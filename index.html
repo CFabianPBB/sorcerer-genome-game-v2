@@ -1,0 +1,1050 @@
+.ocean-info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.6);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.9em;
+        }<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voyage of the Sorcerer II</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .title {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .game-area {
+            display: flex;
+            height: calc(100vh - 150px);
+        }
+
+        .ocean-view {
+            flex: 2;
+            background: linear-gradient(180deg, #4682b4 0%, #191970 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .controls-panel {
+            flex: 1;
+            background: rgba(0,0,0,0.4);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .ship {
+            position: absolute;
+            width: 140px;
+            height: 90px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.5s ease;
+            animation: shipBob 4s ease-in-out infinite;
+        }
+
+        .ship-hull {
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 50%, #e9ecef 100%);
+            border-radius: 70px 70px 10px 10px;
+            position: relative;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            border: 2px solid #dee2e6;
+        }
+
+        .ship-hull::before {
+            content: '';
+            position: absolute;
+            width: 85%;
+            height: 15px;
+            background: linear-gradient(45deg, #6c757d, #adb5bd);
+            border-radius: 20px;
+            top: 5px;
+            left: 7.5%;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .ship-hull::after {
+            content: 'SORCERER II';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8px;
+            font-weight: bold;
+            color: #495057;
+            letter-spacing: 0.5px;
+        }
+
+        .ship-cabin {
+            position: absolute;
+            width: 60px;
+            height: 25px;
+            background: linear-gradient(180deg, #ffffff, #f1f3f4);
+            border-radius: 8px;
+            left: 50%;
+            top: -20px;
+            transform: translateX(-50%);
+            border: 1px solid #ced4da;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .ship-cabin::before {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 8px;
+            background: linear-gradient(45deg, #17a2b8, #20c997);
+            border-radius: 4px;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .ship-mast-main {
+            position: absolute;
+            width: 3px;
+            height: 80px;
+            background: linear-gradient(180deg, #6c757d, #495057);
+            left: 50%;
+            top: -70px;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .ship-mast-front {
+            position: absolute;
+            width: 2px;
+            height: 50px;
+            background: linear-gradient(180deg, #6c757d, #495057);
+            left: 25%;
+            top: -45px;
+            transform: translateX(-50%);
+            border-radius: 1px;
+        }
+
+        .ship-sail-main {
+            position: absolute;
+            width: 35px;
+            height: 45px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 3px;
+            left: 55px;
+            top: -65px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+            animation: sailFlutter 3s ease-in-out infinite;
+            border: 1px solid #e9ecef;
+        }
+
+        .ship-sail-front {
+            position: absolute;
+            width: 20px;
+            height: 30px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 3px;
+            left: 15px;
+            top: -40px;
+            box-shadow: 1px 1px 6px rgba(0,0,0,0.2);
+            animation: sailFlutter 3.5s ease-in-out infinite;
+            border: 1px solid #e9ecef;
+        }
+
+        .ship-equipment {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #6c757d;
+            border-radius: 50%;
+            left: 10px;
+            top: -15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .ship-equipment::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #495057;
+            border-radius: 50%;
+            left: 100px;
+            top: 0px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        @keyframes shipBob {
+            0%, 100% { transform: translate(-50%, -50%) rotate(-1deg); }
+            50% { transform: translate(-50%, -50%) rotate(1deg); }
+        }
+
+        @keyframes sailFlutter {
+            0%, 100% { transform: scaleX(1); }
+            50% { transform: scaleX(1.1); }
+        }
+
+        @keyframes flagWave {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(15deg); }
+        }
+
+        .specimen {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .specimen:hover {
+            transform: scale(1.3);
+            box-shadow: 0 0 15px rgba(255,255,255,0.8);
+        }
+
+        .bacteria { background: #ff6b6b; }
+        .virus { background: #4ecdc4; }
+        .algae { background: #45b7d1; }
+        .plankton { background: #96ceb4; }
+        .microbe { background: #feca57; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .waves {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 120px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255,255,255,0.2) 25%, 
+                rgba(135,206,235,0.3) 50%, 
+                rgba(255,255,255,0.2) 75%, 
+                transparent 100%);
+            animation: wave 4s linear infinite;
+            border-radius: 50% 50% 0 0;
+        }
+
+        .waves::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255,255,255,0.1) 30%, 
+                rgba(70,130,180,0.2) 50%, 
+                rgba(255,255,255,0.1) 70%, 
+                transparent 100%);
+            animation: wave 6s linear infinite reverse;
+            border-radius: 50% 50% 0 0;
+        }
+
+        .waves::after {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255,255,255,0.05) 40%, 
+                rgba(100,149,237,0.1) 50%, 
+                rgba(255,255,255,0.05) 60%, 
+                transparent 100%);
+            animation: wave 8s linear infinite;
+            border-radius: 50% 50% 0 0;
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0%); }
+        }
+
+        .stats {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .lab-panel {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .specimen-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .specimen-item {
+            background: rgba(255,255,255,0.1);
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .specimen-item:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .discovery-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 1000;
+            text-align: center;
+            max-width: 400px;
+            display: none;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 999;
+            display: none;
+        }
+
+        .coordinates {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecdc4, #45b7d1);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .craig-avatar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+            border-radius: 50%;
+            border: 4px solid #fff;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            animation: avatarPulse 3s ease-in-out infinite;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .craig-avatar::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, 
+                #ffd89b 0%,    /* Warm skin tone */
+                #f4d03f 20%,   /* Yellow jacket color */
+                #e67e22 40%,   /* Orange jacket */
+                #d35400 60%,   /* Deeper orange */
+                #8b4513 80%,   /* Beard color */
+                #6c5ce7 100%   /* Background */
+            );
+            border-radius: 50%;
+        }
+
+        .craig-avatar::after {
+            content: '👨‍🔬';
+            position: absolute;
+            font-size: 40px;
+            z-index: 2;
+            filter: sepia(0.3) saturate(1.2) brightness(1.1);
+        }
+
+        .craig-face {
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            background: radial-gradient(circle at 30% 30%, #fdbcb4, #e8998d);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .craig-beard {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 40%;
+            background: linear-gradient(45deg, #d4d4aa, #bcbcaa);
+            border-radius: 50% 50% 70% 70%;
+            z-index: 2;
+        }
+
+        .craig-jacket {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            height: 35%;
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            border-radius: 20% 20% 50% 50%;
+            z-index: 1;
+        }
+
+        @keyframes avatarPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 6px 20px rgba(102,126,234,0.4); }
+        }
+
+        .sequencer-machine {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 2px solid #3498db;
+            box-shadow: 0 5px 20px rgba(52,152,219,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sequencer-machine::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(52,152,219,0.2), transparent);
+            animation: sequencerScan 3s linear infinite;
+        }
+
+        @keyframes sequencerScan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .sequencer-display {
+            background: #000;
+            color: #00ff00;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #00ff00;
+            box-shadow: inset 0 0 10px rgba(0,255,0,0.2);
+        }
+
+        .dna-helix {
+            display: inline-block;
+            animation: dnaRotate 2s linear infinite;
+        }
+
+        @keyframes dnaRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .storm-effects {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .storm-effects.active {
+            opacity: 1;
+        }
+
+        .lightning {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, #fff, #87ceeb, transparent);
+            animation: lightning 0.1s ease-in-out;
+            opacity: 0;
+        }
+
+        @keyframes lightning {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .rain {
+            position: absolute;
+            width: 1px;
+            height: 10px;
+            background: rgba(255,255,255,0.6);
+            animation: rain 1s linear infinite;
+        }
+
+        @keyframes rain {
+            0% { transform: translateY(-10px); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1 class="title">🧬 Voyage of the Sorcerer II 🌊</h1>
+            <p class="subtitle">Join Craig Venter's quest to sequence the ocean's genome</p>
+        </div>
+        
+        <div class="game-area">
+            <div class="ocean-view">
+                <div class="ocean-info">
+                    <div><strong>Current Location:</strong> <span id="location">Sargasso Sea</span></div>
+                    <div class="coordinates">Lat: <span id="lat">32.0°N</span>, Lon: <span id="lon">64.0°W</span></div>
+                    <div><strong>Depth:</strong> <span id="depth">50m</span></div>
+                    <div><strong>Temperature:</strong> <span id="temp">24°C</span></div>
+                </div>
+                
+                <div class="craig-avatar" onclick="craigSpeaks()" title="Dr. Craig Venter">
+                    <div class="craig-face"></div>
+                    <div class="craig-beard"></div>
+                    <div class="craig-jacket"></div>
+                </div>
+                
+                <div class="ship" id="ship">
+                    <div class="ship-hull"></div>
+                    <div class="ship-cabin"></div>
+                    <div class="ship-mast-main"></div>
+                    <div class="ship-mast-front"></div>
+                    <div class="ship-sail-main"></div>
+                    <div class="ship-sail-front"></div>
+                    <div class="ship-equipment"></div>
+                </div>
+                
+                <div class="waves"></div>
+                <div class="storm-effects" id="storm-effects"></div>
+            </div>
+            
+            <div class="controls-panel">
+                <div class="stats">
+                    <h3>🚢 Expedition Status</h3>
+                    <div class="stat-item">
+                        <span>Specimens Collected:</span>
+                        <span id="specimens-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Genes Sequenced:</span>
+                        <span id="genes-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>New Species Found:</span>
+                        <span id="species-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Research Breakthrough:</span>
+                        <span id="breakthrough-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Funding Remaining:</span>
+                        <span id="funding">$2,000,000</span>
+                    </div>
+                </div>
+                
+                <button class="button" onclick="dropNet()">🕸️ Deploy Collection Net</button>
+                <button class="button" onclick="navigate()">🧭 Navigate to New Waters</button>
+                <button class="button" onclick="deepDive()">🌊 Deep Sea Dive</button>
+                
+                <div class="lab-panel">
+                    <h3>🔬 Genomics Laboratory</h3>
+                    
+                    <div class="sequencer-machine" id="sequencer" style="display: none;">
+                        <div class="sequencer-display" id="sequencer-display">
+                            <div>DNA SEQUENCER v3.7 - INITIALIZING...</div>
+                            <div>Loading genetic analysis protocols...</div>
+                            <div>Status: <span class="dna-helix">🧬</span> PROCESSING</div>
+                        </div>
+                        <div style="text-align: center; color: #3498db; font-weight: bold;">
+                            Illumina HiSeq System Active
+                        </div>
+                    </div>
+                    
+                    <button class="button" onclick="processSpecimens()" id="process-btn" disabled>
+                        🧬 Sequence DNA (0 specimens ready)
+                    </button>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress" style="width: 0%"></div>
+                    </div>
+                    
+                    <div class="specimen-list" id="specimen-list">
+                        <em>No specimens collected yet...</em>
+                    </div>
+                </div>
+                
+                <button class="button" onclick="publishFindings()">📊 Publish Research Paper</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="popup-overlay" id="popup-overlay" onclick="closePopup()"></div>
+    <div class="discovery-popup" id="discovery-popup">
+        <h2 id="popup-title">🎉 Major Discovery!</h2>
+        <p id="popup-message"></p>
+        <button class="button" onclick="closePopup()">Continue Research</button>
+    </div>
+
+    <script>
+        const gameState = {
+            specimens: [],
+            genesSequenced: 0,
+            speciesFound: 0,
+            breakthroughs: 0,
+            funding: 2000000,
+            currentLocation: 'Sargasso Sea',
+            depth: 50,
+            coordinates: { lat: 32.0, lon: -64.0 },
+            temperature: 24,
+            expeditionProgress: 0
+        };
+
+        const locations = [
+            { name: 'Sargasso Sea', lat: 32.0, lon: -64.0, temp: 24 },
+            { name: 'Galapagos Islands', lat: -0.7, lon: -91.1, temp: 22 },
+            { name: 'Great Barrier Reef', lat: -16.3, lon: 145.8, temp: 26 },
+            { name: 'Mariana Trench', lat: 11.4, lon: 142.2, temp: 4 },
+            { name: 'Mediterranean Sea', lat: 35.0, lon: 18.0, temp: 20 },
+            { name: 'Arctic Ocean', lat: 85.0, lon: 0.0, temp: -1 }
+        ];
+
+        const specimenTypes = [
+            { type: 'bacteria', name: 'Marine Bacteria', class: 'bacteria', rarity: 0.7 },
+            { type: 'virus', name: 'Ocean Virus', class: 'virus', rarity: 0.5 },
+            { type: 'algae', name: 'Photosynthetic Algae', class: 'algae', rarity: 0.6 },
+            { type: 'plankton', name: 'Zooplankton', class: 'plankton', rarity: 0.4 },
+            { type: 'microbe', name: 'Unknown Microbe', class: 'microbe', rarity: 0.2 }
+        ];
+
+        const craigQuotes = [
+            "The future of medicine lies in understanding the genetic blueprints of our oceans!",
+            "Every drop of seawater contains thousands of unknown species. We're just beginning to scratch the surface.",
+            "This genomic data could revolutionize how we approach climate change and human health.",
+            "We're not just collecting specimens - we're collecting the future of biotechnology.",
+            "The ocean's genetic diversity holds keys to solving humanity's greatest challenges.",
+            "Each new genome we sequence brings us closer to breakthrough discoveries.",
+            "The Sorcerer II isn't just a boat - it's a floating laboratory for the genetic revolution!"
+        ];
+
+        function craigSpeaks() {
+            const quote = craigQuotes[Math.floor(Math.random() * craigQuotes.length)];
+            showPopup('Dr. Craig Venter says:', `"${quote}"`);
+        }
+
+        function createStormEffect() {
+            const stormContainer = document.getElementById('storm-effects');
+            stormContainer.classList.add('active');
+            
+            // Create lightning
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const lightning = document.createElement('div');
+                    lightning.className = 'lightning';
+                    lightning.style.left = `${Math.random() * 100}%`;
+                    stormContainer.appendChild(lightning);
+                    
+                    setTimeout(() => lightning.remove(), 200);
+                }, i * 300);
+            }
+            
+            // Create rain
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const rain = document.createElement('div');
+                    rain.className = 'rain';
+                    rain.style.left = `${Math.random() * 100}%`;
+                    rain.style.animationDelay = `${Math.random() * 1}s`;
+                    stormContainer.appendChild(rain);
+                    
+                    setTimeout(() => rain.remove(), 1000);
+                }, i * 20);
+            }
+            
+            setTimeout(() => {
+                stormContainer.classList.remove('active');
+            }, 2000);
+        }
+
+        function updateDisplay() {
+            document.getElementById('specimens-count').textContent = gameState.specimens.length;
+            document.getElementById('genes-count').textContent = gameState.genesSequenced;
+            document.getElementById('species-count').textContent = gameState.speciesFound;
+            document.getElementById('breakthrough-count').textContent = gameState.breakthroughs;
+            document.getElementById('funding').textContent = `$${gameState.funding.toLocaleString()}`;
+            document.getElementById('location').textContent = gameState.currentLocation;
+            document.getElementById('lat').textContent = `${Math.abs(gameState.coordinates.lat).toFixed(1)}°${gameState.coordinates.lat >= 0 ? 'N' : 'S'}`;
+            document.getElementById('lon').textContent = `${Math.abs(gameState.coordinates.lon).toFixed(1)}°${gameState.coordinates.lon >= 0 ? 'E' : 'W'}`;
+            document.getElementById('depth').textContent = `${gameState.depth}m`;
+            document.getElementById('temp').textContent = `${gameState.temperature}°C`;
+            
+            const processBtn = document.getElementById('process-btn');
+            const unprocessedCount = gameState.specimens.filter(s => !s.processed).length;
+            processBtn.textContent = `🧬 Sequence DNA (${unprocessedCount} specimens ready)`;
+            processBtn.disabled = unprocessedCount === 0;
+            
+            updateProgress();
+            updateSpecimenList();
+        }
+
+        function updateProgress() {
+            const progress = Math.min((gameState.genesSequenced / 1000) * 100, 100);
+            document.getElementById('progress').style.width = `${progress}%`;
+        }
+
+        function updateSpecimenList() {
+            const list = document.getElementById('specimen-list');
+            if (gameState.specimens.length === 0) {
+                list.innerHTML = '<em>No specimens collected yet...</em>';
+                return;
+            }
+            
+            list.innerHTML = gameState.specimens.map((specimen, index) => 
+                `<div class="specimen-item">
+                    <strong>${specimen.name}</strong><br>
+                    <small>${specimen.processed ? '✅ Sequenced' : '⏳ Awaiting analysis'}</small>
+                </div>`
+            ).join('');
+        }
+
+        function dropNet() {
+            if (gameState.funding < 10000) {
+                showPopup('Insufficient Funding', 'Not enough funding for specimen collection. Publish research to secure more grants!');
+                return;
+            }
+            
+            gameState.funding -= 10000;
+            
+            // Clear existing specimens from ocean
+            document.querySelectorAll('.specimen').forEach(el => el.remove());
+            
+            // Generate new specimens based on location
+            const numSpecimens = Math.floor(Math.random() * 8) + 3;
+            
+            for (let i = 0; i < numSpecimens; i++) {
+                setTimeout(() => {
+                    createSpecimen();
+                }, i * 200);
+            }
+            
+            updateDisplay();
+        }
+
+        function createSpecimen() {
+            const specimen = document.createElement('div');
+            const specimenType = specimenTypes[Math.floor(Math.random() * specimenTypes.length)];
+            
+            specimen.className = `specimen ${specimenType.class}`;
+            specimen.style.left = `${Math.random() * 80 + 10}%`;
+            specimen.style.top = `${Math.random() * 70 + 15}%`;
+            specimen.style.animationDelay = `${Math.random() * 3}s`;
+            
+            specimen.onclick = () => collectSpecimen(specimen, specimenType);
+            
+            document.querySelector('.ocean-view').appendChild(specimen);
+        }
+
+        function collectSpecimen(element, specimenType) {
+            element.remove();
+            
+            const newSpecimen = {
+                name: specimenType.name,
+                type: specimenType.type,
+                rarity: specimenType.rarity,
+                processed: false,
+                location: gameState.currentLocation,
+                depth: gameState.depth
+            };
+            
+            gameState.specimens.push(newSpecimen);
+            updateDisplay();
+        }
+
+        function processSpecimens() {
+            const unprocessed = gameState.specimens.filter(s => !s.processed);
+            if (unprocessed.length === 0) return;
+            
+            if (gameState.funding < 50000) {
+                showPopup('Insufficient Funding', 'DNA sequencing requires $50,000. Seek additional funding!');
+                return;
+            }
+            
+            gameState.funding -= 50000;
+            
+            // Show sequencer machine
+            const sequencer = document.getElementById('sequencer');
+            const display = document.getElementById('sequencer-display');
+            sequencer.style.display = 'block';
+            
+            // Animate sequencing process
+            const sequences = [
+                'ATCGATCGTAGCTACGTACG...',
+                'GCTAGCTAGCTGACTAGCTA...',
+                'TAGCTAGCATGCATGCATGC...',
+                'CGCGCGCGATATATATATA...'
+            ];
+            
+            let sequenceIndex = 0;
+            const sequenceInterval = setInterval(() => {
+                display.innerHTML = `
+                    <div>DNA SEQUENCER v3.7 - ACTIVE</div>
+                    <div>Sequence ${sequenceIndex + 1}/${unprocessed.length}: ${sequences[sequenceIndex % sequences.length]}</div>
+                    <div>Status: <span class="dna-helix">🧬</span> PROCESSING</div>
+                `;
+                sequenceIndex++;
+                
+                if (sequenceIndex >= unprocessed.length) {
+                    clearInterval(sequenceInterval);
+                    setTimeout(() => {
+                        sequencer.style.display = 'none';
+                    }, 1000);
+                }
+            }, 1000);
+            
+            unprocessed.forEach(specimen => {
+                specimen.processed = true;
+                gameState.genesSequenced += Math.floor(Math.random() * 500) + 100;
+                
+                if (Math.random() < specimen.rarity) {
+                    gameState.speciesFound++;
+                    
+                    if (Math.random() < 0.3) {
+                        gameState.breakthroughs++;
+                        const discovery = discoveries[Math.floor(Math.random() * discoveries.length)];
+                        setTimeout(() => {
+                            showPopup('Research Breakthrough!', discovery);
+                        }, 2000);
+                    }
+                }
+            });
+            
+            updateDisplay();
+        }
+
+        function navigate() {
+            if (gameState.funding < 25000) {
+                showPopup('Insufficient Funding', 'Navigation and fuel costs require $25,000.');
+                return;
+            }
+            
+            gameState.funding -= 25000;
+            
+            // Create storm effect occasionally
+            if (Math.random() < 0.3) {
+                createStormEffect();
+            }
+            
+            const newLocation = locations[Math.floor(Math.random() * locations.length)];
+            gameState.currentLocation = newLocation.name;
+            gameState.coordinates = { lat: newLocation.lat, lon: newLocation.lon };
+            gameState.temperature = newLocation.temp;
+            gameState.depth = Math.floor(Math.random() * 500) + 10;
+            
+            // Clear existing specimens
+            document.querySelectorAll('.specimen').forEach(el => el.remove());
+            
+            updateDisplay();
+        }
+
+        const discoveries = [
+            "New antibiotic-producing bacteria discovered! Potential treatment for drug-resistant infections.",
+            "Novel enzyme found that breaks down plastic pollutants in ocean water!",
+            "Extremophile bacteria reveals secrets of surviving in harsh climates.",
+            "Photosynthetic organism with 50% higher efficiency could revolutionize biofuel production.",
+            "Unique viral protein shows promise for targeted cancer therapy.",
+            "Deep-sea microbe produces compounds that could slow aging processes.",
+            "Marine algae genome reveals pathway for carbon dioxide sequestration.",
+            "Symbiotic bacteria relationship discovered that enhances coral reef resilience."
+        ];
+
+        function deepDive() {
+            if (gameState.funding < 75000) {
+                showPopup('Insufficient Funding', 'Deep sea exploration requires $75,000 for specialized equipment.');
+                return;
+            }
+            
+            gameState.funding -= 75000;
+            gameState.depth = Math.floor(Math.random() * 2000) + 500;
+            gameState.temperature = Math.max(gameState.temperature - 15, 2);
+            
+            // Deep sea specimens are rarer but more valuable
+            const numSpecimens = Math.floor(Math.random() * 4) + 2;
+            
+            for (let i = 0; i < numSpecimens; i++) {
+                setTimeout(() => {
+                    const specimen = document.createElement('div');
+                    specimen.className = 'specimen microbe';
+                    specimen.style.left = `${Math.random() * 80 + 10}%`;
+                    specimen.style.top = `${Math.random() * 70 + 15}%`;
+                    specimen.style.animationDelay = `${Math.random() * 3}s`;
+                    
+                    specimen.onclick = () => {
+                        specimen.remove();
+                        gameState.specimens.push({
+                            name: 'Deep Sea Extremophile',
+                            type: 'extremophile',
+                            rarity: 0.8,
+                            processed: false,
+                            location: gameState.currentLocation,
+                            depth: gameState.depth
+                        });
+                        updateDisplay();
+                    };
+                    
+                    document.querySelector('.ocean-view').appendChild(specimen);
+                }, i * 300);
+            }
+            
+            updateDisplay();
+        }
+
+        function publishFindings() {
+            if (gameState.genesSequenced < 100) {
+                showPopup('Insufficient Data', 'You need at least 100 sequenced genes to publish meaningful research.');
+                return;
+            }
+            
+            const grantAmount = gameState.breakthroughs * 500000 + gameState.speciesFound * 100000 + Math.floor(gameState.genesSequenced / 100) * 50000;
+            gameState.funding += grantAmount;
+            
+            showPopup('Research Published!', 
+                `Your groundbreaking research has been published in Nature! 
+                Grant funding received: $${grantAmount.toLocaleString()}
+                
+                "Dr. Venter's expedition has revolutionized our understanding of marine genomics and opened new frontiers in biotechnology."`);
+            
+            updateDisplay();
+        }
+
+        function showPopup(title, message) {
+            document.getElementById('popup-title').textContent = title;
+            document.getElementById('popup-message').textContent = message;
+            document.getElementById('popup-overlay').style.display = 'block';
+            document.getElementById('discovery-popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup-overlay').style.display = 'none';
+            document.getElementById('discovery-popup').style.display = 'none';
+        }
+
+        // Initialize game
+        updateDisplay();
+        
+        // Add some initial specimens
+        setTimeout(() => {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => createSpecimen(), i * 500);
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
