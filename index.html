@@ -1,12 +1,4 @@
-.ocean-info {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(0,0,0,0.6);
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 0.9em;
-        }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -21,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(180deg, #0a1526 0%, #1e3c72 100%);
             color: white;
             overflow-x: hidden;
         }
@@ -33,19 +25,50 @@
 
         .header {
             text-align: center;
-            padding: 20px;
-            background: rgba(0,0,0,0.3);
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,20,40,0.9) 100%);
+            border-bottom: 2px solid #4a90e2;
         }
 
         .title {
-            font-size: 2.5em;
+            font-size: 3.2em;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .title-main {
+            font-size: 1.8em;
+            font-weight: 100;
+            letter-spacing: 8px;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .title-of {
+            font-size: 1.2em;
+            font-style: italic;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin: 0 10px;
+        }
+
+        .title-sorcerer {
+            font-size: 2.2em;
+            font-weight: 400;
+            letter-spacing: 6px;
         }
 
         .subtitle {
-            font-size: 1.2em;
+            font-size: 1em;
             opacity: 0.9;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            padding-top: 15px;
         }
 
         .game-area {
@@ -60,6 +83,19 @@
             overflow: hidden;
         }
 
+        .ocean-info {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.6);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            text-align: center;
+            min-width: 200px;
+        }
+
         .controls-panel {
             flex: 1;
             background: rgba(0,0,0,0.4);
@@ -69,143 +105,179 @@
 
         .ship {
             position: absolute;
-            width: 140px;
-            height: 90px;
+            width: 160px;
+            height: 100px;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
             transition: all 0.5s ease;
             animation: shipBob 4s ease-in-out infinite;
+            z-index: 10;
         }
 
         .ship-hull {
             width: 100%;
-            height: 40px;
-            background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 50%, #e9ecef 100%);
-            border-radius: 70px 70px 10px 10px;
+            height: 45px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 30%, #e9ecef 70%, #ced4da 100%);
+            border-radius: 80px 80px 12px 12px;
             position: relative;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-            border: 2px solid #dee2e6;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            border: 2px solid #adb5bd;
         }
 
         .ship-hull::before {
             content: '';
             position: absolute;
-            width: 85%;
-            height: 15px;
-            background: linear-gradient(45deg, #6c757d, #adb5bd);
-            border-radius: 20px;
-            top: 5px;
-            left: 7.5%;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            width: 90%;
+            height: 12px;
+            background: linear-gradient(90deg, #495057, #6c757d, #495057);
+            border-radius: 25px;
+            top: 8px;
+            left: 5%;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
         }
 
         .ship-hull::after {
             content: 'SORCERER II';
             position: absolute;
-            top: 20px;
+            top: 25px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 8px;
+            font-size: 9px;
             font-weight: bold;
             color: #495057;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
+        }
+
+        .ship-deck {
+            position: absolute;
+            width: 85%;
+            height: 20px;
+            background: linear-gradient(45deg, #f8f9fa, #ffffff);
+            border-radius: 40px;
+            left: 7.5%;
+            top: -15px;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
         }
 
         .ship-cabin {
             position: absolute;
-            width: 60px;
-            height: 25px;
+            width: 70px;
+            height: 30px;
             background: linear-gradient(180deg, #ffffff, #f1f3f4);
-            border-radius: 8px;
+            border-radius: 10px;
             left: 50%;
-            top: -20px;
+            top: -25px;
             transform: translateX(-50%);
-            border: 1px solid #ced4da;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            border: 2px solid #ced4da;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
 
         .ship-cabin::before {
             content: '';
             position: absolute;
-            width: 40px;
+            width: 50px;
             height: 8px;
             background: linear-gradient(45deg, #17a2b8, #20c997);
             border-radius: 4px;
-            top: 8px;
+            top: 10px;
             left: 50%;
             transform: translateX(-50%);
         }
 
         .ship-mast-main {
             position: absolute;
-            width: 3px;
-            height: 80px;
+            width: 4px;
+            height: 90px;
             background: linear-gradient(180deg, #6c757d, #495057);
-            left: 50%;
-            top: -70px;
+            left: 55%;
+            top: -80px;
             transform: translateX(-50%);
             border-radius: 2px;
+            box-shadow: 2px 0 4px rgba(0,0,0,0.3);
         }
 
         .ship-mast-front {
             position: absolute;
-            width: 2px;
-            height: 50px;
+            width: 3px;
+            height: 60px;
             background: linear-gradient(180deg, #6c757d, #495057);
             left: 25%;
-            top: -45px;
+            top: -55px;
             transform: translateX(-50%);
-            border-radius: 1px;
+            border-radius: 2px;
+            box-shadow: 1px 0 3px rgba(0,0,0,0.3);
         }
 
         .ship-sail-main {
             position: absolute;
-            width: 35px;
-            height: 45px;
+            width: 40px;
+            height: 55px;
             background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            border-radius: 3px;
-            left: 55px;
-            top: -65px;
-            box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+            border-radius: 4px;
+            left: 75px;
+            top: -75px;
+            box-shadow: 3px 3px 10px rgba(0,0,0,0.3);
             animation: sailFlutter 3s ease-in-out infinite;
             border: 1px solid #e9ecef;
         }
 
         .ship-sail-front {
             position: absolute;
-            width: 20px;
-            height: 30px;
+            width: 25px;
+            height: 40px;
             background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
             border-radius: 3px;
-            left: 15px;
-            top: -40px;
-            box-shadow: 1px 1px 6px rgba(0,0,0,0.2);
+            left: 20px;
+            top: -50px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
             animation: sailFlutter 3.5s ease-in-out infinite;
             border: 1px solid #e9ecef;
         }
 
         .ship-equipment {
             position: absolute;
-            width: 8px;
-            height: 8px;
-            background: #6c757d;
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle, #6c757d, #495057);
             border-radius: 50%;
-            left: 10px;
-            top: -15px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            left: 15px;
+            top: -20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
         }
 
         .ship-equipment::after {
             content: '';
             position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #495057;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #6c757d, #495057);
             border-radius: 50%;
-            left: 100px;
-            top: 0px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            left: 115px;
+            top: 2px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+        }
+
+        .ship-antenna {
+            position: absolute;
+            width: 1px;
+            height: 25px;
+            background: #495057;
+            left: 50%;
+            top: -50px;
+            transform: translateX(-50%);
+        }
+
+        .ship-antenna::before {
+            content: '';
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #dc3545;
+            border-radius: 50%;
+            left: -1px;
+            top: -3px;
         }
 
         @keyframes shipBob {
@@ -218,31 +290,139 @@
             50% { transform: scaleX(1.1); }
         }
 
-        @keyframes flagWave {
+        .specimen {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: float 4s ease-in-out infinite;
+            z-index: 5;
+        }
+
+        .specimen:hover {
+            transform: scale(1.4);
+            filter: brightness(1.3);
+        }
+
+        .bacteria { 
+            background: radial-gradient(circle, #ff6b6b, #ee5a52);
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 0 15px rgba(255,107,107,0.6);
+        }
+
+        .bacteria::before {
+            content: '🧬';
+            position: absolute;
+            font-size: 16px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            animation: dnaRotate 3s linear infinite;
+        }
+
+        .virus { 
+            background: radial-gradient(circle, #4ecdc4, #45b7d1);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 0 15px rgba(78,205,196,0.6);
+        }
+
+        .virus::before {
+            content: '⚛️';
+            position: absolute;
+            font-size: 14px;
+            left: 50%;
+            top: 60%;
+            transform: translate(-50%, -50%);
+        }
+
+        .algae { 
+            background: radial-gradient(circle, #45b7d1, #2980b9);
+            border-radius: 50% 10% 50% 10%;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 0 15px rgba(69,183,209,0.6);
+            animation: algaeWiggle 2s ease-in-out infinite;
+        }
+
+        .algae::before {
+            content: '🌱';
+            position: absolute;
+            font-size: 16px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .plankton { 
+            background: radial-gradient(circle, #96ceb4, #74b9ff);
+            border-radius: 70% 30% 70% 30%;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 0 15px rgba(150,206,180,0.6);
+            position: relative;
+        }
+
+        .plankton::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 50%;
+            top: 8px;
+            left: 8px;
+        }
+
+        .plankton::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 12px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+            top: 18px;
+            left: 6px;
+            animation: tentacleWave 1.5s ease-in-out infinite;
+        }
+
+        .microbe { 
+            background: radial-gradient(circle, #feca57, #ff9ff3);
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.4);
+            box-shadow: 0 0 20px rgba(254,202,87,0.8);
+            position: relative;
+        }
+
+        .microbe::before {
+            content: '🦠';
+            position: absolute;
+            font-size: 18px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes algaeWiggle {
+            0%, 100% { border-radius: 50% 10% 50% 10%; }
+            50% { border-radius: 10% 50% 10% 50%; }
+        }
+
+        @keyframes tentacleWave {
             0%, 100% { transform: rotate(0deg); }
             50% { transform: rotate(15deg); }
         }
 
-        .specimen {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            animation: float 3s ease-in-out infinite;
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
         }
 
-        .specimen:hover {
-            transform: scale(1.3);
-            box-shadow: 0 0 15px rgba(255,255,255,0.8);
+        @keyframes dnaRotate {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
-
-        .bacteria { background: #ff6b6b; }
-        .virus { background: #4ecdc4; }
-        .algae { background: #45b7d1; }
-        .plankton { background: #96ceb4; }
-        .microbe { background: #feca57; }
 
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
@@ -304,6 +484,29 @@
             100% { transform: translateX(0%); }
         }
 
+        .craig-avatar {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            animation: avatarPulse 3s ease-in-out infinite;
+            cursor: pointer;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+        }
+
+        @keyframes avatarPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 25px rgba(0,0,0,0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 10px 30px rgba(102,126,234,0.4); }
+        }
+
         .stats {
             background: rgba(255,255,255,0.1);
             padding: 15px;
@@ -346,6 +549,50 @@
             padding: 15px;
             border-radius: 10px;
             margin-top: 20px;
+        }
+
+        .sequencer-machine {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 2px solid #3498db;
+            box-shadow: 0 5px 20px rgba(52,152,219,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sequencer-machine::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(52,152,219,0.2), transparent);
+            animation: sequencerScan 3s linear infinite;
+        }
+
+        @keyframes sequencerScan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .sequencer-display {
+            background: #000;
+            color: #00ff00;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #00ff00;
+            box-shadow: inset 0 0 10px rgba(0,255,0,0.2);
+        }
+
+        .dna-helix {
+            display: inline-block;
+            animation: dnaRotate 2s linear infinite;
         }
 
         .specimen-list {
@@ -393,12 +640,6 @@
             display: none;
         }
 
-        .coordinates {
-            font-size: 0.9em;
-            opacity: 0.8;
-            margin-top: 10px;
-        }
-
         .progress-bar {
             width: 100%;
             height: 20px;
@@ -415,135 +656,37 @@
             transition: width 0.3s ease;
         }
 
-        .craig-avatar {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 90px;
-            height: 90px;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
-            border-radius: 50%;
-            border: 4px solid #fff;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            animation: avatarPulse 3s ease-in-out infinite;
-            cursor: pointer;
-            overflow: hidden;
-            position: relative;
+        .coordinates {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-top: 10px;
         }
 
-        .craig-avatar::before {
-            content: '';
+        .wave-splash {
             position: absolute;
             width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, 
-                #ffd89b 0%,    /* Warm skin tone */
-                #f4d03f 20%,   /* Yellow jacket color */
-                #e67e22 40%,   /* Orange jacket */
-                #d35400 60%,   /* Deeper orange */
-                #8b4513 80%,   /* Beard color */
-                #6c5ce7 100%   /* Background */
-            );
-            border-radius: 50%;
+            height: 60px;
+            bottom: 80px;
+            left: 0;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                rgba(255,255,255,0.4) 20%,
+                rgba(135,206,235,0.6) 40%,
+                rgba(255,255,255,0.5) 60%,
+                rgba(70,130,180,0.4) 80%,
+                transparent 100%);
+            border-radius: 50% 50% 0 0;
+            animation: splash 3s ease-in-out infinite;
+            opacity: 0;
         }
 
-        .craig-avatar::after {
-            content: '👨‍🔬';
-            position: absolute;
-            font-size: 40px;
-            z-index: 2;
-            filter: sepia(0.3) saturate(1.2) brightness(1.1);
+        .wave-splash.active {
+            opacity: 1;
         }
 
-        .craig-face {
-            position: absolute;
-            width: 80%;
-            height: 80%;
-            background: radial-gradient(circle at 30% 30%, #fdbcb4, #e8998d);
-            border-radius: 50%;
-            z-index: 1;
-        }
-
-        .craig-beard {
-            position: absolute;
-            bottom: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60%;
-            height: 40%;
-            background: linear-gradient(45deg, #d4d4aa, #bcbcaa);
-            border-radius: 50% 50% 70% 70%;
-            z-index: 2;
-        }
-
-        .craig-jacket {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 85%;
-            height: 35%;
-            background: linear-gradient(45deg, #f39c12, #e67e22);
-            border-radius: 20% 20% 50% 50%;
-            z-index: 1;
-        }
-
-        @keyframes avatarPulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-            50% { transform: scale(1.05); box-shadow: 0 6px 20px rgba(102,126,234,0.4); }
-        }
-
-        .sequencer-machine {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 15px 0;
-            border: 2px solid #3498db;
-            box-shadow: 0 5px 20px rgba(52,152,219,0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .sequencer-machine::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(52,152,219,0.2), transparent);
-            animation: sequencerScan 3s linear infinite;
-        }
-
-        @keyframes sequencerScan {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .sequencer-display {
-            background: #000;
-            color: #00ff00;
-            padding: 10px;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            margin-bottom: 10px;
-            border: 1px solid #00ff00;
-            box-shadow: inset 0 0 10px rgba(0,255,0,0.2);
-        }
-
-        .dna-helix {
-            display: inline-block;
-            animation: dnaRotate 2s linear infinite;
-        }
-
-        @keyframes dnaRotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes splash {
+            0%, 100% { transform: scaleY(0.5) translateY(20px); opacity: 0; }
+            50% { transform: scaleY(1.2) translateY(-10px); opacity: 1; }
         }
 
         .storm-effects {
@@ -593,8 +736,12 @@
 <body>
     <div class="game-container">
         <div class="header">
-            <h1 class="title">🧬 Voyage of the Sorcerer II 🌊</h1>
-            <p class="subtitle">Join Craig Venter's quest to sequence the ocean's genome</p>
+            <h1 class="title">
+                <div class="title-main">THE VOYAGE</div>
+                <div class="title-of">of</div>
+                <div class="title-sorcerer">SORCERER II</div>
+            </h1>
+            <p class="subtitle">The expedition that unlocked the secrets of the ocean's microbiome</p>
         </div>
         
         <div class="game-area">
@@ -606,23 +753,24 @@
                     <div><strong>Temperature:</strong> <span id="temp">24°C</span></div>
                 </div>
                 
-                <div class="craig-avatar" onclick="craigSpeaks()" title="Dr. Craig Venter">
-                    <div class="craig-face"></div>
-                    <div class="craig-beard"></div>
-                    <div class="craig-jacket"></div>
+                <div class="craig-avatar" onclick="craigSpeaks()" title="Dr. Craig Venter - Click for insights">
+                    👨‍🔬
                 </div>
                 
                 <div class="ship" id="ship">
                     <div class="ship-hull"></div>
+                    <div class="ship-deck"></div>
                     <div class="ship-cabin"></div>
                     <div class="ship-mast-main"></div>
                     <div class="ship-mast-front"></div>
                     <div class="ship-sail-main"></div>
                     <div class="ship-sail-front"></div>
                     <div class="ship-equipment"></div>
+                    <div class="ship-antenna"></div>
                 </div>
                 
                 <div class="waves"></div>
+                <div class="wave-splash" id="wave-splash"></div>
                 <div class="storm-effects" id="storm-effects"></div>
             </div>
             
@@ -695,6 +843,7 @@
     </div>
 
     <script>
+        // Game state and data
         const gameState = {
             specimens: [],
             genesSequenced: 0,
@@ -735,45 +884,18 @@
             "The Sorcerer II isn't just a boat - it's a floating laboratory for the genetic revolution!"
         ];
 
-        function craigSpeaks() {
-            const quote = craigQuotes[Math.floor(Math.random() * craigQuotes.length)];
-            showPopup('Dr. Craig Venter says:', `"${quote}"`);
-        }
+        const discoveries = [
+            "New antibiotic-producing bacteria discovered! Potential treatment for drug-resistant infections.",
+            "Novel enzyme found that breaks down plastic pollutants in ocean water!",
+            "Extremophile bacteria reveals secrets of surviving in harsh climates.",
+            "Photosynthetic organism with 50% higher efficiency could revolutionize biofuel production.",
+            "Unique viral protein shows promise for targeted cancer therapy.",
+            "Deep-sea microbe produces compounds that could slow aging processes.",
+            "Marine algae genome reveals pathway for carbon dioxide sequestration.",
+            "Symbiotic bacteria relationship discovered that enhances coral reef resilience."
+        ];
 
-        function createStormEffect() {
-            const stormContainer = document.getElementById('storm-effects');
-            stormContainer.classList.add('active');
-            
-            // Create lightning
-            for (let i = 0; i < 3; i++) {
-                setTimeout(() => {
-                    const lightning = document.createElement('div');
-                    lightning.className = 'lightning';
-                    lightning.style.left = `${Math.random() * 100}%`;
-                    stormContainer.appendChild(lightning);
-                    
-                    setTimeout(() => lightning.remove(), 200);
-                }, i * 300);
-            }
-            
-            // Create rain
-            for (let i = 0; i < 50; i++) {
-                setTimeout(() => {
-                    const rain = document.createElement('div');
-                    rain.className = 'rain';
-                    rain.style.left = `${Math.random() * 100}%`;
-                    rain.style.animationDelay = `${Math.random() * 1}s`;
-                    stormContainer.appendChild(rain);
-                    
-                    setTimeout(() => rain.remove(), 1000);
-                }, i * 20);
-            }
-            
-            setTimeout(() => {
-                stormContainer.classList.remove('active');
-            }, 2000);
-        }
-
+        // Core game functions
         function updateDisplay() {
             document.getElementById('specimens-count').textContent = gameState.specimens.length;
             document.getElementById('genes-count').textContent = gameState.genesSequenced;
@@ -937,10 +1059,8 @@
             
             gameState.funding -= 25000;
             
-            // Create storm effect occasionally
-            if (Math.random() < 0.3) {
-                createStormEffect();
-            }
+            // Create dramatic ocean effects
+            createOceanEffects();
             
             const newLocation = locations[Math.floor(Math.random() * locations.length)];
             gameState.currentLocation = newLocation.name;
@@ -953,17 +1073,6 @@
             
             updateDisplay();
         }
-
-        const discoveries = [
-            "New antibiotic-producing bacteria discovered! Potential treatment for drug-resistant infections.",
-            "Novel enzyme found that breaks down plastic pollutants in ocean water!",
-            "Extremophile bacteria reveals secrets of surviving in harsh climates.",
-            "Photosynthetic organism with 50% higher efficiency could revolutionize biofuel production.",
-            "Unique viral protein shows promise for targeted cancer therapy.",
-            "Deep-sea microbe produces compounds that could slow aging processes.",
-            "Marine algae genome reveals pathway for carbon dioxide sequestration.",
-            "Symbiotic bacteria relationship discovered that enhances coral reef resilience."
-        ];
 
         function deepDive() {
             if (gameState.funding < 75000) {
@@ -1022,6 +1131,57 @@
                 "Dr. Venter's expedition has revolutionized our understanding of marine genomics and opened new frontiers in biotechnology."`);
             
             updateDisplay();
+        }
+
+        function createOceanEffects() {
+            // Activate wave splash
+            const splash = document.getElementById('wave-splash');
+            splash.classList.add('active');
+            setTimeout(() => splash.classList.remove('active'), 3000);
+            
+            // Create storm effect occasionally
+            if (Math.random() < 0.4) {
+                setTimeout(() => createStormEffect(), 1000);
+            }
+        }
+
+        function craigSpeaks() {
+            const quote = craigQuotes[Math.floor(Math.random() * craigQuotes.length)];
+            showPopup('Dr. Craig Venter says:', `"${quote}"`);
+        }
+
+        function createStormEffect() {
+            const stormContainer = document.getElementById('storm-effects');
+            stormContainer.classList.add('active');
+            
+            // Create lightning
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const lightning = document.createElement('div');
+                    lightning.className = 'lightning';
+                    lightning.style.left = `${Math.random() * 100}%`;
+                    stormContainer.appendChild(lightning);
+                    
+                    setTimeout(() => lightning.remove(), 200);
+                }, i * 300);
+            }
+            
+            // Create rain
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const rain = document.createElement('div');
+                    rain.className = 'rain';
+                    rain.style.left = `${Math.random() * 100}%`;
+                    rain.style.animationDelay = `${Math.random() * 1}s`;
+                    stormContainer.appendChild(rain);
+                    
+                    setTimeout(() => rain.remove(), 1000);
+                }, i * 20);
+            }
+            
+            setTimeout(() => {
+                stormContainer.classList.remove('active');
+            }, 2000);
         }
 
         function showPopup(title, message) {
