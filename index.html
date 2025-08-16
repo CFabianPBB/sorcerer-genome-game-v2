@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Sorcerer II">
     <title>Voyage of the Sorcerer II</title>
     <style>
         * {
@@ -16,6 +19,12 @@
             background: linear-gradient(180deg, #0a1526 0%, #1e3c72 100%);
             color: white;
             overflow-x: hidden;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .game-container {
@@ -76,6 +85,52 @@
             height: calc(100vh - 150px);
         }
 
+        /* Mobile Layout */
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+                height: auto;
+                min-height: calc(100vh - 120px);
+            }
+            
+            .ocean-view {
+                flex: none;
+                height: 50vh;
+                min-height: 300px;
+            }
+            
+            .controls-panel {
+                flex: none;
+                height: auto;
+                max-height: 50vh;
+                overflow-y: auto;
+                padding: 15px;
+            }
+            
+            .header {
+                padding: 15px 10px;
+            }
+            
+            .title {
+                font-size: 2em;
+            }
+            
+            .title-main {
+                font-size: 1.4em;
+                letter-spacing: 4px;
+            }
+            
+            .title-sorcerer {
+                font-size: 1.8em;
+                letter-spacing: 3px;
+            }
+            
+            .subtitle {
+                font-size: 0.9em;
+                letter-spacing: 1px;
+            }
+        }
+
         .ocean-view {
             flex: 2;
             background: linear-gradient(180deg, #4682b4 0%, #191970 100%);
@@ -94,6 +149,16 @@
             font-size: 0.9em;
             text-align: center;
             min-width: 200px;
+        }
+
+        /* Mobile ocean info */
+        @media (max-width: 768px) {
+            .ocean-info {
+                top: 10px;
+                padding: 10px;
+                font-size: 0.8em;
+                min-width: 180px;
+            }
         }
 
         .controls-panel {
@@ -298,11 +363,24 @@
             transition: all 0.3s ease;
             animation: float 4s ease-in-out infinite;
             z-index: 5;
+            touch-action: manipulation;
         }
 
-        .specimen:hover {
+        .specimen:hover, .specimen:active {
             transform: scale(1.4);
             filter: brightness(1.3);
+        }
+
+        /* Mobile specimen sizing */
+        @media (max-width: 768px) {
+            .specimen {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .specimen:active {
+                transform: scale(1.6);
+            }
         }
 
         .bacteria { 
@@ -500,6 +578,19 @@
             align-items: center;
             justify-content: center;
             font-size: 80px;
+            touch-action: manipulation;
+        }
+
+        /* Mobile craig avatar */
+        @media (max-width: 768px) {
+            .craig-avatar {
+                bottom: 10px;
+                right: 10px;
+                width: 80px;
+                height: 80px;
+                border: 3px solid #fff;
+                font-size: 50px;
+            }
         }
 
         @keyframes avatarPulse {
@@ -520,6 +611,19 @@
             margin-bottom: 8px;
         }
 
+        /* Mobile stats */
+        @media (max-width: 768px) {
+            .stats {
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+            
+            .stat-item {
+                font-size: 14px;
+                margin-bottom: 6px;
+            }
+        }
+
         .button {
             width: 100%;
             padding: 12px;
@@ -531,9 +635,11 @@
             font-size: 16px;
             cursor: pointer;
             transition: all 0.3s ease;
+            touch-action: manipulation;
+            -webkit-appearance: none;
         }
 
-        .button:hover {
+        .button:hover, .button:active {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
@@ -542,6 +648,20 @@
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
+        }
+
+        /* Mobile button styling */
+        @media (max-width: 768px) {
+            .button {
+                padding: 15px;
+                font-size: 15px;
+                margin: 10px 0;
+            }
+            
+            .button:active {
+                transform: scale(0.98);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            }
         }
 
         .lab-panel {
@@ -599,6 +719,7 @@
             max-height: 200px;
             overflow-y: auto;
             margin-top: 10px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .specimen-item {
@@ -608,10 +729,23 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background 0.2s ease;
+            touch-action: manipulation;
         }
 
-        .specimen-item:hover {
+        .specimen-item:hover, .specimen-item:active {
             background: rgba(255,255,255,0.2);
+        }
+
+        /* Mobile specimen list */
+        @media (max-width: 768px) {
+            .specimen-list {
+                max-height: 150px;
+            }
+            
+            .specimen-item {
+                padding: 10px;
+                font-size: 14px;
+            }
         }
 
         .discovery-popup {
