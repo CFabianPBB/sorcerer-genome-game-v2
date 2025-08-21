@@ -564,32 +564,33 @@
 
         .craig-avatar {
             position: absolute;
-            bottom: 20px;
+            top: 20px;
             right: 20px;
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            border: 5px solid #fff;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            border: 4px solid #fff;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
             animation: avatarPulse 3s ease-in-out infinite;
             cursor: pointer;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 80px;
+            font-size: 60px;
             touch-action: manipulation;
+            z-index: 100;
         }
 
         /* Mobile craig avatar */
         @media (max-width: 768px) {
             .craig-avatar {
-                bottom: 10px;
+                top: 60px;
                 right: 10px;
-                width: 80px;
-                height: 80px;
+                width: 70px;
+                height: 70px;
                 border: 3px solid #fff;
-                font-size: 50px;
+                font-size: 40px;
             }
         }
 
@@ -669,6 +670,61 @@
             padding: 15px;
             border-radius: 10px;
             margin-top: 20px;
+        }
+
+        .research-request {
+            background: rgba(255, 193, 7, 0.2);
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            animation: requestPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes requestPulse {
+            0%, 100% { border-color: #ffc107; }
+            50% { border-color: #ff6b6b; }
+        }
+
+        .specimen-categories {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        /* Mobile category styling */
+        @media (max-width: 768px) {
+            .category-grid {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+            
+            .category-item {
+                font-size: 13px;
+                padding: 8px;
+            }
+            
+            .research-request {
+                padding: 12px;
+                font-size: 14px;
+            }
         }
 
         .sequencer-machine {
@@ -924,8 +980,12 @@
                         <span id="species-count">0</span>
                     </div>
                     <div class="stat-item">
-                        <span>Research Breakthrough:</span>
-                        <span id="breakthrough-count">0</span>
+                        <span>Papers Published:</span>
+                        <span id="papers-published">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Papers Rejected:</span>
+                        <span id="papers-rejected">0</span>
                     </div>
                     <div class="stat-item">
                         <span>Funding Remaining:</span>
@@ -939,6 +999,40 @@
                 
                 <div class="lab-panel">
                     <h3>🔬 Genomics Laboratory</h3>
+                    
+                    <div id="research-request" class="research-request" style="display: none;">
+                        <h4>📋 Research Request</h4>
+                        <p id="request-text"></p>
+                        <div class="request-progress">
+                            <span id="request-progress-text"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="specimen-categories">
+                        <h4>📊 Specimen Categories</h4>
+                        <div class="category-grid">
+                            <div class="category-item">
+                                <span>🦠 Bacteria:</span>
+                                <span id="bacteria-count">0</span>
+                            </div>
+                            <div class="category-item">
+                                <span>🦠 Viruses:</span>
+                                <span id="virus-count">0</span>
+                            </div>
+                            <div class="category-item">
+                                <span>🌱 Algae:</span>
+                                <span id="algae-count">0</span>
+                            </div>
+                            <div class="category-item">
+                                <span>🦐 Protozoa:</span>
+                                <span id="protozoa-count">0</span>
+                            </div>
+                            <div class="category-item">
+                                <span>🔬 Unknown:</span>
+                                <span id="microbe-count">0</span>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div class="sequencer-machine" id="sequencer" style="display: none;">
                         <div class="sequencer-display" id="sequencer-display">
@@ -988,7 +1082,18 @@
             depth: 50,
             coordinates: { lat: 32.0, lon: -64.0 },
             temperature: 24,
-            expeditionProgress: 0
+            expeditionProgress: 0,
+            specimenCounts: {
+                bacteria: 0,
+                virus: 0,
+                algae: 0,
+                plankton: 0,
+                microbe: 0,
+                protozoa: 0
+            },
+            currentRequest: null,
+            papersRejected: 0,
+            papersPublished: 0
         };
 
         const locations = [
@@ -1001,11 +1106,12 @@
         ];
 
         const specimenTypes = [
-            { type: 'bacteria', name: 'Marine Bacteria', class: 'bacteria', rarity: 0.7 },
-            { type: 'virus', name: 'Ocean Virus', class: 'virus', rarity: 0.5 },
-            { type: 'algae', name: 'Photosynthetic Algae', class: 'algae', rarity: 0.6 },
-            { type: 'plankton', name: 'Zooplankton', class: 'plankton', rarity: 0.4 },
-            { type: 'microbe', name: 'Unknown Microbe', class: 'microbe', rarity: 0.2 }
+            { type: 'bacteria', name: 'Marine Bacteria', class: 'bacteria', rarity: 0.7, category: 'Bacteria' },
+            { type: 'virus', name: 'Ocean Virus', class: 'virus', rarity: 0.5, category: 'Virus' },
+            { type: 'algae', name: 'Photosynthetic Algae', class: 'algae', rarity: 0.6, category: 'Algae' },
+            { type: 'plankton', name: 'Zooplankton', class: 'plankton', rarity: 0.4, category: 'Protozoa' },
+            { type: 'microbe', name: 'Unknown Microbe', class: 'microbe', rarity: 0.2, category: 'Microbe' },
+            { type: 'protozoa', name: 'Marine Protozoa', class: 'plankton', rarity: 0.3, category: 'Protozoa' }
         ];
 
         const craigQuotes = [
@@ -1016,6 +1122,24 @@
             "The ocean's genetic diversity holds keys to solving humanity's greatest challenges.",
             "Each new genome we sequence brings us closer to breakthrough discoveries.",
             "The Sorcerer II isn't just a boat - it's a floating laboratory for the genetic revolution!"
+        ];
+
+        const researchRequests = [
+            { type: 'bacteria', target: 5, description: 'Marine biologist needs 5 bacterial specimens for antibiotic resistance study', reward: 100000 },
+            { type: 'virus', target: 3, description: 'Virologist requesting 3 ocean viruses for climate change research', reward: 150000 },
+            { type: 'protozoa', target: 4, description: 'Protozoologist needs 4 protozoan samples for evolutionary study', reward: 120000 },
+            { type: 'algae', target: 6, description: 'Biotechnologist requesting 6 algae specimens for biofuel development', reward: 200000 },
+            { type: 'microbe', target: 2, description: 'Unknown microbes needed for breakthrough pharmaceutical research', reward: 300000 }
+        ];
+
+        const rejectionReasons = [
+            "Reviewer 2 demands more genomic evidence. Additional sequencing data required.",
+            "Editorial board requests deeper phylogenetic analysis of specimens.",
+            "Peer reviewers question sample diversity. More specimens from different locations needed.",
+            "Statistical significance concerns raised. Larger sample size required.",
+            "Novel findings need independent validation. Replicate studies necessary.",
+            "Methodology section needs clarification on de Bruijn graph assembly parameters.",
+            "Control experiments missing. Comparative analysis with known species required."
         ];
 
         const discoveries = [
@@ -1029,18 +1153,39 @@
             "Symbiotic bacteria relationship discovered that enhances coral reef resilience."
         ];
 
+        const sequences = [
+            'ATCGATCGTAGCTACGTACG...',
+            'GCTAGCTAGCTGACTAGCTA...',
+            'TAGCTAGCATGCATGCATGC...',
+            'TTTTTTTTTTTTTTTTTTTT...',
+            'GCGCGCGCGCGCGCGCGCGC...',
+            'AAAAAATAAAAAAATAAAAA...',
+            'CCCCCCCCCCCCCCCCCCC...',
+            'GCGCGGCGCGCGGCGCGCGG...',
+            'ATATATATATATATATATA...',
+            'GGGGGGGGGGGGGGGGGGG...'
+        ];
+
         // Core game functions
         function updateDisplay() {
             document.getElementById('specimens-count').textContent = gameState.specimens.length;
             document.getElementById('genes-count').textContent = gameState.genesSequenced;
             document.getElementById('species-count').textContent = gameState.speciesFound;
-            document.getElementById('breakthrough-count').textContent = gameState.breakthroughs;
+            document.getElementById('papers-published').textContent = gameState.papersPublished;
+            document.getElementById('papers-rejected').textContent = gameState.papersRejected;
             document.getElementById('funding').textContent = `$${gameState.funding.toLocaleString()}`;
             document.getElementById('location').textContent = gameState.currentLocation;
             document.getElementById('lat').textContent = `${Math.abs(gameState.coordinates.lat).toFixed(1)}°${gameState.coordinates.lat >= 0 ? 'N' : 'S'}`;
             document.getElementById('lon').textContent = `${Math.abs(gameState.coordinates.lon).toFixed(1)}°${gameState.coordinates.lon >= 0 ? 'E' : 'W'}`;
             document.getElementById('depth').textContent = `${gameState.depth}m`;
             document.getElementById('temp').textContent = `${gameState.temperature}°C`;
+            
+            // Update specimen category counts
+            document.getElementById('bacteria-count').textContent = gameState.specimenCounts.bacteria;
+            document.getElementById('virus-count').textContent = gameState.specimenCounts.virus;
+            document.getElementById('algae-count').textContent = gameState.specimenCounts.algae;
+            document.getElementById('protozoa-count').textContent = gameState.specimenCounts.protozoa + gameState.specimenCounts.plankton;
+            document.getElementById('microbe-count').textContent = gameState.specimenCounts.microbe;
             
             const processBtn = document.getElementById('process-btn');
             const unprocessedCount = gameState.specimens.filter(s => !s.processed).length;
@@ -1049,6 +1194,7 @@
             
             updateProgress();
             updateSpecimenList();
+            updateResearchRequest();
         }
 
         function updateProgress() {
@@ -1121,7 +1267,11 @@
             };
             
             gameState.specimens.push(newSpecimen);
+            gameState.specimenCounts[specimenType.type]++;
             updateDisplay();
+            
+            // Check if this completes a research request
+            checkResearchRequest();
         }
 
         function processSpecimens() {
@@ -1141,13 +1291,6 @@
             sequencer.style.display = 'block';
             
             // Animate sequencing process
-            const sequences = [
-                'ATCGATCGTAGCTACGTACG...',
-                'GCTAGCTAGCTGACTAGCTA...',
-                'TAGCTAGCATGCATGCATGC...',
-                'CGCGCGCGATATATATATA...'
-            ];
-            
             let sequenceIndex = 0;
             const sequenceInterval = setInterval(() => {
                 display.innerHTML = `
@@ -1239,7 +1382,9 @@
                             location: gameState.currentLocation,
                             depth: gameState.depth
                         });
+                        gameState.specimenCounts.microbe++;
                         updateDisplay();
+                        checkResearchRequest();
                     };
                     
                     document.querySelector('.ocean-view').appendChild(specimen);
@@ -1255,14 +1400,32 @@
                 return;
             }
             
+            // Check for paper rejection (30% chance if not enough specimens/genes)
+            const rejectionChance = Math.max(0.3 - (gameState.genesSequenced / 2000), 0.1);
+            
+            if (Math.random() < rejectionChance) {
+                gameState.papersRejected++;
+                const reason = rejectionReasons[Math.floor(Math.random() * rejectionReasons.length)];
+                showPopup('Paper Rejected!', `❌ Your submission to Nature has been rejected.\n\n"${reason}"\n\nKeep collecting data and try again!`);
+                updateDisplay();
+                return;
+            }
+            
+            // Successful publication
+            gameState.papersPublished++;
             const grantAmount = gameState.breakthroughs * 500000 + gameState.speciesFound * 100000 + Math.floor(gameState.genesSequenced / 100) * 50000;
             gameState.funding += grantAmount;
             
             showPopup('Research Published!', 
-                `Your groundbreaking research has been published in Nature! 
+                `✅ Your groundbreaking research has been published in Nature! 
                 Grant funding received: $${grantAmount.toLocaleString()}
                 
                 "Dr. Venter's expedition has revolutionized our understanding of marine genomics and opened new frontiers in biotechnology."`);
+            
+            // Generate new research request occasionally
+            if (Math.random() < 0.4 && !gameState.currentRequest) {
+                generateResearchRequest();
+            }
             
             updateDisplay();
         }
@@ -1330,8 +1493,46 @@
             document.getElementById('discovery-popup').style.display = 'none';
         }
 
+        function generateResearchRequest() {
+            const request = researchRequests[Math.floor(Math.random() * researchRequests.length)];
+            gameState.currentRequest = { ...request, collected: 0 };
+            updateDisplay();
+        }
+
+        function updateResearchRequest() {
+            const requestDiv = document.getElementById('research-request');
+            if (gameState.currentRequest) {
+                requestDiv.style.display = 'block';
+                document.getElementById('request-text').textContent = gameState.currentRequest.description;
+                document.getElementById('request-progress-text').textContent = 
+                    `Progress: ${gameState.currentRequest.collected}/${gameState.currentRequest.target} specimens`;
+            } else {
+                requestDiv.style.display = 'none';
+            }
+        }
+
+        function checkResearchRequest() {
+            if (!gameState.currentRequest) return;
+            
+            const currentCount = gameState.specimenCounts[gameState.currentRequest.type] || 0;
+            gameState.currentRequest.collected = currentCount;
+            
+            if (currentCount >= gameState.currentRequest.target) {
+                const reward = gameState.currentRequest.reward;
+                gameState.funding += reward;
+                showPopup('Research Request Completed!', 
+                    `🎉 You've successfully completed the research request!\n\nReward: $${reward.toLocaleString()}\n\nThe scientific community thanks you for your contribution!`);
+                gameState.currentRequest = null;
+            }
+        }
+
         // Initialize game
         updateDisplay();
+        
+        // Generate initial research request
+        setTimeout(() => {
+            generateResearchRequest();
+        }, 3000);
         
         // Add some initial specimens
         setTimeout(() => {
