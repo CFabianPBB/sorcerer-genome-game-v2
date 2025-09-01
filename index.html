@@ -921,6 +921,88 @@
             10% { opacity: 1; }
             100% { transform: translateY(100vh); opacity: 0; }
         }
+
+        .pirate-ship {
+            position: absolute;
+            width: 120px;
+            height: 80px;
+            background: linear-gradient(180deg, #4a4a4a 0%, #2c2c2c 100%);
+            border-radius: 60px 60px 8px 8px;
+            z-index: 15;
+            animation: pirateApproach 5s ease-in-out;
+        }
+
+        .pirate-ship::before {
+            content: '🏴‍☠️';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            animation: pirateFlag 1s ease-in-out infinite;
+        }
+
+        .pirate-ship::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 40px;
+            background: #654321;
+            left: 50%;
+            top: -35px;
+            transform: translateX(-50%);
+        }
+
+        @keyframes pirateApproach {
+            0% { right: -150px; transform: rotate(-10deg); }
+            50% { right: 200px; transform: rotate(5deg); }
+            100% { right: -150px; transform: rotate(-10deg); }
+        }
+
+        @keyframes pirateFlag {
+            0%, 100% { transform: translateX(-50%) rotate(-5deg); }
+            50% { transform: translateX(-50%) rotate(5deg); }
+        }
+
+        .ship-damage {
+            animation: shipShake 0.5s ease-in-out infinite;
+        }
+
+        @keyframes shipShake {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            25% { transform: translate(-48%, -52%) rotate(-2deg); }
+            75% { transform: translate(-52%, -48%) rotate(2deg); }
+        }
+
+        .health-critical {
+            color: #ff4757 !important;
+            animation: healthBlink 1s ease-in-out infinite;
+        }
+
+        @keyframes healthBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .storm-warning {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(45deg, #ff4757, #ff3838);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(255, 71, 87, 0.4);
+            z-index: 200;
+            animation: warningPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes warningPulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.05); }
+        }
     </style>
 </head>
 <body>
@@ -991,11 +1073,21 @@
                         <span>Funding Remaining:</span>
                         <span id="funding">$2,000,000</span>
                     </div>
+                    <div class="stat-item">
+                        <span>Ship Health:</span>
+                        <span id="ship-health" style="color: #4ecdc4;">100%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Insurance:</span>
+                        <span id="insurance-status">❌ None</span>
+                    </div>
                 </div>
                 
                 <button class="button" onclick="dropNet()">🕸️ Deploy Collection Net</button>
                 <button class="button" onclick="navigate()">🧭 Navigate to New Waters</button>
                 <button class="button" onclick="deepDive()">🌊 Deep Sea Dive</button>
+                <button class="button" onclick="purchaseInsurance()" id="insurance-btn">🛡️ Buy Ship Insurance ($100k)</button>
+                <button class="button" onclick="repairShip()" id="repair-btn" style="display: none;">🔧 Repair Ship ($50k)</button>
                 
                 <div class="lab-panel">
                     <h3>🔬 Genomics Laboratory</h3>
@@ -1024,7 +1116,7 @@
                                 <span id="algae-count">0</span>
                             </div>
                             <div class="category-item">
-                                <span>🦐 Protozoa:</span>
+                                <span>🦠 Protozoa:</span>
                                 <span id="protozoa-count">0</span>
                             </div>
                             <div class="category-item">
@@ -1093,7 +1185,10 @@
             },
             currentRequest: null,
             papersRejected: 0,
-            papersPublished: 0
+            papersPublished: 0,
+            shipHealth: 100,
+            insurance: false,
+            lastEventTime: 0
         };
 
         const locations = [
@@ -1179,6 +1274,36 @@
             document.getElementById('lon').textContent = `${Math.abs(gameState.coordinates.lon).toFixed(1)}°${gameState.coordinates.lon >= 0 ? 'E' : 'W'}`;
             document.getElementById('depth').textContent = `${gameState.depth}m`;
             document.getElementById('temp').textContent = `${gameState.temperature}°C`;
+            
+            // Update ship health display
+            const shipHealthEl = document.getElementById('ship-health');
+            shipHealthEl.textContent = `${gameState.shipHealth}%`;
+            if (gameState.shipHealth < 30) {
+                shipHealthEl.className = 'health-critical';
+                shipHealthEl.style.color = '#ff4757';
+            } else if (gameState.shipHealth < 60) {
+                shipHealthEl.style.color = '#ffa502';
+            } else {
+                shipHealthEl.style.color = '#4ecdc4';
+                shipHealthEl.className = '';
+            }
+            
+            // Update insurance status
+            document.getElementById('insurance-status').textContent = gameState.insurance ? '✅ Active' : '❌ None';
+            
+            // Update repair button visibility
+            const repairBtn = document.getElementById('repair-btn');
+            repairBtn.style.display = gameState.shipHealth < 100 ? 'block' : 'none';
+            
+            // Update insurance button
+            const insuranceBtn = document.getElementById('insurance-btn');
+            if (gameState.insurance) {
+                insuranceBtn.textContent = '🛡️ Insurance Active';
+                insuranceBtn.disabled = true;
+            } else {
+                insuranceBtn.textContent = '🛡️ Buy Ship Insurance ($100k)';
+                insuranceBtn.disabled = gameState.funding < 100000;
+            }
             
             // Update specimen category counts
             document.getElementById('bacteria-count').textContent = gameState.specimenCounts.bacteria;
@@ -1347,6 +1472,9 @@
             
             // Clear existing specimens
             document.querySelectorAll('.specimen').forEach(el => el.remove());
+            
+            // Check for random events during navigation
+            checkRandomEvents();
             
             updateDisplay();
         }
@@ -1521,9 +1649,218 @@
                 const reward = gameState.currentRequest.reward;
                 gameState.funding += reward;
                 showPopup('Research Request Completed!', 
-                    `🎉 You've successfully completed the research request!\n\nReward: $${reward.toLocaleString()}\n\nThe scientific community thanks you for your contribution!`);
+                    `🎉 You've successfully completed the research request!\n\nReward: ${reward.toLocaleString()}\n\nThe scientific community thanks you for your contribution!`);
                 gameState.currentRequest = null;
             }
+        }
+
+        // New challenging event system
+        function checkRandomEvents() {
+            const currentTime = Date.now();
+            if (currentTime - gameState.lastEventTime < 30000) return; // 30 second cooldown
+            
+            const eventChance = Math.random();
+            
+            if (eventChance < 0.25) { // 25% chance
+                gameState.lastEventTime = currentTime;
+                
+                if (Math.random() < 0.6) {
+                    triggerStorm();
+                } else {
+                    triggerPirateAttack();
+                }
+            }
+        }
+
+        function triggerStorm() {
+            showWarning('⛈️ SEVERE STORM APPROACHING!');
+            
+            setTimeout(() => {
+                createMassiveStorm();
+                
+                const damage = Math.floor(Math.random() * 40) + 20; // 20-60% damage
+                const specimenLoss = Math.floor(Math.random() * 5) + 2; // Lose 2-6 specimens
+                const fundingLoss = Math.floor(Math.random() * 200000) + 100000; // $100k-300k
+                
+                // Apply damage
+                gameState.shipHealth = Math.max(0, gameState.shipHealth - damage);
+                
+                // Lose specimens
+                const lostSpecimens = gameState.specimens.splice(0, Math.min(specimenLoss, gameState.specimens.length));
+                lostSpecimens.forEach(specimen => {
+                    if (gameState.specimenCounts[specimen.type]) {
+                        gameState.specimenCounts[specimen.type]--;
+                    }
+                });
+                
+                // Insurance coverage
+                let actualFundingLoss = fundingLoss;
+                if (gameState.insurance) {
+                    actualFundingLoss = Math.floor(fundingLoss * 0.3); // Insurance covers 70%
+                    gameState.insurance = false; // Insurance is used up
+                }
+                
+                gameState.funding = Math.max(0, gameState.funding - actualFundingLoss);
+                
+                // Add ship damage animation
+                document.getElementById('ship').classList.add('ship-damage');
+                setTimeout(() => {
+                    document.getElementById('ship').classList.remove('ship-damage');
+                }, 3000);
+                
+                const insuranceText = gameState.insurance ? 
+                    `\n\n🛡️ Insurance covered 70% of financial losses!` : 
+                    `\n\n💡 Ship insurance could have reduced these losses!`;
+                
+                showPopup('Storm Damage Report!', 
+                    `⛈️ A massive storm has battered the Sorcerer II!\n\n` +
+                    `🚢 Ship Health: -${damage}%\n` +
+                    `🧪 Specimens Lost: ${lostSpecimens.length}\n` +
+                    `💰 Emergency Costs: ${actualFundingLoss.toLocaleString()}` +
+                    insuranceText);
+                
+                updateDisplay();
+            }, 3000);
+        }
+
+        function triggerPirateAttack() {
+            showWarning('🏴‍☠️ PIRATE SHIP SPOTTED!');
+            
+            // Show pirate ship animation
+            const pirateShip = document.createElement('div');
+            pirateShip.className = 'pirate-ship';
+            document.querySelector('.ocean-view').appendChild(pirateShip);
+            
+            setTimeout(() => {
+                pirateShip.remove();
+                
+                const stolenMoney = Math.floor(Math.random() * 300000) + 150000; // $150k-450k
+                const stolenSpecimens = Math.floor(Math.random() * 8) + 3; // 3-10 specimens
+                const shipDamage = Math.floor(Math.random() * 25) + 10; // 10-35% damage
+                
+                // Lose specimens
+                const lostSpecimens = gameState.specimens.splice(0, Math.min(stolenSpecimens, gameState.specimens.length));
+                lostSpecimens.forEach(specimen => {
+                    if (gameState.specimenCounts[specimen.type]) {
+                        gameState.specimenCounts[specimen.type]--;
+                    }
+                });
+                
+                // Apply damage and losses
+                gameState.shipHealth = Math.max(0, gameState.shipHealth - shipDamage);
+                
+                let actualMoneyLoss = stolenMoney;
+                if (gameState.insurance) {
+                    actualMoneyLoss = Math.floor(stolenMoney * 0.4); // Insurance covers 60%
+                    gameState.insurance = false;
+                }
+                
+                gameState.funding = Math.max(0, gameState.funding - actualMoneyLoss);
+                
+                // Add ship damage animation
+                document.getElementById('ship').classList.add('ship-damage');
+                setTimeout(() => {
+                    document.getElementById('ship').classList.remove('ship-damage');
+                }, 3000);
+                
+                const insuranceText = gameState.insurance ? 
+                    `\n\n🛡️ Insurance covered 60% of stolen funds!` : 
+                    `\n\n💡 Ship insurance could have reduced these losses!`;
+                
+                showPopup('Pirate Attack!', 
+                    `🏴‍☠️ Pirates have attacked the Sorcerer II!\n\n` +
+                    `"Arrr! We'll be takin' yer research treasures!"\n\n` +
+                    `🚢 Ship Damage: -${shipDamage}%\n` +
+                    `🧪 Specimens Stolen: ${lostSpecimens.length}\n` +
+                    `💰 Funds Stolen: ${actualMoneyLoss.toLocaleString()}` +
+                    insuranceText);
+                
+                updateDisplay();
+            }, 5000);
+        }
+
+        function showWarning(message) {
+            const warning = document.createElement('div');
+            warning.className = 'storm-warning';
+            warning.textContent = message;
+            document.querySelector('.ocean-view').appendChild(warning);
+            
+            setTimeout(() => {
+                warning.remove();
+            }, 3000);
+        }
+
+        function createMassiveStorm() {
+            const stormContainer = document.getElementById('storm-effects');
+            stormContainer.classList.add('active');
+            
+            // Create intense lightning
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    const lightning = document.createElement('div');
+                    lightning.className = 'lightning';
+                    lightning.style.left = `${Math.random() * 100}%`;
+                    stormContainer.appendChild(lightning);
+                    
+                    setTimeout(() => lightning.remove(), 200);
+                }, i * 100);
+            }
+            
+            // Create heavy rain
+            for (let i = 0; i < 150; i++) {
+                setTimeout(() => {
+                    const rain = document.createElement('div');
+                    rain.className = 'rain';
+                    rain.style.left = `${Math.random() * 100}%`;
+                    rain.style.animationDelay = `${Math.random() * 0.5}s`;
+                    stormContainer.appendChild(rain);
+                    
+                    setTimeout(() => rain.remove(), 2000);
+                }, i * 10);
+            }
+            
+            setTimeout(() => {
+                stormContainer.classList.remove('active');
+            }, 5000);
+        }
+
+        function purchaseInsurance() {
+            if (gameState.funding < 100000) {
+                showPopup('Insufficient Funds', 'Ship insurance costs $100,000.');
+                return;
+            }
+            
+            gameState.funding -= 100000;
+            gameState.insurance = true;
+            
+            showPopup('Insurance Purchased', 
+                '🛡️ Ship insurance is now active!\n\n' +
+                'This will significantly reduce losses from storms and pirate attacks.\n\n' +
+                'Coverage includes:\n' +
+                '• 70% storm damage protection\n' +
+                '• 60% pirate theft protection\n' +
+                '• Emergency repair coverage');
+            
+            updateDisplay();
+        }
+
+        function repairShip() {
+            if (gameState.funding < 50000) {
+                showPopup('Insufficient Funds', 'Ship repairs cost $50,000.');
+                return;
+            }
+            
+            const repairAmount = Math.min(50, 100 - gameState.shipHealth);
+            gameState.funding -= 50000;
+            gameState.shipHealth = Math.min(100, gameState.shipHealth + repairAmount);
+            
+            showPopup('Ship Repaired', 
+                `🔧 Emergency repairs completed!\n\n` +
+                `Ship health restored by ${repairAmount}%\n` +
+                `Current health: ${gameState.shipHealth}%\n\n` +
+                `The Sorcerer II is ready for more adventures!`);
+            
+            updateDisplay();
         }
 
         // Initialize game
