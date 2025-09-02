@@ -1003,6 +1003,71 @@
             0%, 100% { transform: translateX(-50%) scale(1); }
             50% { transform: translateX(-50%) scale(1.05); }
         }
+
+        .shark {
+            position: absolute;
+            width: 80px;
+            height: 40px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+            border-radius: 0 50px 30px 50px;
+            z-index: 12;
+            animation: sharkSwim 4s ease-in-out;
+        }
+
+        .shark::before {
+            content: '🦈';
+            position: absolute;
+            top: -5px;
+            left: 10px;
+            font-size: 28px;
+            animation: sharkBite 0.5s ease-in-out infinite;
+        }
+
+        .shark::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 15px solid #34495e;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            right: -10px;
+            top: 12px;
+        }
+
+        @keyframes sharkSwim {
+            0% { left: -100px; transform: rotate(0deg); }
+            25% { left: 300px; transform: rotate(-5deg); }
+            50% { left: 600px; transform: rotate(5deg); }
+            75% { left: 300px; transform: rotate(-5deg); }
+            100% { left: -100px; transform: rotate(0deg); }
+        }
+
+        @keyframes sharkBite {
+            0%, 100% { transform: scale(1) rotate(-5deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        .blood-effect {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, rgba(220, 53, 69, 0.8), transparent);
+            border-radius: 50%;
+            animation: bloodSpread 2s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes bloodSpread {
+            0% { 
+                transform: scale(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% { 
+                transform: scale(3) rotate(360deg);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1664,10 +1729,13 @@
             if (eventChance < 0.25) { // 25% chance
                 gameState.lastEventTime = currentTime;
                 
-                if (Math.random() < 0.6) {
+                const randomEvent = Math.random();
+                if (randomEvent < 0.4) {
                     triggerStorm();
-                } else {
+                } else if (randomEvent < 0.7) {
                     triggerPirateAttack();
+                } else {
+                    triggerSharkAttack();
                 }
             }
         }
@@ -1777,6 +1845,81 @@
                 
                 updateDisplay();
             }, 5000);
+        }
+
+        function triggerSharkAttack() {
+            showWarning('🦈 SHARK SPOTTED IN THE WATER!');
+            
+            // Show shark animation
+            const shark = document.createElement('div');
+            shark.className = 'shark';
+            document.querySelector('.ocean-view').appendChild(shark);
+            
+            // Create blood effects during attack
+            setTimeout(() => {
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        const blood = document.createElement('div');
+                        blood.className = 'blood-effect';
+                        blood.style.left = `${Math.random() * 60 + 20}%`;
+                        blood.style.top = `${Math.random() * 40 + 40}%`;
+                        document.querySelector('.ocean-view').appendChild(blood);
+                        
+                        setTimeout(() => blood.remove(), 2000);
+                    }, i * 300);
+                }
+            }, 2000);
+            
+            setTimeout(() => {
+                shark.remove();
+                
+                const equipmentDamage = Math.floor(Math.random() * 20) + 10; // 10-30% damage
+                const specimenLoss = Math.floor(Math.random() * 4) + 1; // 1-4 specimens
+                const repairCosts = Math.floor(Math.random() * 100000) + 50000; // $50k-150k
+                
+                // Store insurance status before consuming it
+                const hadInsurance = gameState.insurance;
+                
+                // Apply damage
+                gameState.shipHealth = Math.max(0, gameState.shipHealth - equipmentDamage);
+                
+                // Lose specimens (nets damaged, samples contaminated)
+                const lostSpecimens = gameState.specimens.splice(0, Math.min(specimenLoss, gameState.specimens.length));
+                lostSpecimens.forEach(specimen => {
+                    if (gameState.specimenCounts[specimen.type]) {
+                        gameState.specimenCounts[specimen.type]--;
+                    }
+                });
+                
+                // Insurance coverage (covers 50% of equipment damage)
+                let actualRepairCosts = repairCosts;
+                if (gameState.insurance) {
+                    actualRepairCosts = Math.floor(repairCosts * 0.5); // Insurance covers 50%
+                    gameState.insurance = false; // Insurance is used up
+                }
+                
+                gameState.funding = Math.max(0, gameState.funding - actualRepairCosts);
+                
+                // Add ship damage animation
+                document.getElementById('ship').classList.add('ship-damage');
+                setTimeout(() => {
+                    document.getElementById('ship').classList.remove('ship-damage');
+                }, 3000);
+                
+                const insuranceText = hadInsurance ? 
+                    `\n\n🛡️ Insurance covered 50% of repair costs!` : 
+                    `\n\n💡 Ship insurance could have reduced these losses!`;
+                
+                showPopup('Shark Attack!', 
+                    `🦈 A massive shark has attacked the Sorcerer II!\n\n` +
+                    `The beast damaged collection equipment and contaminated samples!\n\n` +
+                    `🚢 Equipment Damage: -${equipmentDamage}%\n` +
+                    `🧪 Specimens Lost: ${lostSpecimens.length}\n` +
+                    `💰 Repair Costs: ${actualRepairCosts.toLocaleString()}` +
+                    insuranceText);
+                
+                updateDisplay();
+            }, 4000);
         }
 
         function showWarning(message) {
