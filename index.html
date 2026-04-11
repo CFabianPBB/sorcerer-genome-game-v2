@@ -133,7 +133,19 @@
 
         .ocean-view {
             flex: 2;
-            background: linear-gradient(180deg, #4682b4 0%, #191970 100%);
+            background: linear-gradient(
+                180deg,
+                #0a1e36 0%,
+                #1e3c72 14%,
+                #3a6aa8 30%,
+                #6fa3d2 40%,
+                #86baea 42%,
+                #4e82b8 44%,
+                #2f5d95 50%,
+                #1e4578 65%,
+                #0e2a54 82%,
+                #050f26 100%
+            );
             position: relative;
             overflow: hidden;
         }
@@ -537,59 +549,145 @@
             50% { transform: translateY(-10px); }
         }
 
-        .waves {
+        /* =============== Layered ocean scene =============== */
+        .sky-clouds {
             position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 42%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .cloud {
+            position: absolute;
+            background: radial-gradient(ellipse at center,
+                rgba(255,255,255,0.35) 0%,
+                rgba(255,255,255,0.12) 50%,
+                transparent 100%);
+            border-radius: 50%;
+            filter: blur(4px);
+            animation: cloudDrift linear infinite;
+        }
+
+        .cloud-1 { width: 220px; height: 38px; top: 28%; animation-duration: 95s;  animation-delay: 0s;   }
+        .cloud-2 { width: 280px; height: 46px; top: 52%; animation-duration: 140s; animation-delay: -40s; }
+        .cloud-3 { width: 160px; height: 30px; top: 72%; animation-duration: 115s; animation-delay: -75s; }
+        .cloud-4 { width: 190px; height: 34px; top: 12%; animation-duration: 125s; animation-delay: -25s; }
+
+        @keyframes cloudDrift {
+            0%   { transform: translateX(-300px); opacity: 0; }
+            8%   { opacity: 1; }
+            92%  { opacity: 1; }
+            100% { transform: translateX(120vw); opacity: 0; }
+        }
+
+        .horizon-glow {
+            position: absolute;
+            left: 50%;
+            top: 38%;
+            transform: translateX(-50%);
+            width: 75%;
+            height: 70px;
+            background: radial-gradient(ellipse at center,
+                rgba(255,220,150,0.35) 0%,
+                rgba(255,200,120,0.18) 35%,
+                rgba(255,200,120,0.05) 60%,
+                transparent 80%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .horizon-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 42%;
+            height: 1px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(255,220,150,0.35) 25%,
+                rgba(255,230,170,0.75) 50%,
+                rgba(255,220,150,0.35) 75%,
+                transparent 100%);
+            box-shadow: 0 0 10px rgba(255,220,150,0.35);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .water-sparkles {
+            position: absolute;
+            left: 0;
+            top: 42%;
+            width: 100%;
+            height: 45%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 4px rgba(255,255,255,0.85),
+                        0 0 8px rgba(255,220,150,0.45);
+            animation: sparkleTwinkle ease-in-out infinite;
+        }
+
+        @keyframes sparkleTwinkle {
+            0%, 100% { opacity: 0; transform: scale(0.4); }
+            50%      { opacity: 1; transform: scale(1.3); }
+        }
+
+        .ocean-waves {
+            position: absolute;
+            left: 0;
             bottom: 0;
+            width: 100%;
+            height: 58%;
+            pointer-events: none;
+        }
+
+        .wave-svg {
+            position: absolute;
             left: 0;
             width: 200%;
-            height: 120px;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(255,255,255,0.2) 25%, 
-                rgba(135,206,235,0.3) 50%, 
-                rgba(255,255,255,0.2) 75%, 
-                transparent 100%);
-            animation: wave 4s linear infinite;
-            border-radius: 50% 50% 0 0;
+            display: block;
+            animation: waveSlide linear infinite;
         }
 
-        .waves::before {
-            content: '';
-            position: absolute;
-            top: 20px;
-            left: 0;
-            width: 100%;
-            height: 80px;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(255,255,255,0.1) 30%, 
-                rgba(70,130,180,0.2) 50%, 
-                rgba(255,255,255,0.1) 70%, 
-                transparent 100%);
-            animation: wave 6s linear infinite reverse;
-            border-radius: 50% 50% 0 0;
+        .wave-back {
+            bottom: 58%;
+            height: 70px;
+            opacity: 0.55;
+            z-index: 2;
+            animation-duration: 28s;
         }
 
-        .waves::after {
-            content: '';
-            position: absolute;
-            top: 40px;
-            left: 0;
-            width: 100%;
-            height: 60px;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(255,255,255,0.05) 40%, 
-                rgba(100,149,237,0.1) 50%, 
-                rgba(255,255,255,0.05) 60%, 
-                transparent 100%);
-            animation: wave 8s linear infinite;
-            border-radius: 50% 50% 0 0;
+        .wave-mid {
+            bottom: 35%;
+            height: 85px;
+            opacity: 0.7;
+            z-index: 3;
+            animation-duration: 20s;
+            animation-direction: reverse;
         }
 
-        @keyframes wave {
-            0% { transform: translateX(-50%); }
-            100% { transform: translateX(0%); }
+        .wave-front {
+            bottom: 0;
+            height: 140px;
+            opacity: 0.92;
+            z-index: 4;
+            animation-duration: 13s;
+        }
+
+        @keyframes waveSlide {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
 
         .craig-avatar {
@@ -873,8 +971,14 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             z-index: 1000;
             text-align: center;
-            max-width: 400px;
+            max-width: 440px;
             display: none;
+        }
+
+        .discovery-popup #popup-message {
+            white-space: pre-line;
+            line-height: 1.5;
+            margin: 12px 0;
         }
 
         .popup-overlay {
@@ -1117,13 +1221,378 @@
         }
 
         @keyframes bloodSpread {
-            0% { 
+            0% {
                 transform: scale(0) rotate(0deg);
                 opacity: 1;
             }
-            100% { 
+            100% {
                 transform: scale(3) rotate(360deg);
                 opacity: 0;
+            }
+        }
+
+        /* ================= Grand Challenges ================= */
+        .grand-challenges {
+            background: linear-gradient(135deg, rgba(114,9,183,0.22) 0%, rgba(67,97,238,0.18) 100%);
+            border: 2px solid #7209b7;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 0 20px rgba(114,9,183,0.25);
+        }
+
+        .grand-challenges h3 {
+            margin-bottom: 6px;
+            font-size: 1.02em;
+        }
+
+        .gc-subtitle {
+            font-size: 0.78em;
+            opacity: 0.85;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .challenge-card {
+            background: rgba(0,0,0,0.38);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .challenge-card.ready {
+            border-color: #ffd60a;
+            box-shadow: 0 0 15px rgba(255,214,10,0.35);
+            animation: readyPulse 1.8s ease-in-out infinite;
+        }
+
+        @keyframes readyPulse {
+            0%,100% { box-shadow: 0 0 15px rgba(255,214,10,0.35); }
+            50%     { box-shadow: 0 0 25px rgba(255,214,10,0.7); }
+        }
+
+        .challenge-title {
+            font-weight: 600;
+            font-size: 0.96em;
+            margin-bottom: 4px;
+        }
+
+        .challenge-desc {
+            font-size: 0.78em;
+            opacity: 0.87;
+            margin-bottom: 8px;
+            line-height: 1.38;
+        }
+
+        .challenge-requirements {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .trait-chip {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.22);
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 0.73em;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            white-space: nowrap;
+        }
+
+        .trait-chip.met {
+            background: rgba(76,205,196,0.28);
+            border-color: #4ecdc4;
+            color: #eafffb;
+        }
+
+        .trait-chip.hidden-trait {
+            opacity: 0.5;
+            font-style: italic;
+        }
+
+        .challenge-deploy-btn {
+            width: 100%;
+            padding: 9px;
+            background: linear-gradient(45deg, #7209b7, #b5179e);
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: not-allowed;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .challenge-deploy-btn.ready {
+            opacity: 1;
+            cursor: pointer;
+            animation: readyGlow 1.5s ease-in-out infinite;
+        }
+
+        @keyframes readyGlow {
+            0%,100% { box-shadow: 0 0 8px rgba(181,23,158,0.45); }
+            50%     { box-shadow: 0 0 22px rgba(181,23,158,0.9); }
+        }
+
+        /* ================= Rival Expeditions ================= */
+        .rivals-panel {
+            background: rgba(239,71,111,0.10);
+            border: 1px solid rgba(239,71,111,0.45);
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .rivals-panel h3 {
+            font-size: 0.95em;
+            margin-bottom: 9px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .rivals-panel h3 .penalty-indicator {
+            font-size: 0.75em;
+            color: #ff6b7a;
+            font-weight: 400;
+        }
+
+        .rival-row {
+            margin-bottom: 10px;
+            font-size: 0.78em;
+        }
+
+        .rival-row:last-child { margin-bottom: 2px; }
+
+        .rival-name-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+            gap: 8px;
+        }
+
+        .rival-name-row strong { font-weight: 600; }
+        .rival-name-row small { opacity: 0.75; }
+
+        .rival-progress {
+            width: 100%;
+            height: 7px;
+            background: rgba(255,255,255,0.10);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .rival-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ef476f, #ffd166);
+            transition: width 1s ease;
+        }
+
+        /* ================= Synthetic Biology Lab ================= */
+        .synbio-panel {
+            background: linear-gradient(135deg, rgba(6,214,160,0.16) 0%, rgba(17,138,178,0.18) 100%);
+            border: 2px solid #06d6a0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+            box-shadow: 0 0 20px rgba(6,214,160,0.22);
+        }
+
+        .synbio-panel.unlocked { display: block; }
+
+        .synbio-panel h3 {
+            margin-bottom: 6px;
+            color: #7cf0cc;
+            font-size: 1.02em;
+        }
+
+        .synbio-desc {
+            font-size: 0.78em;
+            opacity: 0.88;
+            margin-bottom: 10px;
+            line-height: 1.42;
+        }
+
+        .synbio-btn {
+            width: 100%;
+            padding: 11px;
+            background: linear-gradient(45deg, #06d6a0, #118ab2);
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.92em;
+            transition: all 0.25s ease;
+        }
+
+        .synbio-btn:hover, .synbio-btn:active {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(6,214,160,0.45);
+        }
+
+        .synthetics-list {
+            margin-top: 12px;
+        }
+
+        .synthetic-item {
+            background: rgba(6,214,160,0.10);
+            border: 1px solid #06d6a0;
+            padding: 8px 10px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 0.82em;
+        }
+
+        .synthetic-item .synth-name {
+            font-weight: 600;
+            color: #7cf0cc;
+            margin-bottom: 4px;
+        }
+
+        /* ================= Trait chips on specimens ================= */
+        .specimen-traits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            margin-top: 4px;
+        }
+
+        .specimen-traits .trait-chip {
+            font-size: 0.66em;
+            padding: 1px 6px;
+        }
+
+        /* ================= Synthetic modal ================= */
+        .synbio-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #0f1b2d 0%, #1e3c72 100%);
+            border: 2px solid #06d6a0;
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 520px;
+            width: 92%;
+            max-height: 82vh;
+            overflow-y: auto;
+            z-index: 1100;
+            display: none;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.75);
+            color: #fff;
+        }
+
+        .synbio-modal.active { display: block; }
+
+        .synbio-modal h2 {
+            color: #7cf0cc;
+            margin-bottom: 8px;
+            font-size: 1.3em;
+        }
+
+        .synbio-modal-desc {
+            font-size: 0.87em;
+            opacity: 0.9;
+            margin-bottom: 14px;
+            line-height: 1.45;
+        }
+
+        .synbio-specimen-option {
+            background: rgba(255,255,255,0.06);
+            padding: 10px 12px;
+            border-radius: 7px;
+            margin-bottom: 7px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .synbio-specimen-option:hover {
+            background: rgba(255,255,255,0.13);
+        }
+
+        .synbio-specimen-option.selected {
+            border-color: #06d6a0;
+            background: rgba(6,214,160,0.22);
+        }
+
+        .synbio-specimen-option .label {
+            font-weight: 600;
+            font-size: 0.92em;
+            margin-bottom: 3px;
+        }
+
+        .synbio-modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .synbio-modal-actions button {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 7px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .synbio-modal-actions .create {
+            background: linear-gradient(45deg, #06d6a0, #118ab2);
+        }
+
+        .synbio-modal-actions .create:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .synbio-modal-actions .cancel {
+            background: linear-gradient(45deg, #6c757d, #495057);
+        }
+
+        /* ================= Scoop alert ================= */
+        .scoop-alert {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(45deg, #ef476f, #b5179e);
+            color: #fff;
+            padding: 13px 20px;
+            border-radius: 10px;
+            z-index: 500;
+            box-shadow: 0 6px 22px rgba(239,71,111,0.55);
+            max-width: 320px;
+            font-size: 0.85em;
+            line-height: 1.4;
+            animation: scoopSlide 0.4s ease-out, scoopFade 0.5s ease-in 5.5s forwards;
+        }
+
+        @keyframes scoopSlide {
+            0%   { transform: translateX(-420px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes scoopFade {
+            0%   { opacity: 1; }
+            100% { opacity: 0; transform: translateX(-30px); }
+        }
+
+        @media (max-width: 768px) {
+            .scoop-alert {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                max-width: none;
             }
         }
     </style>
@@ -1152,133 +1621,193 @@
                     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <defs>
                             <radialGradient id="craigSkin" cx="50%" cy="38%" r="65%">
-                                <stop offset="0%"  stop-color="#fadbb8"/>
-                                <stop offset="60%" stop-color="#e6a978"/>
-                                <stop offset="100%" stop-color="#a66e44"/>
+                                <stop offset="0%"  stop-color="#f7cda2"/>
+                                <stop offset="55%" stop-color="#d89160"/>
+                                <stop offset="100%" stop-color="#8a5530"/>
                             </radialGradient>
-                            <linearGradient id="craigBg" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%"   stop-color="#5aa0e8"/>
-                                <stop offset="60%"  stop-color="#2a5aa0"/>
-                                <stop offset="100%" stop-color="#122b56"/>
+                            <linearGradient id="stormySky" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%"   stop-color="#1a2a44"/>
+                                <stop offset="35%"  stop-color="#3d5a7a"/>
+                                <stop offset="60%"  stop-color="#6b8caf"/>
+                                <stop offset="85%"  stop-color="#2a4666"/>
+                                <stop offset="100%" stop-color="#0f1f35"/>
                             </linearGradient>
-                            <linearGradient id="craigShirt" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%"   stop-color="#2b3a55"/>
-                                <stop offset="100%" stop-color="#0f1a30"/>
+                            <linearGradient id="slickerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%"   stop-color="#ffe135"/>
+                                <stop offset="55%"  stop-color="#ffc107"/>
+                                <stop offset="100%" stop-color="#b57800"/>
+                            </linearGradient>
+                            <linearGradient id="slickerShadow" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%"   stop-color="#d99500"/>
+                                <stop offset="100%" stop-color="#8a5a00"/>
                             </linearGradient>
                             <linearGradient id="craigBeard" x1="0%" y1="0%" x2="0%" y2="100%">
                                 <stop offset="0%"   stop-color="#ffffff"/>
-                                <stop offset="100%" stop-color="#ced4da"/>
+                                <stop offset="100%" stop-color="#b9bec3"/>
                             </linearGradient>
                         </defs>
 
-                        <!-- Background -->
-                        <rect width="100" height="100" fill="url(#craigBg)"/>
-                        <!-- Soft light glow behind head -->
-                        <circle cx="50" cy="42" r="34" fill="#ffffff" opacity="0.08"/>
+                        <!-- Stormy sky background -->
+                        <rect width="100" height="100" fill="url(#stormySky)"/>
 
-                        <!-- Shoulders / polo shirt -->
-                        <path d="M 4 100 L 10 78 Q 26 66 50 66 Q 74 66 90 78 L 96 100 Z"
-                              fill="url(#craigShirt)"/>
-                        <!-- Polo collar -->
-                        <path d="M 38 72 L 50 84 L 62 72 L 58 70 L 50 78 L 42 70 Z"
-                              fill="#3b4a68" stroke="#1a2540" stroke-width="0.4"/>
-                        <!-- Collar stitching highlight -->
-                        <path d="M 38 72 L 50 84 L 62 72" stroke="#4f628a" stroke-width="0.35" fill="none"/>
+                        <!-- Drifting storm clouds -->
+                        <ellipse cx="18" cy="14" rx="30" ry="6" fill="#1e2a38" opacity="0.65"/>
+                        <ellipse cx="78" cy="10" rx="32" ry="5" fill="#141c28" opacity="0.75"/>
+                        <ellipse cx="52" cy="20" rx="28" ry="4" fill="#2c3e50" opacity="0.5"/>
+                        <ellipse cx="30" cy="26" rx="20" ry="3" fill="#3a4558" opacity="0.4"/>
 
-                        <!-- Neck -->
-                        <path d="M 42 60 Q 42 73 50 75 Q 58 73 58 60 Z" fill="#c48a5c"/>
-                        <path d="M 43 68 Q 50 71 57 68" stroke="#8a5a3b" stroke-width="0.35" fill="none" opacity="0.5"/>
+                        <!-- Dramatic horizon light streak -->
+                        <rect y="32" width="100" height="1.5" fill="#ffd166" opacity="0.45"/>
+                        <ellipse cx="50" cy="33" rx="45" ry="3" fill="#ffd166" opacity="0.2"/>
 
-                        <!-- Head base -->
-                        <ellipse cx="50" cy="40" rx="22" ry="26" fill="url(#craigSkin)"/>
-                        <!-- Forehead highlight (bald shine) -->
-                        <ellipse cx="46" cy="26" rx="13" ry="7" fill="#ffe6cb" opacity="0.55"/>
-                        <ellipse cx="54" cy="24" rx="4" ry="2" fill="#ffffff" opacity="0.35"/>
+                        <!-- Captain's ship wheel (halo behind head) -->
+                        <g opacity="0.5">
+                            <!-- Outer rim (thick + inner detail) -->
+                            <circle cx="50" cy="40" r="40" fill="none" stroke="#3d2410" stroke-width="4"/>
+                            <circle cx="50" cy="40" r="40" fill="none" stroke="#8b5a2b" stroke-width="2"/>
+                            <circle cx="50" cy="40" r="36" fill="none" stroke="#5d3a1a" stroke-width="1"/>
+                            <!-- 8 spokes radiating from center -->
+                            <line x1="50" y1="0"  x2="50" y2="80" stroke="#6b3f1a" stroke-width="2.2" stroke-linecap="round"/>
+                            <line x1="10" y1="40" x2="90" y2="40" stroke="#6b3f1a" stroke-width="2.2" stroke-linecap="round"/>
+                            <line x1="21.7" y1="11.7" x2="78.3" y2="68.3" stroke="#6b3f1a" stroke-width="2.2" stroke-linecap="round"/>
+                            <line x1="21.7" y1="68.3" x2="78.3" y2="11.7" stroke="#6b3f1a" stroke-width="2.2" stroke-linecap="round"/>
+                            <!-- Handle knobs extending just beyond rim -->
+                            <circle cx="50" cy="0"  r="2.6" fill="#5d3a1a"/>
+                            <circle cx="90" cy="40" r="2.6" fill="#5d3a1a"/>
+                            <circle cx="10" cy="40" r="2.6" fill="#5d3a1a"/>
+                            <circle cx="50" cy="80" r="2.6" fill="#5d3a1a"/>
+                            <circle cx="78.3" cy="11.7" r="2.4" fill="#5d3a1a"/>
+                            <circle cx="21.7" cy="11.7" r="2.4" fill="#5d3a1a"/>
+                            <circle cx="78.3" cy="68.3" r="2.4" fill="#5d3a1a"/>
+                            <circle cx="21.7" cy="68.3" r="2.4" fill="#5d3a1a"/>
+                            <!-- Center hub -->
+                            <circle cx="50" cy="40" r="5" fill="#3d2410"/>
+                            <circle cx="50" cy="40" r="2" fill="#8b5a2b"/>
+                        </g>
+
+                        <!-- Yellow sailing slicker (outer shell) -->
+                        <path d="M -2 100 L 4 74 Q 18 62 50 62 Q 82 62 96 74 L 102 100 Z"
+                              fill="url(#slickerGrad)"/>
+                        <!-- Slicker shoulder shadow (defines form) -->
+                        <path d="M 4 74 Q 12 66 22 64 Q 15 72 12 82 L 4 80 Z"
+                              fill="url(#slickerShadow)" opacity="0.55"/>
+                        <path d="M 96 74 Q 88 66 78 64 Q 85 72 88 82 L 96 80 Z"
+                              fill="url(#slickerShadow)" opacity="0.55"/>
+                        <!-- Raised hood / collar around neck -->
+                        <path d="M 30 72 Q 32 64 42 62 L 58 62 Q 68 64 70 72 Q 64 68 50 68 Q 36 68 30 72 Z"
+                              fill="url(#slickerShadow)"/>
+                        <!-- Hood lining (slightly brighter yellow inside) -->
+                        <path d="M 34 71 Q 36 66 44 65 L 56 65 Q 64 66 66 71 Q 60 68 50 68 Q 40 68 34 71 Z"
+                              fill="#ffe76b" opacity="0.7"/>
+                        <!-- Zipper -->
+                        <line x1="50" y1="68" x2="50" y2="100" stroke="#8b6914" stroke-width="0.6"/>
+                        <!-- Zipper teeth -->
+                        <line x1="49" y1="72" x2="51" y2="72" stroke="#5d3a1a" stroke-width="0.3"/>
+                        <line x1="49" y1="78" x2="51" y2="78" stroke="#5d3a1a" stroke-width="0.3"/>
+                        <line x1="49" y1="84" x2="51" y2="84" stroke="#5d3a1a" stroke-width="0.3"/>
+                        <line x1="49" y1="90" x2="51" y2="90" stroke="#5d3a1a" stroke-width="0.3"/>
+                        <line x1="49" y1="96" x2="51" y2="96" stroke="#5d3a1a" stroke-width="0.3"/>
+                        <!-- Wet slicker highlights (shine) -->
+                        <path d="M 12 80 Q 16 72 22 72" stroke="#fff78f" stroke-width="1.3" fill="none" opacity="0.75"/>
+                        <path d="M 78 72 Q 84 72 88 80" stroke="#fff78f" stroke-width="1.3" fill="none" opacity="0.75"/>
+                        <path d="M 38 90 Q 42 86 46 90" stroke="#fff78f" stroke-width="0.7" fill="none" opacity="0.45"/>
+                        <path d="M 54 90 Q 58 86 62 90" stroke="#fff78f" stroke-width="0.7" fill="none" opacity="0.45"/>
+
+                        <!-- Weathered neck -->
+                        <path d="M 43 62 Q 43 68 50 70 Q 57 68 57 62 Z" fill="#b57745"/>
+                        <path d="M 44 66 Q 50 68 56 66" stroke="#7a4a28" stroke-width="0.35" fill="none" opacity="0.6"/>
+
+                        <!-- Head -->
+                        <ellipse cx="50" cy="38" rx="22" ry="26" fill="url(#craigSkin)"/>
+                        <!-- Bald forehead shine -->
+                        <ellipse cx="47" cy="23" rx="15" ry="7.5" fill="#ffe4c4" opacity="0.6"/>
+                        <ellipse cx="53" cy="21" rx="6" ry="2" fill="#ffffff" opacity="0.45"/>
+                        <!-- Temple highlight -->
+                        <ellipse cx="33" cy="31" rx="3" ry="5" fill="#ffe4c4" opacity="0.3"/>
+                        <!-- Weathered cheek flush -->
+                        <ellipse cx="32" cy="47" rx="4.5" ry="3" fill="#c25a3c" opacity="0.32"/>
+                        <ellipse cx="68" cy="47" rx="4.5" ry="3" fill="#c25a3c" opacity="0.32"/>
+                        <!-- Stubble shadow along jaw -->
+                        <path d="M 30 46 Q 33 58 42 63" stroke="#6b4020" stroke-width="0.4" fill="none" opacity="0.25"/>
+                        <path d="M 70 46 Q 67 58 58 63" stroke="#6b4020" stroke-width="0.4" fill="none" opacity="0.25"/>
 
                         <!-- Ears -->
-                        <ellipse cx="27.5" cy="44" rx="3" ry="5" fill="#d79866"/>
-                        <ellipse cx="72.5" cy="44" rx="3" ry="5" fill="#d79866"/>
-                        <path d="M 27 43 Q 28 46 28.8 46.5" stroke="#8a5a3b" stroke-width="0.4" fill="none"/>
-                        <path d="M 73 43 Q 72 46 71.2 46.5" stroke="#8a5a3b" stroke-width="0.4" fill="none"/>
+                        <ellipse cx="27" cy="42" rx="3" ry="5" fill="#c98a5a"/>
+                        <ellipse cx="73" cy="42" rx="3" ry="5" fill="#c98a5a"/>
+                        <path d="M 26 42 Q 27 45 28 46" stroke="#7a4a28" stroke-width="0.4" fill="none"/>
+                        <path d="M 74 42 Q 73 45 72 46" stroke="#7a4a28" stroke-width="0.4" fill="none"/>
 
-                        <!-- Side hair (white, balding pattern) -->
-                        <path d="M 28 42
-                                 Q 25 33 31 27
-                                 Q 38 24 43 25
-                                 Q 39 31 38 38
-                                 Q 34 42 30 46
-                                 Q 27 46 28 42 Z"
-                              fill="#f1f3f5" stroke="#ced4da" stroke-width="0.35"/>
-                        <path d="M 72 42
-                                 Q 75 33 69 27
-                                 Q 62 24 57 25
-                                 Q 61 31 62 38
-                                 Q 66 42 70 46
-                                 Q 73 46 72 42 Z"
-                              fill="#f1f3f5" stroke="#ced4da" stroke-width="0.35"/>
-                        <!-- Hair flowing down sides -->
-                        <path d="M 28 42 Q 24 54 30 62 Q 33 58 33 50 Q 31 46 32 42 Z" fill="#f1f3f5"/>
-                        <path d="M 72 42 Q 76 54 70 62 Q 67 58 67 50 Q 69 46 68 42 Z" fill="#f1f3f5"/>
+                        <!-- Close-cropped side hair / stubble -->
+                        <path d="M 28 40 Q 26 48 30 54 Q 32 50 33 45 Q 32 42 28 40 Z" fill="#e8ecef"/>
+                        <path d="M 72 40 Q 74 48 70 54 Q 68 50 67 45 Q 68 42 72 40 Z" fill="#e8ecef"/>
+                        <!-- Salt-and-pepper crown rim -->
+                        <path d="M 30 36 Q 36 30 50 29 Q 64 30 70 36 Q 62 33 50 33 Q 38 33 30 36 Z"
+                              fill="#cfd3d7" opacity="0.55"/>
 
-                        <!-- Eyebrows (silvery) -->
-                        <path d="M 35 37 Q 40 34 45 37" stroke="#aab1b8" stroke-width="1.5"
+                        <!-- Bushy silver eyebrows -->
+                        <path d="M 33 36 Q 40 32 46 36" stroke="#98a0a8" stroke-width="1.9"
                               fill="none" stroke-linecap="round"/>
-                        <path d="M 55 37 Q 60 34 65 37" stroke="#aab1b8" stroke-width="1.5"
+                        <path d="M 54 36 Q 60 32 67 36" stroke="#98a0a8" stroke-width="1.9"
                               fill="none" stroke-linecap="round"/>
 
-                        <!-- Rimless-ish glasses -->
-                        <circle cx="40" cy="43" r="5.2" fill="#ffffff" fill-opacity="0.08"
-                                stroke="#1f2630" stroke-width="1.2"/>
-                        <circle cx="60" cy="43" r="5.2" fill="#ffffff" fill-opacity="0.08"
-                                stroke="#1f2630" stroke-width="1.2"/>
-                        <line x1="45.2" y1="43" x2="54.8" y2="43" stroke="#1f2630" stroke-width="1.2"/>
-                        <line x1="28" y1="42" x2="34.8" y2="42.4" stroke="#1f2630" stroke-width="1"/>
-                        <line x1="72" y1="42" x2="65.2" y2="42.4" stroke="#1f2630" stroke-width="1"/>
-                        <!-- Lens glints -->
-                        <path d="M 37 40 Q 38 41 39 40" stroke="#ffffff" stroke-width="0.6" fill="none" opacity="0.8"/>
-                        <path d="M 57 40 Q 58 41 59 40" stroke="#ffffff" stroke-width="0.6" fill="none" opacity="0.8"/>
+                        <!-- Dark rimmed glasses -->
+                        <circle cx="40" cy="42" r="5.3" fill="#000" fill-opacity="0.18"
+                                stroke="#141b26" stroke-width="1.3"/>
+                        <circle cx="60" cy="42" r="5.3" fill="#000" fill-opacity="0.18"
+                                stroke="#141b26" stroke-width="1.3"/>
+                        <line x1="45.3" y1="42" x2="54.7" y2="42" stroke="#141b26" stroke-width="1.3"/>
+                        <line x1="28"   y1="41" x2="34.7" y2="41.3" stroke="#141b26" stroke-width="1"/>
+                        <line x1="72"   y1="41" x2="65.3" y2="41.3" stroke="#141b26" stroke-width="1"/>
+                        <!-- Lens glints (catching horizon light) -->
+                        <path d="M 36.5 39 L 38.5 40" stroke="#ffd166" stroke-width="0.9" opacity="0.9"/>
+                        <path d="M 56.5 39 L 58.5 40" stroke="#ffd166" stroke-width="0.9" opacity="0.9"/>
 
-                        <!-- Eyes -->
-                        <circle cx="40" cy="43.2" r="1.3" fill="#1e2a3a"/>
-                        <circle cx="60" cy="43.2" r="1.3" fill="#1e2a3a"/>
-                        <circle cx="40.4" cy="42.8" r="0.4" fill="#ffffff"/>
-                        <circle cx="60.4" cy="42.8" r="0.4" fill="#ffffff"/>
+                        <!-- Squinting sailor eyes -->
+                        <path d="M 36.5 41.8 Q 40 41 43.5 41.8" stroke="#141b26" stroke-width="1.4"
+                              fill="none" stroke-linecap="round"/>
+                        <path d="M 56.5 41.8 Q 60 41 63.5 41.8" stroke="#141b26" stroke-width="1.4"
+                              fill="none" stroke-linecap="round"/>
+                        <circle cx="40" cy="42.2" r="0.9" fill="#141b26"/>
+                        <circle cx="60" cy="42.2" r="0.9" fill="#141b26"/>
+                        <!-- Crow's feet (weather lines) -->
+                        <path d="M 33 44 L 30.5 45" stroke="#7a4a28" stroke-width="0.4" opacity="0.6"/>
+                        <path d="M 33 46 L 31 47"   stroke="#7a4a28" stroke-width="0.4" opacity="0.55"/>
+                        <path d="M 67 44 L 69.5 45" stroke="#7a4a28" stroke-width="0.4" opacity="0.6"/>
+                        <path d="M 67 46 L 69 47"   stroke="#7a4a28" stroke-width="0.4" opacity="0.55"/>
 
-                        <!-- Nose -->
-                        <path d="M 50 45 Q 47 52 46 56 Q 48 58 50 57 Q 52 58 54 56 Q 53 52 50 45 Z"
-                              fill="#d79866" stroke="#a06b41" stroke-width="0.35"/>
-                        <ellipse cx="48.6" cy="56" rx="0.7" ry="0.5" fill="#6b3410" opacity="0.55"/>
-                        <ellipse cx="51.4" cy="56" rx="0.7" ry="0.5" fill="#6b3410" opacity="0.55"/>
+                        <!-- Pronounced nose -->
+                        <path d="M 50 44 Q 47 52 45.5 56 Q 48 58 50 57 Q 52 58 54.5 56 Q 53 52 50 44 Z"
+                              fill="#c98a5a" stroke="#8a5530" stroke-width="0.4"/>
+                        <path d="M 50 45 Q 49 50 50 54" stroke="#7a4a28" stroke-width="0.35" fill="none" opacity="0.4"/>
+                        <ellipse cx="48.3" cy="56" rx="0.7" ry="0.5" fill="#4a1f05" opacity="0.65"/>
+                        <ellipse cx="51.7" cy="56" rx="0.7" ry="0.5" fill="#4a1f05" opacity="0.65"/>
 
-                        <!-- White mustache -->
-                        <path d="M 41 58 Q 45 57 50 58 Q 55 57 59 58 Q 58.5 61 54 61 Q 50 60 46 61 Q 41.5 61 41 58 Z"
-                              fill="url(#craigBeard)" stroke="#dee2e6" stroke-width="0.35"/>
+                        <!-- Fuller silver mustache -->
+                        <path d="M 39 58 Q 44 56 50 58 Q 56 56 61 58 Q 61 62 56 62 Q 50 60 44 62 Q 39 62 39 58 Z"
+                              fill="url(#craigBeard)" stroke="#b8bec3" stroke-width="0.35"/>
+                        <path d="M 42 58.5 Q 44 58 46 58.5" stroke="#fff" stroke-width="0.35" fill="none" opacity="0.6"/>
+                        <path d="M 54 58.5 Q 56 58 58 58.5" stroke="#fff" stroke-width="0.35" fill="none" opacity="0.6"/>
 
-                        <!-- Mouth -->
-                        <path d="M 46 62 Q 50 63 54 62" stroke="#5a2b10"
-                              stroke-width="0.8" fill="none" stroke-linecap="round"/>
+                        <!-- Firm mouth line -->
+                        <path d="M 45 62 Q 50 63 55 62" stroke="#4a1f05"
+                              stroke-width="0.9" fill="none" stroke-linecap="round"/>
 
-                        <!-- White goatee / full beard -->
-                        <path d="M 39 61
-                                 Q 37 70 43 74
-                                 Q 46 76 50 76
-                                 Q 54 76 57 74
-                                 Q 63 70 61 61
-                                 Q 59 66 54 67
-                                 Q 50 68 46 67
-                                 Q 41 66 39 61 Z"
-                              fill="url(#craigBeard)" stroke="#dee2e6" stroke-width="0.35"/>
-                        <!-- Beard texture strands -->
-                        <path d="M 44 66 Q 44.5 70 44 73" stroke="#ced4da"
-                              stroke-width="0.35" fill="none"/>
-                        <path d="M 50 68 Q 50 72 50 75" stroke="#ced4da"
-                              stroke-width="0.35" fill="none"/>
-                        <path d="M 56 66 Q 55.5 70 56 73" stroke="#ced4da"
-                              stroke-width="0.35" fill="none"/>
-
-                        <!-- Cheek warmth -->
-                        <ellipse cx="34" cy="50" rx="3" ry="2" fill="#d46a4a" opacity="0.18"/>
-                        <ellipse cx="66" cy="50" rx="3" ry="2" fill="#d46a4a" opacity="0.18"/>
+                        <!-- Full salty goatee / beard -->
+                        <path d="M 37 61
+                                 Q 34 72 42 76
+                                 Q 46 78 50 78
+                                 Q 54 78 58 76
+                                 Q 66 72 63 61
+                                 Q 60 67 55 67.5
+                                 Q 50 68 45 67.5
+                                 Q 40 67 37 61 Z"
+                              fill="url(#craigBeard)" stroke="#b8bec3" stroke-width="0.4"/>
+                        <!-- Beard strand texture -->
+                        <path d="M 42 65 Q 42 70 42 74" stroke="#b8bec3" stroke-width="0.35" fill="none"/>
+                        <path d="M 46 67 Q 46 72 46 77" stroke="#b8bec3" stroke-width="0.35" fill="none"/>
+                        <path d="M 50 68 Q 50 73 50 78" stroke="#b8bec3" stroke-width="0.35" fill="none"/>
+                        <path d="M 54 67 Q 54 72 54 77" stroke="#b8bec3" stroke-width="0.35" fill="none"/>
+                        <path d="M 58 65 Q 58 70 58 74" stroke="#b8bec3" stroke-width="0.35" fill="none"/>
                     </svg>
                 </div>
                 <div class="craig-label">Dr. Craig Venter</div>
@@ -1418,7 +1947,50 @@
                     </svg>
                 </div>
                 
-                <div class="waves"></div>
+                <div class="sky-clouds">
+                    <div class="cloud cloud-1"></div>
+                    <div class="cloud cloud-2"></div>
+                    <div class="cloud cloud-3"></div>
+                    <div class="cloud cloud-4"></div>
+                </div>
+                <div class="horizon-glow"></div>
+                <div class="horizon-line"></div>
+                <div class="water-sparkles" id="water-sparkles"></div>
+
+                <div class="ocean-waves">
+                    <svg class="wave-svg wave-back" viewBox="0 0 2880 70" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="waveBackGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%"   stop-color="#a8c8e6" stop-opacity="0.45"/>
+                                <stop offset="100%" stop-color="#5a8cb8" stop-opacity="0.7"/>
+                            </linearGradient>
+                        </defs>
+                        <path fill="url(#waveBackGrad)" d="M0,35 Q90,10 180,35 T360,35 T540,35 T720,35 T900,35 T1080,35 T1260,35 T1440,35 T1620,35 T1800,35 T1980,35 T2160,35 T2340,35 T2520,35 T2700,35 T2880,35 L2880,70 L0,70 Z"/>
+                    </svg>
+                    <svg class="wave-svg wave-mid" viewBox="0 0 2880 85" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="waveMidGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%"   stop-color="#5a8cb8" stop-opacity="0.65"/>
+                                <stop offset="100%" stop-color="#254a78" stop-opacity="0.9"/>
+                            </linearGradient>
+                        </defs>
+                        <path fill="url(#waveMidGrad)" d="M0,40 Q90,8 180,40 T360,40 T540,40 T720,40 T900,40 T1080,40 T1260,40 T1440,40 T1620,40 T1800,40 T1980,40 T2160,40 T2340,40 T2520,40 T2700,40 T2880,40 L2880,85 L0,85 Z"/>
+                        <path fill="none" stroke="#ffffff" stroke-width="1.2" stroke-opacity="0.35"
+                              d="M0,40 Q90,8 180,40 T360,40 T540,40 T720,40 T900,40 T1080,40 T1260,40 T1440,40 T1620,40 T1800,40 T1980,40 T2160,40 T2340,40 T2520,40 T2700,40 T2880,40"/>
+                    </svg>
+                    <svg class="wave-svg wave-front" viewBox="0 0 2880 140" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="waveFrontGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%"   stop-color="#2d5a8c" stop-opacity="0.95"/>
+                                <stop offset="100%" stop-color="#0a1f3d" stop-opacity="1"/>
+                            </linearGradient>
+                        </defs>
+                        <path fill="url(#waveFrontGrad)" d="M0,55 Q90,12 180,55 T360,55 T540,55 T720,55 T900,55 T1080,55 T1260,55 T1440,55 T1620,55 T1800,55 T1980,55 T2160,55 T2340,55 T2520,55 T2700,55 T2880,55 L2880,140 L0,140 Z"/>
+                        <path fill="none" stroke="#ffffff" stroke-width="1.8" stroke-opacity="0.5"
+                              d="M0,55 Q90,12 180,55 T360,55 T540,55 T720,55 T900,55 T1080,55 T1260,55 T1440,55 T1620,55 T1800,55 T1980,55 T2160,55 T2340,55 T2520,55 T2700,55 T2880,55"/>
+                    </svg>
+                </div>
+
                 <div class="wave-splash" id="wave-splash"></div>
                 <div class="storm-effects" id="storm-effects"></div>
             </div>
@@ -1459,7 +2031,12 @@
                         <span id="insurance-status">❌ None</span>
                     </div>
                 </div>
-                
+
+                <div class="rivals-panel">
+                    <h3>⚓ Rival Expeditions <span class="penalty-indicator" id="penalty-indicator"></span></h3>
+                    <div id="rivals-list"></div>
+                </div>
+
                 <button class="button" onclick="dropNet()">🕸️ Deploy Collection Net</button>
                 <button class="button" onclick="navigate()">🧭 Navigate to New Waters</button>
                 <button class="button" onclick="deepDive()">🌊 Deep Sea Dive</button>
@@ -1526,7 +2103,20 @@
                         <em>No specimens collected yet...</em>
                     </div>
                 </div>
-                
+
+                <div class="grand-challenges">
+                    <h3>🌐 Global Grand Challenges</h3>
+                    <p class="gc-subtitle">Sequence specimens to reveal their hidden traits, then deploy organisms whose traits match humanity's greatest crises.</p>
+                    <div id="challenges-list"></div>
+                </div>
+
+                <div class="synbio-panel" id="synbio-panel">
+                    <h3>🧬 Synthetic Biology Lab</h3>
+                    <p class="synbio-desc">Splice traits from two sequenced specimens to engineer a designer organism. Chimeras count as the sum of their parents' traits for Grand Challenges.</p>
+                    <button class="synbio-btn" onclick="openSynBioModal()">🧪 Engineer Designer Organism ($500k)</button>
+                    <div class="synthetics-list" id="synthetics-list"></div>
+                </div>
+
                 <button class="button" onclick="publishFindings()">📊 Publish Research Paper</button>
             </div>
         </div>
@@ -1537,6 +2127,17 @@
         <h2 id="popup-title">🎉 Major Discovery!</h2>
         <p id="popup-message"></p>
         <button class="button" onclick="closePopup()">Continue Research</button>
+    </div>
+
+    <div class="popup-overlay" id="synbio-overlay" onclick="closeSynBioModal()"></div>
+    <div class="synbio-modal" id="synbio-modal">
+        <h2>🧬 Engineer Designer Organism</h2>
+        <p class="synbio-modal-desc">Select <strong>exactly 2</strong> sequenced specimens to splice. The resulting chimera will inherit all revealed traits from both parents and can be deployed to Grand Challenges. <strong>Cost: $500,000.</strong></p>
+        <div id="synbio-specimen-list"></div>
+        <div class="synbio-modal-actions">
+            <button class="create" id="synbio-create-btn" onclick="createSynthetic()" disabled>🧪 Splice Selected</button>
+            <button class="cancel" onclick="closeSynBioModal()">Cancel</button>
+        </div>
     </div>
 
     <script>
@@ -1565,7 +2166,15 @@
             papersPublished: 0,
             shipHealth: 100,
             insurance: false,
-            lastEventTime: 0
+            lastEventTime: 0,
+            // Traits + Grand Challenges + Rivals + Synthetic Biology
+            activeChallenges: [],
+            challengesCompleted: 0,
+            rivals: [],
+            publicationPenalty: 0,
+            synthetics: [],
+            synbioUnlocked: false,
+            selectedSynbioIds: []
         };
 
         const locations = [
@@ -1638,6 +2247,422 @@
             'GGGGGGGGGGGGGGGGGGG...'
         ];
 
+        // ============ Traits + Grand Challenges + Rivals ============
+        const TRAITS = {
+            carbon:      { name: 'Carbon-Fixing',      icon: '🌿' },
+            photo:       { name: 'Photosynthetic',     icon: '☀️' },
+            antibiotic:  { name: 'Antibiotic',         icon: '💊' },
+            antiviral:   { name: 'Antiviral',          icon: '🛡️' },
+            plastic:     { name: 'Plastic-Degrading',  icon: '♻️' },
+            hydrocarbon: { name: 'Hydrocarbon-Eating', icon: '🛢️' },
+            nitrogen:    { name: 'Nitrogen-Fixing',    icon: '🌱' },
+            extreme:     { name: 'Extremophile',       icon: '🔥' },
+            thermo:      { name: 'Thermostable',       icon: '🌡️' },
+            cold:        { name: 'Cold-Tolerant',      icon: '❄️' },
+            biolum:      { name: 'Bioluminescent',     icon: '✨' },
+            novel:       { name: 'Novel Protein',      icon: '🧪' }
+        };
+
+        const LOCATION_TRAITS = {
+            'Sargasso Sea':       ['carbon', 'photo', 'nitrogen', 'novel'],
+            'Galapagos Islands':  ['novel', 'biolum', 'antibiotic', 'photo'],
+            'Great Barrier Reef': ['antibiotic', 'photo', 'antiviral', 'carbon'],
+            'Mariana Trench':     ['extreme', 'thermo', 'novel', 'biolum', 'hydrocarbon'],
+            'Mediterranean Sea':  ['antiviral', 'nitrogen', 'plastic', 'carbon'],
+            'Arctic Ocean':       ['cold', 'extreme', 'antibiotic', 'hydrocarbon']
+        };
+
+        const CHALLENGE_TEMPLATES = [
+            {
+                id: 'climate', icon: '🌍', name: 'Climate Crisis',
+                desc: 'Global temperatures are climbing past 1.5°C. Deploy carbon-sequestering organisms to reverse the trend.',
+                requires: { carbon: 3, photo: 2 },
+                reward: 800000,
+                victoryQuote: '"A living carbon sink. This changes the climate equation." — IPCC'
+            },
+            {
+                id: 'pandemic', icon: '💊', name: 'Antibiotic Apocalypse',
+                desc: 'Drug-resistant superbugs are spreading through hospitals worldwide. Find novel antimicrobial compounds.',
+                requires: { antibiotic: 3, thermo: 2 },
+                reward: 900000,
+                victoryQuote: '"The first new class of antibiotics in 30 years." — The Lancet'
+            },
+            {
+                id: 'plastic', icon: '♻️', name: 'Plastic Oceans',
+                desc: 'Microplastics are choking the seas and entering the food chain. Deploy plastic-degrading microbes.',
+                requires: { plastic: 2, hydrocarbon: 2 },
+                reward: 750000,
+                victoryQuote: '"The Great Pacific Garbage Patch is literally dissolving." — National Geographic'
+            },
+            {
+                id: 'diseaseX', icon: '🦠', name: 'Disease X Pandemic',
+                desc: 'A novel pathogen has emerged from thawing permafrost. Find antiviral organisms with unique proteins.',
+                requires: { antiviral: 3, novel: 2 },
+                reward: 1000000,
+                victoryQuote: '"A vaccine candidate identified within weeks of outbreak." — WHO'
+            },
+            {
+                id: 'energy', icon: '⚡', name: 'Energy Crisis',
+                desc: 'Fossil fuel reserves are dwindling. Engineer photosynthetic organisms for sustainable biofuels.',
+                requires: { photo: 3, novel: 2 },
+                reward: 850000,
+                victoryQuote: '"Solar-to-fuel efficiency beyond anything nature had shown us." — Nature Energy'
+            },
+            {
+                id: 'food', icon: '🌾', name: 'Global Food Security',
+                desc: 'Crop yields are collapsing from soil depletion. Find nitrogen-fixing microbes for regenerative agriculture.',
+                requires: { nitrogen: 3, extreme: 1 },
+                reward: 700000,
+                victoryQuote: '"We can feed ten billion people without another acre of farmland." — FAO'
+            },
+            {
+                id: 'arctic', icon: '❄️', name: 'Arctic Ecosystem Collapse',
+                desc: 'Polar ecosystems are unraveling as ice retreats. Find cold-adapted organisms to stabilize the food web.',
+                requires: { cold: 2, photo: 2, carbon: 1 },
+                reward: 780000,
+                victoryQuote: '"A lifeline for the poles." — Polar Research Institute'
+            }
+        ];
+
+        const RIVAL_TEMPLATES = [
+            { name: 'RV Poseidon',    institution: 'Scripps',    specialty: 'photo',   rate: [4, 9] },
+            { name: 'RV Atlantis II', institution: 'Woods Hole', specialty: 'extreme', rate: [3, 8] },
+            { name: 'RV Ocean Seeker', institution: 'MBARI',     specialty: 'biolum',  rate: [3, 7] }
+        ];
+
+        const RIVAL_HEADLINES = [
+            'has just published a landmark paper',
+            'scooped you on a major discovery',
+            'announced a breakthrough at a press conference',
+            'claimed a novel species first',
+            'got a cover story in Nature'
+        ];
+
+        // ============ Trait rolling ============
+        function rollHiddenTraits(location) {
+            const pool = LOCATION_TRAITS[location] || Object.keys(TRAITS);
+            // 1-3 hidden traits, weighted toward 2
+            const r = Math.random();
+            const count = r < 0.25 ? 1 : r < 0.80 ? 2 : 3;
+            const traits = [];
+            for (let i = 0; i < count; i++) {
+                const pick = pool[Math.floor(Math.random() * pool.length)];
+                if (!traits.includes(pick)) traits.push(pick);
+            }
+            // Wild-card trait (rare cross-location discovery)
+            if (Math.random() < 0.12) {
+                const allKeys = Object.keys(TRAITS);
+                const wild = allKeys[Math.floor(Math.random() * allKeys.length)];
+                if (!traits.includes(wild)) traits.push(wild);
+            }
+            return traits;
+        }
+
+        function countAvailableTraits() {
+            const counts = {};
+            gameState.specimens.forEach(s => {
+                if (!s.processed || s.deployed) return;
+                (s.revealedTraits || []).forEach(t => {
+                    counts[t] = (counts[t] || 0) + 1;
+                });
+            });
+            gameState.synthetics.forEach(s => {
+                if (s.deployed) return;
+                (s.traits || []).forEach(t => {
+                    counts[t] = (counts[t] || 0) + 1;
+                });
+            });
+            return counts;
+        }
+
+        // ============ Grand Challenges ============
+        function initializeChallenges() {
+            const shuffled = [...CHALLENGE_TEMPLATES].sort(() => Math.random() - 0.5);
+            gameState.activeChallenges = shuffled.slice(0, 3).map(t => ({ ...t }));
+        }
+
+        function updateChallengesUI() {
+            const list = document.getElementById('challenges-list');
+            if (!list) return;
+            const available = countAvailableTraits();
+
+            list.innerHTML = gameState.activeChallenges.map((ch, idx) => {
+                const reqChips = Object.entries(ch.requires).map(([trait, need]) => {
+                    const have = available[trait] || 0;
+                    const met = have >= need;
+                    const t = TRAITS[trait];
+                    return `<span class="trait-chip ${met ? 'met' : ''}">${t.icon} ${t.name} ${have}/${need}</span>`;
+                }).join('');
+
+                const canDeploy = Object.entries(ch.requires).every(([trait, need]) => (available[trait] || 0) >= need);
+
+                return `<div class="challenge-card ${canDeploy ? 'ready' : ''}">
+                    <div class="challenge-title">${ch.icon} ${ch.name}</div>
+                    <div class="challenge-desc">${ch.desc}</div>
+                    <div class="challenge-requirements">${reqChips}</div>
+                    <button class="challenge-deploy-btn ${canDeploy ? 'ready' : ''}" ${canDeploy ? '' : 'disabled'} onclick="deployChallenge(${idx})">
+                        🚀 Deploy Solution • $${ch.reward.toLocaleString()}
+                    </button>
+                </div>`;
+            }).join('');
+        }
+
+        function deployChallenge(idx) {
+            const ch = gameState.activeChallenges[idx];
+            if (!ch) return;
+            const available = countAvailableTraits();
+            const canDeploy = Object.entries(ch.requires).every(([trait, need]) => (available[trait] || 0) >= need);
+            if (!canDeploy) return;
+
+            // Greedy allocation: spend specimens/synthetics to fill requirements
+            const need = { ...ch.requires };
+            const consumedNames = [];
+
+            // Prefer synthetics first (they're designed for this)
+            gameState.synthetics.forEach(s => {
+                if (s.deployed) return;
+                const helps = (s.traits || []).some(t => (need[t] || 0) > 0);
+                if (helps) {
+                    s.deployed = true;
+                    consumedNames.push(s.name);
+                    s.traits.forEach(t => {
+                        if (need[t] > 0) need[t]--;
+                    });
+                }
+            });
+
+            // Then regular specimens
+            gameState.specimens.forEach(s => {
+                if (!s.processed || s.deployed) return;
+                const helps = (s.revealedTraits || []).some(t => (need[t] || 0) > 0);
+                if (helps) {
+                    s.deployed = true;
+                    consumedNames.push(s.name);
+                    (s.revealedTraits || []).forEach(t => {
+                        if (need[t] > 0) need[t]--;
+                    });
+                }
+            });
+
+            // Award the player
+            gameState.funding += ch.reward;
+            gameState.challengesCompleted++;
+            gameState.breakthroughs++;
+            gameState.speciesFound += 2;
+
+            // Unlock Synthetic Biology Lab on first win
+            if (!gameState.synbioUnlocked) {
+                gameState.synbioUnlocked = true;
+                const panel = document.getElementById('synbio-panel');
+                if (panel) panel.classList.add('unlocked');
+            }
+
+            // Replace this challenge with a new one (avoiding duplicates of currently active)
+            const activeIds = gameState.activeChallenges.map(c => c.id);
+            const remaining = CHALLENGE_TEMPLATES.filter(t => !activeIds.includes(t.id));
+            if (remaining.length > 0) {
+                const newCh = { ...remaining[Math.floor(Math.random() * remaining.length)] };
+                gameState.activeChallenges[idx] = newCh;
+            } else {
+                gameState.activeChallenges.splice(idx, 1);
+            }
+
+            const unlockText = (gameState.challengesCompleted === 1)
+                ? '\n\n🧬 Synthetic Biology Lab UNLOCKED! You can now splice traits from specimens to design super-organisms.'
+                : '';
+
+            showPopup(`${ch.icon} ${ch.name} — SOLVED!`,
+                `Your discoveries have been deployed globally!\n\n` +
+                `💰 Grant Reward: $${ch.reward.toLocaleString()}\n` +
+                `🧪 Organisms Deployed: ${consumedNames.length}\n` +
+                `🏆 Grand Challenges Solved: ${gameState.challengesCompleted}\n\n` +
+                `${ch.victoryQuote}` +
+                unlockText);
+
+            updateDisplay();
+        }
+
+        // ============ Rival Expeditions ============
+        function initializeRivals() {
+            gameState.rivals = RIVAL_TEMPLATES.map(r => ({
+                ...r,
+                progress: Math.floor(Math.random() * 35)
+            }));
+        }
+
+        function updateRivalsUI() {
+            const list = document.getElementById('rivals-list');
+            if (!list) return;
+            list.innerHTML = gameState.rivals.map(r => {
+                const sp = TRAITS[r.specialty];
+                return `<div class="rival-row">
+                    <div class="rival-name-row">
+                        <span><strong>${r.name}</strong> <small>${r.institution}</small></span>
+                        <span title="${sp.name} specialty">${sp.icon}</span>
+                    </div>
+                    <div class="rival-progress">
+                        <div class="rival-progress-fill" style="width:${Math.min(r.progress, 100)}%"></div>
+                    </div>
+                </div>`;
+            }).join('');
+
+            const indicator = document.getElementById('penalty-indicator');
+            if (indicator) {
+                if (gameState.publicationPenalty > 0) {
+                    indicator.textContent = `-${Math.round(gameState.publicationPenalty * 100)}% paper value`;
+                } else {
+                    indicator.textContent = '';
+                }
+            }
+        }
+
+        function tickRivals() {
+            gameState.rivals.forEach(r => {
+                const delta = r.rate[0] + Math.random() * (r.rate[1] - r.rate[0]);
+                r.progress += delta;
+                if (r.progress >= 100) {
+                    r.progress = 0;
+                    rivalPublishes(r);
+                }
+            });
+            updateRivalsUI();
+        }
+
+        function rivalPublishes(rival) {
+            const traitName = TRAITS[rival.specialty].name;
+            gameState.publicationPenalty = Math.min(gameState.publicationPenalty + 0.15, 0.5);
+
+            const headline = RIVAL_HEADLINES[Math.floor(Math.random() * RIVAL_HEADLINES.length)];
+            const alert = document.createElement('div');
+            alert.className = 'scoop-alert';
+            alert.innerHTML = `<strong>📰 SCOOPED!</strong><br>${rival.name} (${rival.institution}) ${headline} on a <em>${traitName}</em> species. Your next paper's value has dropped.`;
+            document.body.appendChild(alert);
+            setTimeout(() => alert.remove(), 6500);
+
+            updateRivalsUI();
+        }
+
+        // ============ Synthetic Biology Lab ============
+        function updateSyntheticsUI() {
+            const list = document.getElementById('synthetics-list');
+            if (!list) return;
+            if (gameState.synthetics.length === 0) {
+                list.innerHTML = '';
+                return;
+            }
+            list.innerHTML = gameState.synthetics.map(s => {
+                const chips = (s.traits || []).map(t =>
+                    `<span class="trait-chip">${TRAITS[t].icon} ${TRAITS[t].name}</span>`
+                ).join('');
+                const status = s.deployed ? ' <small>🚀 Deployed</small>' : '';
+                return `<div class="synthetic-item" style="${s.deployed ? 'opacity:0.55;' : ''}">
+                    <div class="synth-name">${s.name}${status}</div>
+                    <div class="specimen-traits">${chips}</div>
+                </div>`;
+            }).join('');
+        }
+
+        function openSynBioModal() {
+            if (gameState.funding < 500000) {
+                showPopup('Insufficient Funding', 'Designing synthetic organisms costs $500,000. Publish more research first.');
+                return;
+            }
+
+            gameState.selectedSynbioIds = [];
+
+            const eligible = gameState.specimens
+                .map((s, i) => ({ s, i }))
+                .filter(({ s }) => s.processed && !s.deployed && (s.revealedTraits || []).length > 0);
+
+            if (eligible.length < 2) {
+                showPopup('Not Enough Specimens', 'You need at least 2 sequenced specimens with revealed traits that have not been deployed yet.');
+                return;
+            }
+
+            const list = document.getElementById('synbio-specimen-list');
+            list.innerHTML = eligible.map(({ s, i }) => {
+                const chips = s.revealedTraits.map(t =>
+                    `<span class="trait-chip">${TRAITS[t].icon} ${TRAITS[t].name}</span>`
+                ).join('');
+                return `<div class="synbio-specimen-option" data-id="${i}" onclick="toggleSynbioSpecimen(${i})">
+                    <div class="label">${s.name} <small style="opacity:0.7;">(${s.location})</small></div>
+                    <div class="specimen-traits">${chips}</div>
+                </div>`;
+            }).join('');
+
+            document.getElementById('synbio-create-btn').disabled = true;
+            document.getElementById('synbio-overlay').style.display = 'block';
+            document.getElementById('synbio-modal').classList.add('active');
+        }
+
+        function toggleSynbioSpecimen(idx) {
+            const pos = gameState.selectedSynbioIds.indexOf(idx);
+            if (pos >= 0) {
+                gameState.selectedSynbioIds.splice(pos, 1);
+            } else if (gameState.selectedSynbioIds.length < 2) {
+                gameState.selectedSynbioIds.push(idx);
+            }
+            document.querySelectorAll('.synbio-specimen-option').forEach(el => {
+                const id = parseInt(el.dataset.id, 10);
+                el.classList.toggle('selected', gameState.selectedSynbioIds.includes(id));
+            });
+            document.getElementById('synbio-create-btn').disabled = gameState.selectedSynbioIds.length !== 2;
+        }
+
+        function createSynthetic() {
+            if (gameState.selectedSynbioIds.length !== 2) return;
+            if (gameState.funding < 500000) return;
+
+            gameState.funding -= 500000;
+
+            const parents = gameState.selectedSynbioIds.map(i => gameState.specimens[i]);
+            const combinedTraits = [...new Set(parents.flatMap(p => p.revealedTraits || []))];
+
+            // Consume parent specimens
+            parents.forEach(p => { p.deployed = true; });
+
+            const suffixes = ['Chimera', 'Synthoid', 'Hybrid', 'Designer', 'Neo', 'Alpha', 'Prime', 'Nexus'];
+            const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+            const name = `JCVI-Syn ${suffix}-${gameState.synthetics.length + 1}`;
+
+            gameState.synthetics.push({
+                name,
+                traits: combinedTraits,
+                deployed: false,
+                isSynthetic: true
+            });
+
+            closeSynBioModal();
+
+            const traitText = combinedTraits.map(t => `${TRAITS[t].icon} ${TRAITS[t].name}`).join(', ');
+            showPopup('🧬 Designer Organism Created!',
+                `${name} successfully engineered in the lab!\n\n` +
+                `Combined traits: ${traitText}\n\n` +
+                `This chimera now lives in your specimen bank and can be deployed to any Grand Challenge whose requirements it satisfies.`);
+
+            updateDisplay();
+        }
+
+        function closeSynBioModal() {
+            document.getElementById('synbio-overlay').style.display = 'none';
+            document.getElementById('synbio-modal').classList.remove('active');
+        }
+
+        // ============ Water sparkles (glittering ocean surface) ============
+        function createWaterSparkles() {
+            const container = document.getElementById('water-sparkles');
+            if (!container) return;
+            for (let i = 0; i < 45; i++) {
+                const s = document.createElement('div');
+                s.className = 'sparkle';
+                s.style.left = `${Math.random() * 100}%`;
+                s.style.top = `${Math.random() * 100}%`;
+                s.style.animationDuration = `${2 + Math.random() * 3.5}s`;
+                s.style.animationDelay = `${Math.random() * 5}s`;
+                container.appendChild(s);
+            }
+        }
+
         // Core game functions
         function updateDisplay() {
             document.getElementById('specimens-count').textContent = gameState.specimens.length;
@@ -1697,6 +2722,9 @@
             updateProgress();
             updateSpecimenList();
             updateResearchRequest();
+            updateChallengesUI();
+            updateRivalsUI();
+            updateSyntheticsUI();
         }
 
         function updateProgress() {
@@ -1710,13 +2738,28 @@
                 list.innerHTML = '<em>No specimens collected yet...</em>';
                 return;
             }
-            
-            list.innerHTML = gameState.specimens.map((specimen, index) => 
-                `<div class="specimen-item">
+
+            list.innerHTML = gameState.specimens.map((specimen) => {
+                const revealed = (specimen.revealedTraits || []).map(t =>
+                    `<span class="trait-chip">${TRAITS[t].icon} ${TRAITS[t].name}</span>`
+                ).join('');
+                const hiddenCount = (specimen.hiddenTraits || []).length;
+                const hiddenChip = hiddenCount > 0 && specimen.processed
+                    ? `<span class="trait-chip hidden-trait">+${hiddenCount} hidden</span>`
+                    : '';
+                const traitHtml = (revealed || hiddenChip)
+                    ? `<div class="specimen-traits">${revealed}${hiddenChip}</div>`
+                    : '';
+                let status;
+                if (specimen.deployed)       status = '🚀 Deployed to Challenge';
+                else if (specimen.processed) status = '✅ Sequenced';
+                else                         status = '⏳ Awaiting analysis';
+                return `<div class="specimen-item" style="${specimen.deployed ? 'opacity:0.55;' : ''}">
                     <strong>${specimen.name}</strong><br>
-                    <small>${specimen.processed ? '✅ Sequenced' : '⏳ Awaiting analysis'}</small>
-                </div>`
-            ).join('');
+                    <small>${status}</small>
+                    ${traitHtml}
+                </div>`;
+            }).join('');
         }
 
         function dropNet() {
@@ -1758,20 +2801,23 @@
 
         function collectSpecimen(element, specimenType) {
             element.remove();
-            
+
             const newSpecimen = {
                 name: specimenType.name,
                 type: specimenType.type,
                 rarity: specimenType.rarity,
                 processed: false,
                 location: gameState.currentLocation,
-                depth: gameState.depth
+                depth: gameState.depth,
+                hiddenTraits: rollHiddenTraits(gameState.currentLocation),
+                revealedTraits: [],
+                deployed: false
             };
-            
+
             gameState.specimens.push(newSpecimen);
             gameState.specimenCounts[specimenType.type]++;
             updateDisplay();
-            
+
             // Check if this completes a research request
             checkResearchRequest();
         }
@@ -1810,13 +2856,26 @@
                 }
             }, 1000);
             
+            const newlyRevealed = [];
             unprocessed.forEach(specimen => {
                 specimen.processed = true;
                 gameState.genesSequenced += Math.floor(Math.random() * 500) + 100;
-                
+
+                // Reveal 1-2 traits from the hidden pool
+                if (!specimen.hiddenTraits) specimen.hiddenTraits = [];
+                if (!specimen.revealedTraits) specimen.revealedTraits = [];
+                const revealCount = Math.min(specimen.hiddenTraits.length, 1 + Math.floor(Math.random() * 2));
+                for (let i = 0; i < revealCount; i++) {
+                    const trait = specimen.hiddenTraits.shift();
+                    if (trait && !specimen.revealedTraits.includes(trait)) {
+                        specimen.revealedTraits.push(trait);
+                        newlyRevealed.push(trait);
+                    }
+                }
+
                 if (Math.random() < specimen.rarity) {
                     gameState.speciesFound++;
-                    
+
                     if (Math.random() < 0.3) {
                         gameState.breakthroughs++;
                         const discovery = discoveries[Math.floor(Math.random() * discoveries.length)];
@@ -1826,7 +2885,17 @@
                     }
                 }
             });
-            
+
+            // Trait reveal popup (only if something was found and no breakthrough popup will fire)
+            if (newlyRevealed.length > 0) {
+                const uniqueTraits = [...new Set(newlyRevealed)];
+                const traitText = uniqueTraits.map(t => `${TRAITS[t].icon} ${TRAITS[t].name}`).join(', ');
+                setTimeout(() => {
+                    showPopup('🧬 Traits Revealed',
+                        `Sequencing uncovered hidden traits in your specimens:\n\n${traitText}\n\nCheck the Grand Challenges board — these organisms may be critical to solving humanity's crises.`);
+                }, 1200);
+            }
+
             updateDisplay();
         }
 
@@ -1885,7 +2954,10 @@
                             rarity: 0.8,
                             processed: false,
                             location: gameState.currentLocation,
-                            depth: gameState.depth
+                            depth: gameState.depth,
+                            hiddenTraits: rollHiddenTraits('Mariana Trench'),
+                            revealedTraits: [],
+                            deployed: false
                         });
                         gameState.specimenCounts.microbe++;
                         updateDisplay();
@@ -1918,10 +2990,14 @@
             
             // Successful publication
             gameState.papersPublished++;
-            const grantAmount = gameState.breakthroughs * 500000 + gameState.speciesFound * 100000 + Math.floor(gameState.genesSequenced / 100) * 50000;
+            const basePaper = gameState.breakthroughs * 500000 + gameState.speciesFound * 100000 + Math.floor(gameState.genesSequenced / 100) * 50000;
+            const penaltyFactor = 1 - gameState.publicationPenalty;
+            const grantAmount = Math.floor(basePaper * penaltyFactor);
             gameState.funding += grantAmount;
-            
-            showPopup('Research Published!', 
+            // Publishing relieves some of the scoop pressure
+            gameState.publicationPenalty = Math.max(0, gameState.publicationPenalty - 0.3);
+
+            showPopup('Research Published!',
                 `✅ Your groundbreaking research has been published in Nature! 
                 Grant funding received: $${grantAmount.toLocaleString()}
                 
@@ -2319,19 +3395,25 @@
         }
 
         // Initialize game
+        initializeChallenges();
+        initializeRivals();
+        createWaterSparkles();
         updateDisplay();
-        
+
         // Generate initial research request
         setTimeout(() => {
             generateResearchRequest();
         }, 3000);
-        
+
         // Add some initial specimens
         setTimeout(() => {
             for (let i = 0; i < 5; i++) {
                 setTimeout(() => createSpecimen(), i * 500);
             }
         }, 1000);
+
+        // Rival expeditions advance every 8 seconds
+        setInterval(tickRivals, 8000);
     </script>
 </body>
 </html>
