@@ -170,14 +170,44 @@
 
         .ship {
             position: absolute;
-            width: 160px;
-            height: 100px;
+            width: 240px;
+            height: 210px;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
             transition: all 0.5s ease;
             animation: shipBob 4s ease-in-out infinite;
             z-index: 10;
+            filter: drop-shadow(0 10px 14px rgba(0,0,0,0.45));
+        }
+
+        /* Mobile ship sizing */
+        @media (max-width: 768px) {
+            .ship {
+                width: 180px;
+                height: 160px;
+            }
+        }
+
+        .ship-svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .ship-svg .sail {
+            transform-origin: 120px 130px;
+            animation: sailBreath 5s ease-in-out infinite;
+        }
+
+        .ship-svg .sail-jib {
+            animation-duration: 4.5s;
+            animation-delay: -1.5s;
+        }
+
+        @keyframes sailBreath {
+            0%, 100% { transform: scaleX(1); }
+            50%      { transform: scaleX(1.035) skewX(-1.2deg); }
         }
 
         .ship-hull {
@@ -566,19 +596,42 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            width: 100px;
-            height: 100px;
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
             border: 4px solid #fff;
             box-shadow: 0 8px 25px rgba(0,0,0,0.6);
             animation: avatarPulse 3s ease-in-out infinite;
             cursor: pointer;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            background: linear-gradient(135deg, #4a90e2 0%, #1e3c72 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 60px;
             touch-action: manipulation;
+            z-index: 100;
+        }
+
+        .craig-avatar svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .craig-label {
+            position: absolute;
+            top: 132px;
+            right: 20px;
+            background: rgba(0,0,0,0.65);
+            color: #f8f9fa;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+            white-space: nowrap;
+            pointer-events: none;
             z-index: 100;
         }
 
@@ -587,10 +640,15 @@
             .craig-avatar {
                 top: 60px;
                 right: 10px;
-                width: 70px;
-                height: 70px;
+                width: 78px;
+                height: 78px;
                 border: 3px solid #fff;
-                font-size: 40px;
+            }
+            .craig-label {
+                top: 142px;
+                right: 10px;
+                font-size: 10px;
+                padding: 2px 8px;
             }
         }
 
@@ -1091,19 +1149,273 @@
                 </div>
                 
                 <div class="craig-avatar" onclick="craigSpeaks()" title="Dr. Craig Venter - Click for insights">
-                    👨‍🔬
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <radialGradient id="craigSkin" cx="50%" cy="38%" r="65%">
+                                <stop offset="0%"  stop-color="#fadbb8"/>
+                                <stop offset="60%" stop-color="#e6a978"/>
+                                <stop offset="100%" stop-color="#a66e44"/>
+                            </radialGradient>
+                            <linearGradient id="craigBg" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%"   stop-color="#5aa0e8"/>
+                                <stop offset="60%"  stop-color="#2a5aa0"/>
+                                <stop offset="100%" stop-color="#122b56"/>
+                            </linearGradient>
+                            <linearGradient id="craigShirt" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%"   stop-color="#2b3a55"/>
+                                <stop offset="100%" stop-color="#0f1a30"/>
+                            </linearGradient>
+                            <linearGradient id="craigBeard" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%"   stop-color="#ffffff"/>
+                                <stop offset="100%" stop-color="#ced4da"/>
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Background -->
+                        <rect width="100" height="100" fill="url(#craigBg)"/>
+                        <!-- Soft light glow behind head -->
+                        <circle cx="50" cy="42" r="34" fill="#ffffff" opacity="0.08"/>
+
+                        <!-- Shoulders / polo shirt -->
+                        <path d="M 4 100 L 10 78 Q 26 66 50 66 Q 74 66 90 78 L 96 100 Z"
+                              fill="url(#craigShirt)"/>
+                        <!-- Polo collar -->
+                        <path d="M 38 72 L 50 84 L 62 72 L 58 70 L 50 78 L 42 70 Z"
+                              fill="#3b4a68" stroke="#1a2540" stroke-width="0.4"/>
+                        <!-- Collar stitching highlight -->
+                        <path d="M 38 72 L 50 84 L 62 72" stroke="#4f628a" stroke-width="0.35" fill="none"/>
+
+                        <!-- Neck -->
+                        <path d="M 42 60 Q 42 73 50 75 Q 58 73 58 60 Z" fill="#c48a5c"/>
+                        <path d="M 43 68 Q 50 71 57 68" stroke="#8a5a3b" stroke-width="0.35" fill="none" opacity="0.5"/>
+
+                        <!-- Head base -->
+                        <ellipse cx="50" cy="40" rx="22" ry="26" fill="url(#craigSkin)"/>
+                        <!-- Forehead highlight (bald shine) -->
+                        <ellipse cx="46" cy="26" rx="13" ry="7" fill="#ffe6cb" opacity="0.55"/>
+                        <ellipse cx="54" cy="24" rx="4" ry="2" fill="#ffffff" opacity="0.35"/>
+
+                        <!-- Ears -->
+                        <ellipse cx="27.5" cy="44" rx="3" ry="5" fill="#d79866"/>
+                        <ellipse cx="72.5" cy="44" rx="3" ry="5" fill="#d79866"/>
+                        <path d="M 27 43 Q 28 46 28.8 46.5" stroke="#8a5a3b" stroke-width="0.4" fill="none"/>
+                        <path d="M 73 43 Q 72 46 71.2 46.5" stroke="#8a5a3b" stroke-width="0.4" fill="none"/>
+
+                        <!-- Side hair (white, balding pattern) -->
+                        <path d="M 28 42
+                                 Q 25 33 31 27
+                                 Q 38 24 43 25
+                                 Q 39 31 38 38
+                                 Q 34 42 30 46
+                                 Q 27 46 28 42 Z"
+                              fill="#f1f3f5" stroke="#ced4da" stroke-width="0.35"/>
+                        <path d="M 72 42
+                                 Q 75 33 69 27
+                                 Q 62 24 57 25
+                                 Q 61 31 62 38
+                                 Q 66 42 70 46
+                                 Q 73 46 72 42 Z"
+                              fill="#f1f3f5" stroke="#ced4da" stroke-width="0.35"/>
+                        <!-- Hair flowing down sides -->
+                        <path d="M 28 42 Q 24 54 30 62 Q 33 58 33 50 Q 31 46 32 42 Z" fill="#f1f3f5"/>
+                        <path d="M 72 42 Q 76 54 70 62 Q 67 58 67 50 Q 69 46 68 42 Z" fill="#f1f3f5"/>
+
+                        <!-- Eyebrows (silvery) -->
+                        <path d="M 35 37 Q 40 34 45 37" stroke="#aab1b8" stroke-width="1.5"
+                              fill="none" stroke-linecap="round"/>
+                        <path d="M 55 37 Q 60 34 65 37" stroke="#aab1b8" stroke-width="1.5"
+                              fill="none" stroke-linecap="round"/>
+
+                        <!-- Rimless-ish glasses -->
+                        <circle cx="40" cy="43" r="5.2" fill="#ffffff" fill-opacity="0.08"
+                                stroke="#1f2630" stroke-width="1.2"/>
+                        <circle cx="60" cy="43" r="5.2" fill="#ffffff" fill-opacity="0.08"
+                                stroke="#1f2630" stroke-width="1.2"/>
+                        <line x1="45.2" y1="43" x2="54.8" y2="43" stroke="#1f2630" stroke-width="1.2"/>
+                        <line x1="28" y1="42" x2="34.8" y2="42.4" stroke="#1f2630" stroke-width="1"/>
+                        <line x1="72" y1="42" x2="65.2" y2="42.4" stroke="#1f2630" stroke-width="1"/>
+                        <!-- Lens glints -->
+                        <path d="M 37 40 Q 38 41 39 40" stroke="#ffffff" stroke-width="0.6" fill="none" opacity="0.8"/>
+                        <path d="M 57 40 Q 58 41 59 40" stroke="#ffffff" stroke-width="0.6" fill="none" opacity="0.8"/>
+
+                        <!-- Eyes -->
+                        <circle cx="40" cy="43.2" r="1.3" fill="#1e2a3a"/>
+                        <circle cx="60" cy="43.2" r="1.3" fill="#1e2a3a"/>
+                        <circle cx="40.4" cy="42.8" r="0.4" fill="#ffffff"/>
+                        <circle cx="60.4" cy="42.8" r="0.4" fill="#ffffff"/>
+
+                        <!-- Nose -->
+                        <path d="M 50 45 Q 47 52 46 56 Q 48 58 50 57 Q 52 58 54 56 Q 53 52 50 45 Z"
+                              fill="#d79866" stroke="#a06b41" stroke-width="0.35"/>
+                        <ellipse cx="48.6" cy="56" rx="0.7" ry="0.5" fill="#6b3410" opacity="0.55"/>
+                        <ellipse cx="51.4" cy="56" rx="0.7" ry="0.5" fill="#6b3410" opacity="0.55"/>
+
+                        <!-- White mustache -->
+                        <path d="M 41 58 Q 45 57 50 58 Q 55 57 59 58 Q 58.5 61 54 61 Q 50 60 46 61 Q 41.5 61 41 58 Z"
+                              fill="url(#craigBeard)" stroke="#dee2e6" stroke-width="0.35"/>
+
+                        <!-- Mouth -->
+                        <path d="M 46 62 Q 50 63 54 62" stroke="#5a2b10"
+                              stroke-width="0.8" fill="none" stroke-linecap="round"/>
+
+                        <!-- White goatee / full beard -->
+                        <path d="M 39 61
+                                 Q 37 70 43 74
+                                 Q 46 76 50 76
+                                 Q 54 76 57 74
+                                 Q 63 70 61 61
+                                 Q 59 66 54 67
+                                 Q 50 68 46 67
+                                 Q 41 66 39 61 Z"
+                              fill="url(#craigBeard)" stroke="#dee2e6" stroke-width="0.35"/>
+                        <!-- Beard texture strands -->
+                        <path d="M 44 66 Q 44.5 70 44 73" stroke="#ced4da"
+                              stroke-width="0.35" fill="none"/>
+                        <path d="M 50 68 Q 50 72 50 75" stroke="#ced4da"
+                              stroke-width="0.35" fill="none"/>
+                        <path d="M 56 66 Q 55.5 70 56 73" stroke="#ced4da"
+                              stroke-width="0.35" fill="none"/>
+
+                        <!-- Cheek warmth -->
+                        <ellipse cx="34" cy="50" rx="3" ry="2" fill="#d46a4a" opacity="0.18"/>
+                        <ellipse cx="66" cy="50" rx="3" ry="2" fill="#d46a4a" opacity="0.18"/>
+                    </svg>
                 </div>
+                <div class="craig-label">Dr. Craig Venter</div>
                 
                 <div class="ship" id="ship">
-                    <div class="ship-hull"></div>
-                    <div class="ship-deck"></div>
-                    <div class="ship-cabin"></div>
-                    <div class="ship-mast-main"></div>
-                    <div class="ship-mast-front"></div>
-                    <div class="ship-sail-main"></div>
-                    <div class="ship-sail-front"></div>
-                    <div class="ship-equipment"></div>
-                    <div class="ship-antenna"></div>
+                    <svg class="ship-svg" viewBox="0 0 240 210" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="sailGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ffffff"/>
+                                <stop offset="60%" stop-color="#f1f3f5"/>
+                                <stop offset="100%" stop-color="#c8ced4"/>
+                            </linearGradient>
+                            <linearGradient id="hullGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%"  stop-color="#ffffff"/>
+                                <stop offset="55%" stop-color="#f1f3f5"/>
+                                <stop offset="100%" stop-color="#adb5bd"/>
+                            </linearGradient>
+                            <linearGradient id="waterlineGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#1d3557"/>
+                                <stop offset="100%" stop-color="#0b1a2b"/>
+                            </linearGradient>
+                            <radialGradient id="domeGrad" cx="50%" cy="35%" r="60%">
+                                <stop offset="0%" stop-color="#ffffff"/>
+                                <stop offset="100%" stop-color="#a8aeb4"/>
+                            </radialGradient>
+                        </defs>
+
+                        <!-- Under-hull shadow on water -->
+                        <ellipse cx="125" cy="178" rx="100" ry="5" fill="rgba(0,0,0,0.35)"/>
+
+                        <!-- Standing rigging: forestay & backstay -->
+                        <line x1="120" y1="24" x2="214" y2="132" stroke="#dfe3e6" stroke-width="0.7" opacity="0.85"/>
+                        <line x1="120" y1="24" x2="36"  y2="132" stroke="#dfe3e6" stroke-width="0.7" opacity="0.85"/>
+
+                        <!-- Mast -->
+                        <line x1="120" y1="24" x2="120" y2="134" stroke="#c8ccd1" stroke-width="3" stroke-linecap="round"/>
+                        <!-- Spreaders (cross beam near top of mast) -->
+                        <line x1="108" y1="52" x2="132" y2="52" stroke="#9aa0a6" stroke-width="1.2" stroke-linecap="round"/>
+                        <!-- Boom -->
+                        <line x1="120" y1="130" x2="64" y2="133" stroke="#9aa0a6" stroke-width="2.2" stroke-linecap="round"/>
+
+                        <!-- Main sail (aft of mast) -->
+                        <path class="sail sail-main"
+                              d="M 118 28 L 118 130 L 66 132 Z"
+                              fill="url(#sailGrad)" stroke="#adb5bd" stroke-width="0.6"/>
+                        <!-- Jib (fore sail) -->
+                        <path class="sail sail-jib"
+                              d="M 122 34 L 122 130 L 208 132 Z"
+                              fill="url(#sailGrad)" stroke="#adb5bd" stroke-width="0.6"/>
+
+                        <!-- Sail battens (horizontal lines on main) -->
+                        <path d="M 118 55 L 98 56" stroke="#c8ced4" stroke-width="0.4" opacity="0.7"/>
+                        <path d="M 118 80 L 86 82" stroke="#c8ced4" stroke-width="0.4" opacity="0.7"/>
+                        <path d="M 118 105 L 74 108" stroke="#c8ced4" stroke-width="0.4" opacity="0.7"/>
+
+                        <!-- Red burgee flag at masthead -->
+                        <path d="M 120 22 L 134 25 L 120 28 Z" fill="#e63946"/>
+                        <!-- Wind instrument / VHF antenna -->
+                        <line x1="120" y1="22" x2="120" y2="14" stroke="#495057" stroke-width="0.8"/>
+                        <circle cx="120" cy="13" r="1.6" fill="#495057"/>
+
+                        <!-- Hull — sleek modern sloop profile -->
+                        <path d="M 30 134
+                                 Q 42 131 62 130
+                                 L 196 130
+                                 Q 218 131 226 136
+                                 Q 224 158 212 166
+                                 Q 196 174 170 175
+                                 L 80 175
+                                 Q 52 174 40 163
+                                 Q 30 152 30 134 Z"
+                              fill="url(#hullGrad)" stroke="#495057" stroke-width="0.9"/>
+
+                        <!-- Cove stripe (subtle horizontal line along hull) -->
+                        <path d="M 38 140 Q 120 138 222 140"
+                              stroke="#4a90e2" stroke-width="0.8" fill="none" opacity="0.85"/>
+
+                        <!-- Dark blue waterline / antifouling -->
+                        <path d="M 34 152
+                                 Q 120 150 224 152
+                                 Q 221 165 210 170
+                                 Q 180 176 120 176
+                                 Q 58 176 40 168
+                                 Q 34 162 34 152 Z"
+                              fill="url(#waterlineGrad)"/>
+
+                        <!-- Bow wave / foam at waterline -->
+                        <path d="M 214 156 Q 222 153 228 157 Q 224 160 218 161 Z"
+                              fill="#ffffff" opacity="0.85"/>
+                        <path d="M 28 156 Q 22 154 18 158 Q 22 161 30 161 Z"
+                              fill="#ffffff" opacity="0.6"/>
+
+                        <!-- Coachroof / cabin superstructure -->
+                        <path d="M 82 130
+                                 Q 88 116 102 115
+                                 L 166 115
+                                 Q 180 116 186 130 Z"
+                              fill="#f1f3f5" stroke="#adb5bd" stroke-width="0.7"/>
+                        <!-- Cabin top highlight -->
+                        <path d="M 88 122 Q 96 118 108 117 L 162 117 Q 174 118 180 122 Z"
+                              fill="#ffffff" opacity="0.7"/>
+                        <!-- Tinted cabin window strip -->
+                        <path d="M 92 125 L 178 125 L 174 129 L 96 129 Z"
+                              fill="#1d3557" stroke="#0b1a2b" stroke-width="0.3"/>
+                        <!-- Window frame divider mullions -->
+                        <line x1="112" y1="125" x2="111" y2="129" stroke="#6c757d" stroke-width="0.4"/>
+                        <line x1="135" y1="125" x2="134" y2="129" stroke="#6c757d" stroke-width="0.4"/>
+                        <line x1="158" y1="125" x2="157" y2="129" stroke="#6c757d" stroke-width="0.4"/>
+
+                        <!-- Mast collar at deck -->
+                        <rect x="116" y="129" width="8" height="4" fill="#6c757d"/>
+
+                        <!-- Deck hatch fore -->
+                        <rect x="192" y="131" width="16" height="4" rx="0.8"
+                              fill="#ced4da" stroke="#6c757d" stroke-width="0.3"/>
+                        <!-- Deck winches -->
+                        <circle cx="94"  cy="132" r="1.6" fill="#6c757d"/>
+                        <circle cx="178" cy="132" r="1.6" fill="#6c757d"/>
+
+                        <!-- Bow pulpit / anchor roller -->
+                        <path d="M 222 132 L 230 134 L 228 136 L 222 135 Z"
+                              fill="#adb5bd" stroke="#6c757d" stroke-width="0.3"/>
+                        <!-- Stern rail -->
+                        <line x1="30" y1="132" x2="24" y2="136" stroke="#adb5bd" stroke-width="0.8"/>
+
+                        <!-- Satellite / science dome on cabin -->
+                        <circle cx="154" cy="114" r="3.5" fill="url(#domeGrad)" stroke="#6c757d" stroke-width="0.4"/>
+                        <!-- Communications antenna -->
+                        <line x1="108" y1="115" x2="108" y2="108" stroke="#495057" stroke-width="0.6"/>
+                        <circle cx="108" cy="107" r="0.8" fill="#dc3545"/>
+
+                        <!-- Ship name plate -->
+                        <text x="125" y="147" text-anchor="middle"
+                              font-family="Georgia, 'Times New Roman', serif"
+                              font-size="7" font-weight="700"
+                              fill="#1d3557" letter-spacing="0.6">SORCERER II</text>
+                    </svg>
                 </div>
                 
                 <div class="waves"></div>
