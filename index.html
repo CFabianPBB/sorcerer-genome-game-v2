@@ -1595,6 +1595,46 @@
                 max-width: none;
             }
         }
+
+        /* ============ Save indicator ============ */
+        .save-indicator {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.72em;
+            opacity: 0.7;
+        }
+
+        .save-indicator .save-status {
+            color: #4ecdc4;
+        }
+
+        .save-indicator .save-status.flash {
+            animation: saveFlash 0.8s ease-out;
+        }
+
+        @keyframes saveFlash {
+            0%   { color: #ffe135; transform: scale(1.05); }
+            100% { color: #4ecdc4; transform: scale(1); }
+        }
+
+        .save-indicator .reset-link {
+            color: #ff6b7a;
+            cursor: pointer;
+            text-decoration: underline;
+            background: none;
+            border: none;
+            font-size: inherit;
+            font-family: inherit;
+            padding: 0;
+        }
+
+        .save-indicator .reset-link:hover {
+            color: #ff4757;
+        }
     </style>
 </head>
 <body>
@@ -2033,6 +2073,10 @@
                     <div class="stat-item">
                         <span>Insurance:</span>
                         <span id="insurance-status">❌ None</span>
+                    </div>
+                    <div class="save-indicator">
+                        <span class="save-status" id="save-status">💾 Auto-save on</span>
+                        <button class="reset-link" onclick="resetGame()">🔄 New Game</button>
                     </div>
                 </div>
 
@@ -2652,6 +2696,85 @@
             document.getElementById('synbio-modal').classList.remove('active');
         }
 
+        // ============ Save / Load / Reset (localStorage) ============
+        const SAVE_KEY = 'sorcerer2.save.v1';
+        let _initComplete = false;
+
+        function saveGame() {
+            if (!_initComplete) return;
+            try {
+                const payload = {
+                    specimens:          gameState.specimens,
+                    genesSequenced:     gameState.genesSequenced,
+                    speciesFound:       gameState.speciesFound,
+                    breakthroughs:      gameState.breakthroughs,
+                    funding:            gameState.funding,
+                    currentLocation:    gameState.currentLocation,
+                    depth:              gameState.depth,
+                    coordinates:        gameState.coordinates,
+                    temperature:        gameState.temperature,
+                    specimenCounts:     gameState.specimenCounts,
+                    currentRequest:     gameState.currentRequest,
+                    papersRejected:     gameState.papersRejected,
+                    papersPublished:    gameState.papersPublished,
+                    shipHealth:         gameState.shipHealth,
+                    insurance:          gameState.insurance,
+                    activeChallenges:   gameState.activeChallenges,
+                    challengesCompleted: gameState.challengesCompleted,
+                    publicationPenalty: gameState.publicationPenalty,
+                    synthetics:         gameState.synthetics,
+                    synbioUnlocked:     gameState.synbioUnlocked,
+                    savedAt:            Date.now()
+                };
+                localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
+
+                // Flash the save indicator briefly
+                const status = document.getElementById('save-status');
+                if (status) {
+                    status.textContent = '💾 Saved';
+                    status.classList.remove('flash');
+                    // Force reflow so the animation restarts
+                    void status.offsetWidth;
+                    status.classList.add('flash');
+                    clearTimeout(saveGame._timer);
+                    saveGame._timer = setTimeout(() => {
+                        status.textContent = '💾 Auto-save on';
+                    }, 1200);
+                }
+            } catch (e) {
+                // localStorage may be disabled (private browsing, etc.)
+                console.warn('Save failed:', e);
+                const status = document.getElementById('save-status');
+                if (status) status.textContent = '⚠️ Save unavailable';
+            }
+        }
+
+        function loadGame() {
+            try {
+                const raw = localStorage.getItem(SAVE_KEY);
+                if (!raw) return false;
+                const data = JSON.parse(raw);
+                // Shallow merge — any missing fields keep their current defaults
+                Object.assign(gameState, data);
+                // Defensive: make sure specimens have the new trait fields
+                (gameState.specimens || []).forEach(s => {
+                    if (!s.hiddenTraits)  s.hiddenTraits  = [];
+                    if (!s.revealedTraits) s.revealedTraits = [];
+                    if (typeof s.deployed !== 'boolean') s.deployed = false;
+                });
+                return true;
+            } catch (e) {
+                console.warn('Load failed:', e);
+                return false;
+            }
+        }
+
+        function resetGame() {
+            if (!confirm('Start a new game? This will erase your saved progress permanently.')) return;
+            try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+            location.reload();
+        }
+
         // ============ Water sparkles (glittering ocean surface) ============
         function createWaterSparkles() {
             const container = document.getElementById('water-sparkles');
@@ -2729,6 +2852,7 @@
             updateChallengesUI();
             updateRivalsUI();
             updateSyntheticsUI();
+            saveGame();
         }
 
         function updateProgress() {
@@ -3399,22 +3523,47 @@
         }
 
         // Initialize game
-        initializeChallenges();
+        const _resumed = loadGame();
+
+        // Rivals are transient — always regenerate
         initializeRivals();
+
+        // Only generate fresh challenges for a new game
+        if (!_resumed || !gameState.activeChallenges || gameState.activeChallenges.length === 0) {
+            initializeChallenges();
+        }
+
+        // Re-apply Synthetic Biology Lab unlock if this save already earned it
+        if (gameState.synbioUnlocked) {
+            const panel = document.getElementById('synbio-panel');
+            if (panel) panel.classList.add('unlocked');
+        }
+
         createWaterSparkles();
+
+        // Mark init complete so saveGame() is allowed to run
+        _initComplete = true;
         updateDisplay();
 
-        // Generate initial research request
-        setTimeout(() => {
-            generateResearchRequest();
-        }, 3000);
-
-        // Add some initial specimens
-        setTimeout(() => {
-            for (let i = 0; i < 5; i++) {
-                setTimeout(() => createSpecimen(), i * 500);
+        if (_resumed) {
+            // Welcome back — briefly show a "resumed" indicator
+            const status = document.getElementById('save-status');
+            if (status) {
+                status.textContent = '✅ Progress restored';
+                setTimeout(() => { status.textContent = '💾 Auto-save on'; }, 2500);
             }
-        }, 1000);
+        } else {
+            // Fresh game — generate initial research request and starter specimens
+            setTimeout(() => {
+                generateResearchRequest();
+            }, 3000);
+
+            setTimeout(() => {
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => createSpecimen(), i * 500);
+                }
+            }, 1000);
+        }
 
         // Rival expeditions advance every 8 seconds
         setInterval(tickRivals, 8000);
