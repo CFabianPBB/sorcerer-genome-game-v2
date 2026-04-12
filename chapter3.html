@@ -61,6 +61,33 @@
             margin-top: 2px;
         }
 
+        /* ================= Chapter Navigation ================= */
+        .chapter-nav {
+            display: flex; align-items: center; justify-content: center;
+            gap: 6px; margin-top: 10px;
+        }
+        .chapter-nav-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            border: 1.5px solid rgba(255,255,255,0.3); background: transparent;
+            cursor: pointer; transition: all 0.3s;
+        }
+        .chapter-nav-dot:hover { transform: scale(1.3); border-color: rgba(255,255,255,0.7); }
+        .chapter-nav-dot.completed { background: #ffd700; border-color: #ffd700; box-shadow: 0 0 6px rgba(255,215,0,0.4); }
+        .chapter-nav-dot.active { background: #7c3aed; border-color: #a78bfa; box-shadow: 0 0 8px rgba(124,58,237,0.6); }
+        .chapter-nav-dot.locked { opacity: 0.3; cursor: default; }
+        .chapter-nav-dot.locked:hover { transform: none; }
+        .chapter-nav-connector { width: 18px; height: 1px; background: rgba(255,255,255,0.12); }
+        .chapter-nav-connector.lit { background: linear-gradient(90deg, #ffd700, #7c3aed); }
+        .chapter-nav-label {
+            font-size: 0.6em; letter-spacing: 2px; text-transform: uppercase;
+            color: rgba(255,255,255,0.35); margin-top: 5px;
+        }
+        @media (max-width: 768px) {
+            .chapter-nav { gap: 4px; }
+            .chapter-nav-connector { width: 12px; }
+            .chapter-nav-dot { width: 8px; height: 8px; }
+        }
+
         /* ================= Layout ================= */
         .game-area {
             display: flex;
@@ -601,6 +628,16 @@
             <div class="title-chapter">Chapter Three</div>
             <h1 class="title-main">LIFE AT THE SPEED OF LIGHT</h1>
             <div class="subtitle">Digital-to-Biological Converter Network &bull; Global Operations</div>
+            <div class="chapter-nav">
+                <div class="chapter-nav-dot completed" title="Chapter 1: Voyage of the Sorcerer II" onclick="window.location.href='index.html'"></div>
+                <div class="chapter-nav-connector lit"></div>
+                <div class="chapter-nav-dot completed" title="Chapter 2: The 100-Year Life" onclick="window.location.href='chapter2.html'"></div>
+                <div class="chapter-nav-connector lit"></div>
+                <div class="chapter-nav-dot active" title="Chapter 3: Life at the Speed of Light"></div>
+                <div class="chapter-nav-connector"></div>
+                <div class="chapter-nav-dot" title="Chapter 4: Fax Me a Martian" onclick="window.location.href='chapter4.html'"></div>
+            </div>
+            <div class="chapter-nav-label">Chapter 3 of 4</div>
         </div>
 
         <div class="game-area">
