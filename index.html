@@ -1635,6 +1635,583 @@
         .save-indicator .reset-link:hover {
             color: #ff4757;
         }
+        /* ============================================
+           CINEMATIC ANIMATION OVERLAYS
+           ============================================ */
+
+        /* --- Shared overlay bases --- */
+        .cinematic-overlay-ocean {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 200;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .cinematic-overlay-full {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        /* --- 1. DEPLOY COLLECTION NET --- */
+        .net-svg {
+            position: absolute;
+            left: 50%; top: -60%;
+            transform: translateX(-50%);
+            width: 60%; height: 70%;
+            animation: netDescend 3.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+                       netSway 2s ease-in-out infinite;
+        }
+        .net-svg.retracting {
+            animation: netRetract 1.5s cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards,
+                       netSway 2s ease-in-out infinite;
+        }
+        @keyframes netDescend {
+            0%   { top: -60%; }
+            100% { top: 15%; }
+        }
+        @keyframes netRetract {
+            0%   { top: 15%; }
+            100% { top: -70%; }
+        }
+        @keyframes netSway {
+            0%, 100% { transform: translateX(-50%) rotate(-2deg); }
+            50%      { transform: translateX(-50%) rotate(2deg); }
+        }
+        .net-specimen-dot {
+            position: absolute;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            filter: blur(0.5px);
+            animation: dotSwirl 1.5s ease-in-out forwards;
+        }
+        @keyframes dotSwirl {
+            0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+            60%  { opacity: 1; transform: translate(var(--dx), var(--dy)) scale(1.3); }
+            100% { opacity: 0.8; transform: translate(var(--dx), var(--dy)) scale(0.7); }
+        }
+        .net-bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.35);
+            animation: bubbleRiseNet 2.5s ease-out forwards;
+        }
+        @keyframes bubbleRiseNet {
+            0%   { opacity: 0.6; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-180px) scale(0.3); }
+        }
+        .net-result-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #00e5ff;
+            text-shadow: 0 0 20px rgba(0,229,255,0.8), 0 0 40px rgba(0,229,255,0.4);
+            opacity: 0;
+            animation: flashText 1.2s ease-out 3.8s forwards;
+            white-space: nowrap;
+        }
+        @keyframes flashText {
+            0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            30%  { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* --- 2. DEEP SEA DIVE --- */
+        .dive-darkness {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, #020818 0%, #040d1f 50%, #000508 100%);
+            opacity: 0;
+            animation: diveDown 2.5s ease-in forwards;
+        }
+        .dive-darkness.surfacing {
+            animation: diveSurface 2s ease-out forwards;
+        }
+        @keyframes diveDown {
+            0%   { opacity: 0; }
+            100% { opacity: 0.92; }
+        }
+        @keyframes diveSurface {
+            0%   { opacity: 0.92; }
+            100% { opacity: 0; }
+        }
+        .dive-bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.25);
+            border: 1px solid rgba(255,255,255,0.15);
+            animation: diveBubbleRise var(--dur) ease-out forwards;
+            animation-delay: var(--delay);
+            opacity: 0;
+        }
+        @keyframes diveBubbleRise {
+            0%   { opacity: 0.5; transform: translateY(0) scale(1); }
+            80%  { opacity: 0.3; }
+            100% { opacity: 0; transform: translateY(calc(-100vh)) scale(0.2); }
+        }
+        .bioluminescent-coral {
+            position: absolute;
+            bottom: 10%;
+            opacity: 0;
+            animation: coralAppear 1s ease-out forwards, coralPulse 2s ease-in-out infinite 1s;
+        }
+        @keyframes coralAppear {
+            0%   { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 0.85; transform: scale(1); }
+        }
+        @keyframes coralPulse {
+            0%, 100% { filter: brightness(1) drop-shadow(0 0 8px var(--glow)); }
+            50%      { filter: brightness(1.4) drop-shadow(0 0 18px var(--glow)); }
+        }
+        .deep-fish {
+            position: absolute;
+            opacity: 0;
+            animation: fishSwim var(--dur) linear forwards;
+            animation-delay: var(--delay);
+        }
+        @keyframes fishSwim {
+            0%   { opacity: 0; transform: translateX(-80px); }
+            10%  { opacity: 0.8; }
+            90%  { opacity: 0.8; }
+            100% { opacity: 0; transform: translateX(calc(100vw + 80px)); }
+        }
+        .marine-snow {
+            position: absolute;
+            width: 2px; height: 2px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 50%;
+            animation: snowDrift var(--dur) linear infinite;
+            animation-delay: var(--delay);
+        }
+        @keyframes snowDrift {
+            0%   { transform: translateY(-20px) translateX(0); opacity: 0.5; }
+            100% { transform: translateY(400px) translateX(20px); opacity: 0; }
+        }
+        .depth-readout {
+            position: absolute;
+            bottom: 15px; right: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: #00e5ff;
+            text-shadow: 0 0 8px rgba(0,229,255,0.6);
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out 1s forwards;
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* --- 3. DNA SEQUENCING --- */
+        .seq-overlay {
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .seq-scanlines {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 65, 0.03) 2px,
+                rgba(0, 255, 65, 0.03) 4px
+            );
+            animation: crtFlicker 0.15s infinite;
+            pointer-events: none;
+        }
+        @keyframes crtFlicker {
+            0%, 100% { opacity: 1; }
+            50%      { opacity: 0.97; }
+        }
+        .seq-helix-container {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%; height: 200px;
+        }
+        .seq-vial {
+            position: absolute;
+            left: 5%; top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            animation: vialSlideIn 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+        }
+        @keyframes vialSlideIn {
+            0%   { opacity: 0; transform: translateY(-50%) translateX(-40px); }
+            100% { opacity: 1; transform: translateY(-50%) translateX(0); }
+        }
+        .seq-machine {
+            position: absolute;
+            left: 18%; top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out 0.8s forwards;
+        }
+        .seq-led {
+            display: inline-block;
+            width: 4px; height: 4px;
+            border-radius: 50%;
+            margin: 2px;
+            animation: ledBlink 0.6s ease-in-out infinite alternate;
+        }
+        @keyframes ledBlink {
+            0%   { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        .seq-readout {
+            position: absolute;
+            right: 5%; top: 20%;
+            width: 28%;
+            height: 60%;
+            font-family: 'Courier New', monospace;
+            font-size: 0.7em;
+            color: #00ff41;
+            overflow: hidden;
+            text-shadow: 0 0 6px rgba(0,255,65,0.5);
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out 1s forwards;
+            line-height: 1.4;
+        }
+        .seq-readout-scroll {
+            animation: scrollBases 3.5s linear forwards;
+        }
+        @keyframes scrollBases {
+            0%   { transform: translateY(100%); }
+            100% { transform: translateY(-100%); }
+        }
+        .seq-progress {
+            position: absolute;
+            bottom: 12%; left: 10%; right: 10%;
+            height: 6px;
+            background: rgba(0,255,65,0.15);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .seq-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00ff41, #00e5ff);
+            border-radius: 3px;
+            animation: seqFill 3.5s linear forwards;
+            box-shadow: 0 0 10px rgba(0,255,65,0.6);
+        }
+        @keyframes seqFill {
+            0%   { width: 0%; }
+            100% { width: 100%; }
+        }
+        .seq-complete-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2em;
+            font-weight: bold;
+            color: #fff;
+            background: rgba(0,255,65,0.25);
+            padding: 15px 40px;
+            border-radius: 4px;
+            text-shadow: 0 0 20px rgba(0,255,65,0.8);
+            opacity: 0;
+            animation: seqFlash 0.6s ease-out 3.5s forwards;
+        }
+        @keyframes seqFlash {
+            0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+            50%  { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        .seq-scan-beam {
+            position: absolute;
+            left: 18%; top: 30%;
+            width: 120px; height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff41, transparent);
+            opacity: 0;
+            animation: scanBeam 0.8s ease-in-out infinite 1s;
+        }
+        @keyframes scanBeam {
+            0%, 100% { opacity: 0; transform: translateY(0); }
+            50%      { opacity: 0.8; transform: translateY(60px); }
+        }
+
+        /* --- 4. PUBLISH RESEARCH PAPER --- */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap');
+
+        .pub-overlay {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.7);
+        }
+        .pub-journal {
+            width: 380px;
+            max-width: 90vw;
+            background: #fdf6e8;
+            border-radius: 4px;
+            padding: 30px 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,0,0,0.1);
+            transform: translateX(110vw);
+            animation: journalSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+            position: relative;
+            color: #1a1a1a;
+            transition: transform 0.3s ease;
+            pointer-events: auto;
+        }
+        .pub-journal:hover {
+            transform: perspective(800px) rotateY(-3deg) scale(1.01);
+        }
+        .pub-journal.sliding-out {
+            animation: journalSlideOut 0.8s cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
+        }
+        @keyframes journalSlideIn {
+            0%   { transform: translateX(110vw) rotate(3deg); }
+            100% { transform: translateX(0) rotate(0deg); }
+        }
+        @keyframes journalSlideOut {
+            0%   { transform: translateX(0) rotate(0deg); }
+            100% { transform: translateX(110vw) rotate(3deg); }
+        }
+        .pub-journal-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.6em;
+            font-weight: 900;
+            color: #8b0000;
+            text-align: center;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            border-bottom: 3px solid #8b0000;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        .pub-headline {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.05em;
+            font-weight: 700;
+            color: #1a1a1a;
+            text-align: center;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+        .pub-illustration {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(180deg, #87ceeb 0%, #2e6b9e 60%, #1a3a5c 100%);
+            border-radius: 3px;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        .pub-meta {
+            font-size: 0.65em;
+            color: #666;
+            text-align: center;
+            font-family: Georgia, serif;
+            font-style: italic;
+        }
+        .pub-stamp {
+            position: absolute;
+            top: 15px; right: -8px;
+            width: 65px; height: 65px;
+            border-radius: 50%;
+            border: 3px solid #b8860b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.5em;
+            font-weight: bold;
+            color: #b8860b;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #ffd700, #daa520, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transform: rotate(15deg);
+            line-height: 1.2;
+        }
+        .pub-stamp::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            border: 2px dashed #daa520;
+        }
+        .confetti-piece {
+            position: fixed;
+            width: 8px; height: 14px;
+            z-index: 2001;
+            opacity: 1;
+            pointer-events: none;
+        }
+
+        /* --- CHAPTER COMPLETE UNLOCK SCREEN --- */
+        .chapter-complete-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 3000;
+            background: radial-gradient(ellipse at center, #0a1e36 0%, #000 70%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            animation: chapterFadeIn 1.5s ease-out forwards;
+            overflow: hidden;
+        }
+        @keyframes chapterFadeIn {
+            0%   { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .chapter-complete-stars {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+        }
+        .chapter-star {
+            position: absolute;
+            width: 2px; height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            animation: starTwinkle 2s ease-in-out infinite;
+        }
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        .chapter-complete-badge {
+            width: 120px; height: 120px;
+            border: 3px solid #ffd700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            margin-bottom: 25px;
+            background: radial-gradient(circle, rgba(255,215,0,0.15), transparent);
+            box-shadow: 0 0 40px rgba(255,215,0,0.3), inset 0 0 20px rgba(255,215,0,0.1);
+            opacity: 0;
+            animation: badgePop 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+        }
+        @keyframes badgePop {
+            0%   { opacity: 0; transform: scale(0.3) rotate(-20deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+        .chapter-complete-title {
+            font-size: 2.6em;
+            font-weight: 100;
+            letter-spacing: 10px;
+            text-transform: uppercase;
+            color: #ffd700;
+            text-shadow: 0 0 30px rgba(255,215,0,0.5);
+            margin-bottom: 8px;
+            opacity: 0;
+            animation: chapterTextUp 1s ease-out 1.2s forwards;
+        }
+        .chapter-complete-subtitle {
+            font-size: 1.1em;
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 35px;
+            opacity: 0;
+            animation: chapterTextUp 1s ease-out 1.5s forwards;
+        }
+        @keyframes chapterTextUp {
+            0%   { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .chapter-stats {
+            display: flex;
+            gap: 35px;
+            margin-bottom: 35px;
+            opacity: 0;
+            animation: chapterTextUp 1s ease-out 2s forwards;
+        }
+        .chapter-stat {
+            text-align: center;
+        }
+        .chapter-stat-value {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #00e5ff;
+            text-shadow: 0 0 15px rgba(0,229,255,0.5);
+        }
+        .chapter-stat-label {
+            font-size: 0.75em;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            margin-top: 4px;
+        }
+        .chapter-venter-quote {
+            max-width: 500px;
+            text-align: center;
+            font-style: italic;
+            font-size: 1em;
+            color: rgba(255,255,255,0.65);
+            line-height: 1.6;
+            margin-bottom: 35px;
+            opacity: 0;
+            animation: chapterTextUp 1s ease-out 2.5s forwards;
+        }
+        .chapter-venter-quote strong {
+            color: #ffd700;
+            font-style: normal;
+        }
+        .chapter-next-btn {
+            padding: 16px 40px;
+            font-size: 1.1em;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #000;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 0 30px rgba(255,215,0,0.4), 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            opacity: 0;
+            animation: chapterTextUp 1s ease-out 3s forwards, chapterBtnGlow 2s ease-in-out infinite 3s;
+            pointer-events: auto;
+        }
+        .chapter-next-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(255,215,0,0.6), 0 6px 20px rgba(0,0,0,0.4);
+        }
+        @keyframes chapterBtnGlow {
+            0%, 100% { box-shadow: 0 0 30px rgba(255,215,0,0.4), 0 4px 15px rgba(0,0,0,0.3); }
+            50%      { box-shadow: 0 0 50px rgba(255,215,0,0.7), 0 4px 15px rgba(0,0,0,0.3); }
+        }
+        .chapter-continue-small {
+            margin-top: 15px;
+            font-size: 0.8em;
+            color: rgba(255,255,255,0.35);
+            cursor: pointer;
+            opacity: 0;
+            animation: chapterTextUp 1s ease-out 3.3s forwards;
+            pointer-events: auto;
+        }
+        .chapter-continue-small:hover {
+            color: rgba(255,255,255,0.7);
+        }
+        .chapter-wave {
+            position: absolute;
+            bottom: 0; left: 0; width: 200%; height: 80px;
+            background: linear-gradient(0deg, rgba(0,229,255,0.08) 0%, transparent 100%);
+            animation: chapterWave 8s linear infinite;
+        }
+        @keyframes chapterWave {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
     </style>
 </head>
 <body>
@@ -2222,7 +2799,8 @@
             publicationPenalty: 0,
             synthetics: [],
             synbioUnlocked: false,
-            selectedSynbioIds: []
+            selectedSynbioIds: [],
+            ch1Complete: false
         };
 
         const locations = [
@@ -2528,6 +3106,14 @@
                 unlockText);
 
             updateDisplay();
+
+            // Check for Chapter 1 completion (3 Grand Challenges solved)
+            if (gameState.challengesCompleted >= 3 && !gameState.ch1Complete) {
+                gameState.ch1Complete = true;
+                saveGame();
+                // Delay so the Grand Challenge popup shows first
+                setTimeout(() => showChapterComplete(), 3000);
+            }
         }
 
         // ============ Rival Expeditions ============
@@ -2724,6 +3310,7 @@
                     publicationPenalty: gameState.publicationPenalty,
                     synthetics:         gameState.synthetics,
                     synbioUnlocked:     gameState.synbioUnlocked,
+                    ch1Complete:        gameState.ch1Complete,
                     savedAt:            Date.now()
                 };
                 localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
@@ -2909,7 +3496,8 @@
                     createSpecimen();
                 }, i * 200);
             }
-            
+
+            showCinematicOverlay('net');
             updateDisplay();
         }
 
@@ -2958,7 +3546,9 @@
                 showPopup('Insufficient Funding', 'DNA sequencing requires $50,000. Seek additional funding!');
                 return;
             }
-            
+
+            showCinematicOverlay('sequence');
+
             gameState.funding -= 50000;
             
             // Show sequencer machine
@@ -3058,7 +3648,8 @@
                 showPopup('Insufficient Funding', 'Deep sea exploration requires $75,000 for specialized equipment.');
                 return;
             }
-            
+
+            showCinematicOverlay('dive');
             gameState.funding -= 75000;
             gameState.depth = Math.floor(Math.random() * 2000) + 500;
             gameState.temperature = Math.max(gameState.temperature - 15, 2);
@@ -3125,6 +3716,7 @@
             // Publishing relieves some of the scoop pressure
             gameState.publicationPenalty = Math.max(0, gameState.publicationPenalty - 0.3);
 
+            showCinematicOverlay('publish');
             showPopup('Research Published!',
                 `✅ Your groundbreaking research has been published in Nature! 
                 Grant funding received: $${grantAmount.toLocaleString()}
@@ -3567,6 +4159,549 @@
 
         // Rival expeditions advance every 8 seconds
         setInterval(tickRivals, 8000);
+
+        /* ============================================
+           CHAPTER COMPLETE UNLOCK SCREEN
+           ============================================ */
+
+        function showChapterComplete() {
+            const overlay = document.createElement('div');
+            overlay.className = 'chapter-complete-overlay';
+
+            // Starfield background
+            const starsDiv = document.createElement('div');
+            starsDiv.className = 'chapter-complete-stars';
+            for (let i = 0; i < 80; i++) {
+                const star = document.createElement('div');
+                star.className = 'chapter-star';
+                star.style.left = (Math.random() * 100) + '%';
+                star.style.top = (Math.random() * 100) + '%';
+                star.style.animationDelay = (Math.random() * 2) + 's';
+                star.style.width = star.style.height = (Math.random() * 2 + 1) + 'px';
+                starsDiv.appendChild(star);
+            }
+            overlay.appendChild(starsDiv);
+
+            // Slow wave at bottom
+            const wave = document.createElement('div');
+            wave.className = 'chapter-wave';
+            overlay.appendChild(wave);
+
+            // Badge
+            const badge = document.createElement('div');
+            badge.className = 'chapter-complete-badge';
+            badge.textContent = '\u2693'; // anchor
+            overlay.appendChild(badge);
+
+            // Title
+            const title = document.createElement('div');
+            title.className = 'chapter-complete-title';
+            title.textContent = 'CHAPTER 1 COMPLETE';
+            overlay.appendChild(title);
+
+            // Subtitle
+            const subtitle = document.createElement('div');
+            subtitle.className = 'chapter-complete-subtitle';
+            subtitle.textContent = 'Voyage of the Sorcerer II';
+            overlay.appendChild(subtitle);
+
+            // Stats
+            const stats = document.createElement('div');
+            stats.className = 'chapter-stats';
+            const statData = [
+                { value: gameState.speciesFound, label: 'Species Found' },
+                { value: gameState.genesSequenced.toLocaleString(), label: 'Genes Sequenced' },
+                { value: gameState.challengesCompleted, label: 'Challenges Solved' },
+                { value: gameState.papersPublished, label: 'Papers Published' }
+            ];
+            statData.forEach(s => {
+                const stat = document.createElement('div');
+                stat.className = 'chapter-stat';
+                stat.innerHTML = `<div class="chapter-stat-value">${s.value}</div><div class="chapter-stat-label">${s.label}</div>`;
+                stats.appendChild(stat);
+            });
+            overlay.appendChild(stats);
+
+            // Venter quote
+            const quote = document.createElement('div');
+            quote.className = 'chapter-venter-quote';
+            quote.innerHTML = `"The ocean was just the beginning. Every genome we decoded out there is a blueprint for something far greater. Now we turn the sequencer on ourselves. <strong>The human genome is the next frontier.</strong>"<br><br>— Dr. Craig Venter`;
+            overlay.appendChild(quote);
+
+            // Next chapter button
+            const btn = document.createElement('a');
+            btn.className = 'chapter-next-btn';
+            btn.href = 'chapter2.html';
+            btn.textContent = 'Begin Chapter 2 \u2192';
+            overlay.appendChild(btn);
+
+            // Continue playing option
+            const cont = document.createElement('div');
+            cont.className = 'chapter-continue-small';
+            cont.textContent = 'or continue exploring the ocean';
+            cont.onclick = () => overlay.remove();
+            overlay.appendChild(cont);
+
+            // Save completion flag for cross-chapter detection
+            try {
+                localStorage.setItem('sorcerer2.ch1.complete', JSON.stringify({
+                    speciesFound: gameState.speciesFound,
+                    genesSequenced: gameState.genesSequenced,
+                    challengesCompleted: gameState.challengesCompleted,
+                    specimens: gameState.specimens,
+                    completedAt: Date.now()
+                }));
+            } catch (e) { /* ignore */ }
+
+            document.body.appendChild(overlay);
+        }
+
+        // Show "Continue to Ch2" button on load if chapter was already completed
+        (function checkCh1ReturnVisit() {
+            if (gameState.ch1Complete) {
+                setTimeout(() => {
+                    const existing = document.getElementById('ch2-continue-banner');
+                    if (existing) return;
+                    const banner = document.createElement('div');
+                    banner.id = 'ch2-continue-banner';
+                    banner.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:500;background:linear-gradient(135deg,#ffd700,#ffaa00);color:#000;padding:12px 24px;border-radius:30px;font-weight:bold;font-size:0.9em;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.3);letter-spacing:1px;pointer-events:auto;';
+                    banner.textContent = 'Continue to Chapter 2 \u2192';
+                    banner.onclick = () => { window.location.href = 'chapter2.html'; };
+                    document.body.appendChild(banner);
+                }, 2000);
+            }
+        })();
+
+        /* ============================================
+           CINEMATIC ANIMATION OVERLAYS — JS
+           ============================================ */
+
+        function showCinematicOverlay(type) {
+            switch(type) {
+                case 'net':    return cinematicNet();
+                case 'dive':   return cinematicDive();
+                case 'sequence': return cinematicSequence();
+                case 'publish': return cinematicPublish();
+            }
+        }
+
+        // --- 1. DEPLOY COLLECTION NET ---
+        function cinematicNet() {
+            const ocean = document.querySelector('.ocean-view');
+            if (!ocean) return;
+            const overlay = document.createElement('div');
+            overlay.className = 'cinematic-overlay-ocean';
+
+            // Net SVG
+            const netSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            netSvg.setAttribute('class', 'net-svg');
+            netSvg.setAttribute('viewBox', '0 0 200 200');
+            netSvg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+            // Diamond grid net pattern
+            let netPath = '';
+            for (let row = 0; row < 10; row++) {
+                for (let col = 0; col < 10; col++) {
+                    const x = col * 20 + 10;
+                    const y = row * 20 + 10;
+                    netPath += `M${x},${y-8} L${x+8},${y} L${x},${y+8} L${x-8},${y} Z `;
+                }
+            }
+            netSvg.innerHTML = `<path d="${netPath}" fill="none" stroke="rgba(200,220,240,0.6)" stroke-width="0.8"/>`;
+            overlay.appendChild(netSvg);
+
+            // Bubbles behind net
+            for (let i = 0; i < 12; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'net-bubble';
+                const size = Math.random() * 8 + 3;
+                bubble.style.width = size + 'px';
+                bubble.style.height = size + 'px';
+                bubble.style.left = (Math.random() * 80 + 10) + '%';
+                bubble.style.bottom = (Math.random() * 30) + '%';
+                bubble.style.animationDelay = (Math.random() * 2) + 's';
+                overlay.appendChild(bubble);
+            }
+
+            // Specimen dots that get caught
+            const dotColors = ['#ff69b4', '#00e5ff', '#ffd700', '#ff69b4', '#00e5ff', '#7cfc00', '#ff6347', '#da70d6'];
+            for (let i = 0; i < 8; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'net-specimen-dot';
+                dot.style.background = dotColors[i];
+                dot.style.boxShadow = `0 0 8px ${dotColors[i]}`;
+                dot.style.left = (Math.random() * 60 + 20) + '%';
+                dot.style.top = (Math.random() * 50 + 25) + '%';
+                dot.style.setProperty('--dx', (Math.random() * 40 - 20) + 'px');
+                dot.style.setProperty('--dy', (Math.random() * -30 - 10) + 'px');
+                dot.style.animationDelay = (1.5 + Math.random() * 1.5) + 's';
+                overlay.appendChild(dot);
+            }
+
+            // Result text
+            const numCaught = document.querySelectorAll('.specimen').length || Math.floor(Math.random() * 6) + 3;
+            const resultText = document.createElement('div');
+            resultText.className = 'net-result-text';
+            resultText.textContent = `NET RETRIEVED — ${numCaught} SPECIMENS CAPTURED`;
+            overlay.appendChild(resultText);
+
+            ocean.appendChild(overlay);
+
+            // Retract net after 3.5s
+            setTimeout(() => {
+                netSvg.classList.add('retracting');
+            }, 3500);
+
+            // Remove overlay after 5s
+            setTimeout(() => {
+                if (overlay.parentNode) overlay.remove();
+            }, 5200);
+        }
+
+        // --- 2. DEEP SEA DIVE ---
+        function cinematicDive() {
+            const ocean = document.querySelector('.ocean-view');
+            if (!ocean) return;
+
+            {
+                const overlay = document.createElement('div');
+                overlay.className = 'cinematic-overlay-ocean';
+
+                // Darkness layer
+                const darkness = document.createElement('div');
+                darkness.className = 'dive-darkness';
+                overlay.appendChild(darkness);
+
+                // Rising bubbles (submersion)
+                for (let i = 0; i < 30; i++) {
+                    const bubble = document.createElement('div');
+                    bubble.className = 'dive-bubble';
+                    const size = Math.random() * 10 + 3;
+                    bubble.style.width = size + 'px';
+                    bubble.style.height = size + 'px';
+                    bubble.style.left = (Math.random() * 90 + 5) + '%';
+                    bubble.style.bottom = (-Math.random() * 20) + '%';
+                    bubble.style.setProperty('--dur', (2 + Math.random() * 2) + 's');
+                    bubble.style.setProperty('--delay', (Math.random() * 1.5) + 's');
+                    overlay.appendChild(bubble);
+                }
+
+                // Bioluminescent corals (appear after descent)
+                const coralColors = [
+                    { fill: '#00e5ff', glow: 'rgba(0,229,255,0.6)' },
+                    { fill: '#9c27b0', glow: 'rgba(156,39,176,0.6)' },
+                    { fill: '#00bfa5', glow: 'rgba(0,191,165,0.6)' }
+                ];
+                const coralPositions = [
+                    { left: '3%', bottom: '5%', scale: 1 },
+                    { left: '10%', bottom: '8%', scale: 0.7 },
+                    { right: '5%', bottom: '5%', scale: 0.9 },
+                    { right: '12%', bottom: '10%', scale: 0.6 }
+                ];
+                coralPositions.forEach((pos, i) => {
+                    const coral = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    coral.setAttribute('class', 'bioluminescent-coral');
+                    coral.setAttribute('width', '60');
+                    coral.setAttribute('height', '80');
+                    coral.setAttribute('viewBox', '0 0 60 80');
+                    const c = coralColors[i % coralColors.length];
+                    coral.style.setProperty('--glow', c.glow);
+                    coral.style.animationDelay = (2.5 + i * 0.2) + 's, ' + (3.5 + i * 0.2) + 's';
+                    coral.style.bottom = pos.bottom;
+                    if (pos.left) coral.style.left = pos.left;
+                    if (pos.right) coral.style.right = pos.right;
+                    coral.style.transform = `scale(${pos.scale})`;
+                    coral.innerHTML = `<path d="M30 80 Q25 60 15 45 Q5 35 10 20 Q15 5 25 15 Q30 25 30 10 Q30 25 35 15 Q45 5 50 20 Q55 35 45 45 Q35 60 30 80Z" fill="${c.fill}" opacity="0.7"/>`;
+                    overlay.appendChild(coral);
+                });
+
+                // Swimming fish
+                const fishData = [
+                    { top: '30%', dur: 4, delay: 2.8, color: '#00e5ff' },
+                    { top: '50%', dur: 5, delay: 3.2, color: '#ff69b4' },
+                    { top: '65%', dur: 3.5, delay: 3, color: '#ffd700' },
+                    { top: '40%', dur: 6, delay: 3.5, color: '#7cfc00' }
+                ];
+                fishData.forEach(f => {
+                    const fish = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    fish.setAttribute('class', 'deep-fish');
+                    fish.setAttribute('width', '40');
+                    fish.setAttribute('height', '20');
+                    fish.setAttribute('viewBox', '0 0 40 20');
+                    fish.style.top = f.top;
+                    fish.style.left = '-40px';
+                    fish.style.setProperty('--dur', f.dur + 's');
+                    fish.style.setProperty('--delay', f.delay + 's');
+                    fish.innerHTML = `<path d="M0 10 Q10 0 25 5 L35 0 L35 20 L25 15 Q10 20 0 10Z" fill="${f.color}" opacity="0.8"/><circle cx="22" cy="9" r="1.5" fill="#000"/>`;
+                    overlay.appendChild(fish);
+                });
+
+                // Marine snow / plankton particles
+                for (let i = 0; i < 25; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'marine-snow';
+                    particle.style.left = (Math.random() * 100) + '%';
+                    particle.style.top = (Math.random() * 30) + '%';
+                    particle.style.setProperty('--dur', (3 + Math.random() * 4) + 's');
+                    particle.style.setProperty('--delay', (2 + Math.random() * 2) + 's');
+                    overlay.appendChild(particle);
+                }
+
+                // Depth readout
+                const depthDiv = document.createElement('div');
+                depthDiv.className = 'depth-readout';
+                depthDiv.textContent = 'DEPTH: 0m';
+                overlay.appendChild(depthDiv);
+
+                ocean.appendChild(overlay);
+
+                // Animate depth counter
+                const targetDepth = gameState.depth || 1200;
+                let currentDepthDisplay = 0;
+                const depthInterval = setInterval(() => {
+                    currentDepthDisplay += Math.floor(targetDepth / 30);
+                    if (currentDepthDisplay >= targetDepth) {
+                        currentDepthDisplay = targetDepth;
+                        clearInterval(depthInterval);
+                    }
+                    depthDiv.textContent = `DEPTH: ${currentDepthDisplay}m`;
+                }, 100);
+
+                // Surface after 4s
+                setTimeout(() => {
+                    darkness.classList.add('surfacing');
+                }, 4000);
+
+                // Remove after 6s
+                setTimeout(() => {
+                    if (overlay.parentNode) overlay.remove();
+                }, 6000);
+            }
+        }
+
+        // --- 3. DNA SEQUENCING ---
+        function cinematicSequence() {
+            const overlay = document.createElement('div');
+            overlay.className = 'cinematic-overlay-full seq-overlay';
+
+            // CRT scanlines
+            const scanlines = document.createElement('div');
+            scanlines.className = 'seq-scanlines';
+            overlay.appendChild(scanlines);
+
+            // DNA helix SVG
+            const helixContainer = document.createElement('div');
+            helixContainer.className = 'seq-helix-container';
+            const helixSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            helixSvg.setAttribute('width', '100%');
+            helixSvg.setAttribute('height', '100%');
+            helixSvg.setAttribute('viewBox', '0 0 800 200');
+            let strand1 = 'M0,100';
+            let strand2 = 'M0,100';
+            let rungs = '';
+            for (let x = 0; x <= 800; x += 5) {
+                const y1 = 100 + Math.sin(x * 0.03) * 60;
+                const y2 = 100 + Math.sin(x * 0.03 + Math.PI) * 60;
+                strand1 += ` L${x},${y1}`;
+                strand2 += ` L${x},${y2}`;
+                if (x % 25 === 0) {
+                    rungs += `<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="rgba(0,255,65,0.25)" stroke-width="1"/>`;
+                }
+            }
+            helixSvg.innerHTML = `
+                ${rungs}
+                <path d="${strand1}" fill="none" stroke="#00ff41" stroke-width="2" opacity="0.8">
+                    <animateTransform attributeName="transform" type="translate" values="-100,0;0,0;100,0" dur="4s" repeatCount="1"/>
+                </path>
+                <path d="${strand2}" fill="none" stroke="#00e5ff" stroke-width="2" opacity="0.8">
+                    <animateTransform attributeName="transform" type="translate" values="-100,0;0,0;100,0" dur="4s" repeatCount="1"/>
+                </path>
+            `;
+            helixContainer.appendChild(helixSvg);
+            overlay.appendChild(helixContainer);
+
+            // Specimen vial
+            const vial = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            vial.setAttribute('class', 'seq-vial');
+            vial.setAttribute('width', '40');
+            vial.setAttribute('height', '80');
+            vial.setAttribute('viewBox', '0 0 40 80');
+            vial.innerHTML = `
+                <rect x="10" y="5" width="20" height="55" rx="0" ry="0" fill="none" stroke="#00ff41" stroke-width="1.5"/>
+                <rect x="10" y="55" width="20" height="10" rx="10" ry="10" fill="none" stroke="#00ff41" stroke-width="1.5"/>
+                <rect x="12" y="25" width="16" height="38" rx="0" fill="#00e5ff" opacity="0.3">
+                    <animate attributeName="opacity" values="0.3;0.6;0.3" dur="1.5s" repeatCount="indefinite"/>
+                </rect>
+                <rect x="8" y="2" width="24" height="6" rx="2" fill="#00ff41" opacity="0.5"/>
+            `;
+            overlay.appendChild(vial);
+
+            // Sequencer machine
+            const machine = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            machine.setAttribute('class', 'seq-machine');
+            machine.setAttribute('width', '120');
+            machine.setAttribute('height', '100');
+            machine.setAttribute('viewBox', '0 0 120 100');
+            let leds = '';
+            for (let i = 0; i < 8; i++) {
+                const color = i % 2 === 0 ? '#ff0000' : '#00ff41';
+                leds += `<circle cx="${15 + i * 12}" cy="15" r="3" fill="${color}" opacity="0.4">
+                    <animate attributeName="opacity" values="0.4;1;0.4" dur="${0.4 + i * 0.1}s" repeatCount="indefinite"/>
+                </circle>`;
+            }
+            machine.innerHTML = `
+                <rect x="5" y="5" width="110" height="90" rx="4" fill="none" stroke="#00ff41" stroke-width="1.5"/>
+                <rect x="10" y="30" width="100" height="3" fill="#00ff41" opacity="0.15"/>
+                <text x="60" y="80" text-anchor="middle" fill="#00ff41" font-size="8" font-family="monospace" opacity="0.6">SEQUENCER v3.7</text>
+                ${leds}
+            `;
+            overlay.appendChild(machine);
+
+            // Scan beam
+            const beam = document.createElement('div');
+            beam.className = 'seq-scan-beam';
+            overlay.appendChild(beam);
+
+            // Base pair readout
+            const readout = document.createElement('div');
+            readout.className = 'seq-readout';
+            const bases = 'ATCG';
+            let readoutContent = '';
+            for (let i = 0; i < 200; i++) {
+                readoutContent += bases[Math.floor(Math.random() * 4)];
+                if ((i + 1) % 4 === 0) readoutContent += ' ';
+                if ((i + 1) % 40 === 0) readoutContent += '\n';
+            }
+            const scrollDiv = document.createElement('div');
+            scrollDiv.className = 'seq-readout-scroll';
+            scrollDiv.style.whiteSpace = 'pre';
+            scrollDiv.textContent = readoutContent;
+            readout.appendChild(scrollDiv);
+            overlay.appendChild(readout);
+
+            // Progress bar
+            const progressContainer = document.createElement('div');
+            progressContainer.className = 'seq-progress';
+            const progressBar = document.createElement('div');
+            progressBar.className = 'seq-progress-bar';
+            progressContainer.appendChild(progressBar);
+            overlay.appendChild(progressContainer);
+
+            // Complete text (shows after 3.5s via CSS)
+            const completeText = document.createElement('div');
+            completeText.className = 'seq-complete-text';
+            completeText.textContent = 'SEQUENCING COMPLETE';
+            overlay.appendChild(completeText);
+
+            document.body.appendChild(overlay);
+
+            setTimeout(() => {
+                if (overlay.parentNode) overlay.remove();
+            }, 4500);
+        }
+
+        // --- 4. PUBLISH RESEARCH PAPER ---
+        function cinematicPublish() {
+            const overlay = document.createElement('div');
+            overlay.className = 'cinematic-overlay-full pub-overlay';
+
+            // Journal cover
+            const journal = document.createElement('div');
+            journal.className = 'pub-journal';
+
+            const speciesCount = gameState.speciesFound || 1;
+
+            journal.innerHTML = `
+                <div class="pub-stamp">PEER<br>REVIEWED</div>
+                <div class="pub-journal-title">Nature Ocean Genomics</div>
+                <div class="pub-headline">
+                    SORCERER II EXPEDITION DISCOVERS ${speciesCount} NEW SPECIES — A GENOMIC REVOLUTION
+                </div>
+                <div class="pub-illustration">
+                    <svg width="100%" height="100%" viewBox="0 0 380 120" preserveAspectRatio="xMidYMid meet">
+                        <!-- Water -->
+                        <rect width="380" height="120" fill="url(#pubWater)"/>
+                        <defs>
+                            <linearGradient id="pubWater" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#87ceeb"/>
+                                <stop offset="60%" stop-color="#2e6b9e"/>
+                                <stop offset="100%" stop-color="#1a3a5c"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Simple boat -->
+                        <path d="M150,55 L160,45 L165,45 L165,55 L220,55 L215,65 L148,65 Z" fill="#fff" stroke="#aaa" stroke-width="0.5"/>
+                        <line x1="175" y1="45" x2="175" y2="25" stroke="#666" stroke-width="1.5"/>
+                        <polygon points="176,27 176,45 200,38" fill="#fff" stroke="#ddd" stroke-width="0.3"/>
+                        <!-- DNA helix overlay -->
+                        <path d="M50,90 Q100,60 150,90 Q200,120 250,90 Q300,60 350,90" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+                        <path d="M50,90 Q100,120 150,90 Q200,60 250,90 Q300,120 350,90" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                    </svg>
+                </div>
+                <div class="pub-meta">
+                    Vol. ${38 + gameState.papersPublished} &bull; Issue ${Math.floor(Math.random() * 12) + 1} &bull; ${new Date().getFullYear()} &bull; Ocean Genomics Quarterly
+                </div>
+            `;
+            overlay.appendChild(journal);
+
+            document.body.appendChild(overlay);
+
+            // Confetti explosion
+            const confettiColors = ['#ff0000', '#ffd700', '#00e5ff', '#ffffff', '#ff69b4', '#7cfc00', '#ff6347', '#da70d6'];
+            const confettiPieces = [];
+            for (let i = 0; i < 60; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.background = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                piece.style.left = '50%';
+                piece.style.top = '50%';
+                piece.style.width = (Math.random() * 8 + 4) + 'px';
+                piece.style.height = (Math.random() * 14 + 6) + 'px';
+                piece.style.borderRadius = Math.random() > 0.5 ? '2px' : '50%';
+                document.body.appendChild(piece);
+                confettiPieces.push({
+                    el: piece,
+                    x: window.innerWidth / 2,
+                    y: window.innerHeight / 2,
+                    vx: (Math.random() - 0.5) * 16,
+                    vy: (Math.random() - 0.8) * 14,
+                    rotation: Math.random() * 360,
+                    rotSpeed: (Math.random() - 0.5) * 12,
+                    opacity: 1
+                });
+            }
+
+            // Animate confetti with gravity
+            let confettiFrame;
+            function animateConfetti() {
+                let alive = false;
+                confettiPieces.forEach(p => {
+                    p.vy += 0.25; // gravity
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.rotation += p.rotSpeed;
+                    p.opacity -= 0.004;
+                    if (p.opacity > 0) alive = true;
+                    p.el.style.transform = `translate(${p.x - window.innerWidth/2}px, ${p.y - window.innerHeight/2}px) rotate(${p.rotation}deg)`;
+                    p.el.style.opacity = Math.max(0, p.opacity);
+                });
+                if (alive) confettiFrame = requestAnimationFrame(animateConfetti);
+            }
+            // Start confetti after journal lands
+            setTimeout(() => {
+                confettiFrame = requestAnimationFrame(animateConfetti);
+            }, 800);
+
+            // Slide journal out and clean up after 5s
+            setTimeout(() => {
+                journal.classList.add('sliding-out');
+            }, 4200);
+
+            setTimeout(() => {
+                cancelAnimationFrame(confettiFrame);
+                confettiPieces.forEach(p => { if (p.el.parentNode) p.el.remove(); });
+                if (overlay.parentNode) overlay.remove();
+            }, 5200);
+        }
+
     </script>
 </body>
 </html>

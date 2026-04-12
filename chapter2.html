@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="100-Year Life">
+    <title>The 100-Year Life — Chapter 2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(180deg, #0a0e1a 0%, #111827 100%);
+            color: white;
+            overflow-x: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .game-container {
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ================= Header ================= */
+        .header {
+            text-align: center;
+            padding: 25px 20px;
+            background: linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(10,20,40,0.95) 100%);
+            border-bottom: 2px solid #00e5ff;
+            position: relative;
+        }
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #00e5ff, transparent);
+            box-shadow: 0 0 15px rgba(0,229,255,0.5);
+        }
+
+        .title-chapter {
+            font-size: 0.75em;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: #00e5ff;
+            font-weight: 300;
+            margin-bottom: 4px;
+        }
+
+        .title-main {
+            font-size: 2.8em;
+            font-weight: 100;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            text-shadow: 0 0 30px rgba(0,229,255,0.3);
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            font-size: 0.85em;
+            opacity: 0.6;
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* ================= Game Area ================= */
+        .game-area {
+            display: flex;
+            height: calc(100vh - 130px);
+        }
+
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+                height: auto;
+                min-height: calc(100vh - 110px);
+            }
+            .genome-dashboard {
+                flex: none;
+                height: 50vh;
+                min-height: 300px;
+            }
+            .controls-panel {
+                flex: none;
+                height: auto;
+                max-height: 50vh;
+                overflow-y: auto;
+                padding: 15px;
+            }
+            .header { padding: 15px 10px; }
+            .title-main { font-size: 2em; letter-spacing: 4px; }
+        }
+
+        /* ================= Genome Dashboard (left panel) ================= */
+        .genome-dashboard {
+            flex: 2;
+            background: linear-gradient(180deg, #0a0e1a 0%, #0d1525 40%, #111d33 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Grid overlay */
+        .genome-dashboard::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background:
+                linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        /* Scan line sweep */
+        .scan-line {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0,229,255,0.4), transparent);
+            animation: scanSweep 4s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 5;
+        }
+        @keyframes scanSweep {
+            0%   { top: -2px; opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        /* Human body silhouette area */
+        .body-display {
+            position: absolute;
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            width: 220px; height: 400px;
+            z-index: 2;
+        }
+        .body-silhouette {
+            width: 100%; height: 100%;
+            filter: drop-shadow(0 0 20px rgba(0,229,255,0.15));
+            animation: bodyPulse 6s ease-in-out infinite;
+        }
+        @keyframes bodyPulse {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(0,229,255,0.15)); }
+            50%      { filter: drop-shadow(0 0 35px rgba(0,229,255,0.3)); }
+        }
+
+        /* Floating data points around the body */
+        .body-data-point {
+            position: absolute;
+            font-size: 0.65em;
+            color: rgba(0,229,255,0.7);
+            font-family: 'Courier New', monospace;
+            white-space: nowrap;
+            animation: dataFloat 3s ease-in-out infinite;
+        }
+        @keyframes dataFloat {
+            0%, 100% { transform: translateY(0); opacity: 0.6; }
+            50%      { transform: translateY(-5px); opacity: 1; }
+        }
+
+        /* Dashboard info overlay */
+        .dashboard-info {
+            position: absolute;
+            top: 15px; left: 15px;
+            background: rgba(0,10,20,0.7);
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(0,229,255,0.15);
+            font-size: 0.8em;
+            z-index: 10;
+        }
+        .dashboard-info div {
+            margin-bottom: 4px;
+        }
+        .dashboard-info .label {
+            color: rgba(255,255,255,0.45);
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .dashboard-info .value {
+            color: #00e5ff;
+            font-weight: bold;
+        }
+
+        /* Patient queue markers */
+        .patient-marker {
+            position: absolute;
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            background: rgba(0,229,255,0.6);
+            border: 1px solid #00e5ff;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            animation: patientPulse 2s ease-in-out infinite;
+        }
+        .patient-marker:hover {
+            transform: scale(1.5);
+            box-shadow: 0 0 15px rgba(0,229,255,0.8);
+        }
+        .patient-marker.scanned {
+            background: rgba(0,255,100,0.6);
+            border-color: #00ff64;
+        }
+        .patient-marker.risk-high {
+            background: rgba(255,80,80,0.6);
+            border-color: #ff5050;
+            animation: patientRisk 1.5s ease-in-out infinite;
+        }
+        @keyframes patientPulse {
+            0%, 100% { box-shadow: 0 0 4px rgba(0,229,255,0.3); }
+            50%      { box-shadow: 0 0 10px rgba(0,229,255,0.6); }
+        }
+        @keyframes patientRisk {
+            0%, 100% { box-shadow: 0 0 4px rgba(255,80,80,0.3); }
+            50%      { box-shadow: 0 0 12px rgba(255,80,80,0.7); }
+        }
+
+        /* ================= Controls Panel (right) ================= */
+        .controls-panel {
+            flex: 1;
+            background: rgba(0,5,15,0.6);
+            padding: 20px;
+            overflow-y: auto;
+            border-left: 1px solid rgba(0,229,255,0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(0,229,255,0.05);
+            border: 1px solid rgba(0,229,255,0.12);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+        .stat-card .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #00e5ff;
+            text-shadow: 0 0 10px rgba(0,229,255,0.3);
+        }
+        .stat-card .stat-label {
+            font-size: 0.7em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.45);
+            margin-top: 3px;
+        }
+
+        .stat-card.funding .stat-value { color: #ffd700; }
+        .stat-card.accuracy .stat-value { color: #00ff64; }
+
+        .section-title {
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: rgba(255,255,255,0.4);
+            margin: 20px 0 10px 0;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(0,229,255,0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(0,229,255,0.25);
+            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(0,229,255,0.08), rgba(0,229,255,0.02));
+            color: #fff;
+            font-size: 0.85em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        .btn:hover {
+            background: linear-gradient(135deg, rgba(0,229,255,0.18), rgba(0,229,255,0.06));
+            border-color: rgba(0,229,255,0.5);
+            box-shadow: 0 0 15px rgba(0,229,255,0.15);
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .btn .btn-cost {
+            float: right;
+            color: #ffd700;
+            font-size: 0.9em;
+        }
+
+        /* ================= Grand Challenges ================= */
+        .challenges-panel {
+            margin-top: 15px;
+        }
+        .challenge-card {
+            background: rgba(0,229,255,0.04);
+            border: 1px solid rgba(0,229,255,0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+        .challenge-card .challenge-name {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #00e5ff;
+            margin-bottom: 4px;
+        }
+        .challenge-card .challenge-desc {
+            font-size: 0.75em;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.4;
+        }
+        .challenge-card .challenge-reward {
+            font-size: 0.7em;
+            color: #ffd700;
+            margin-top: 6px;
+        }
+        .challenge-card .challenge-progress {
+            height: 3px;
+            background: rgba(0,229,255,0.1);
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .challenge-card .challenge-progress-bar {
+            height: 100%;
+            background: #00e5ff;
+            border-radius: 2px;
+            transition: width 0.5s;
+        }
+
+        /* ================= Rivals ================= */
+        .rival-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.8em;
+        }
+        .rival-icon {
+            font-size: 1.2em;
+        }
+        .rival-name {
+            flex: 1;
+            font-weight: 500;
+        }
+        .rival-bar {
+            width: 80px; height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .rival-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff5050, #ff8c00);
+            transition: width 0.5s;
+        }
+
+        /* ================= Compound Library (Ch1 imports) ================= */
+        .compound-library {
+            margin-top: 10px;
+        }
+        .compound-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            background: rgba(0,229,255,0.03);
+            border-radius: 6px;
+            margin-bottom: 4px;
+            font-size: 0.75em;
+        }
+        .compound-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #00e5ff;
+        }
+        .compound-dot.processed { background: #00ff64; }
+        .compound-dot.rare { background: #ffd700; }
+
+        /* ================= Craig Venter Avatar (Lab coat) ================= */
+        .venter-avatar {
+            position: absolute;
+            bottom: 15px; right: 15px;
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            border: 2px solid rgba(0,229,255,0.3);
+            background: radial-gradient(circle at 30% 30%, #b57745, #8b5a2b);
+            cursor: pointer;
+            z-index: 20;
+            transition: transform 0.2s, box-shadow 0.2s;
+            overflow: hidden;
+        }
+        .venter-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(0,229,255,0.4);
+        }
+        .venter-avatar svg {
+            width: 100%; height: 100%;
+        }
+
+        /* ================= Popup ================= */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .popup-overlay.active {
+            display: flex;
+        }
+        .popup-box {
+            background: linear-gradient(135deg, #0a1526, #111d33);
+            border: 1px solid rgba(0,229,255,0.3);
+            border-radius: 12px;
+            padding: 25px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(0,229,255,0.1);
+        }
+        .popup-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #00e5ff;
+            margin-bottom: 12px;
+        }
+        .popup-text {
+            font-size: 0.9em;
+            line-height: 1.5;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 18px;
+            white-space: pre-line;
+        }
+        .popup-close {
+            padding: 10px 30px;
+            background: linear-gradient(135deg, #00e5ff, #0090a8);
+            border: none;
+            border-radius: 25px;
+            color: #000;
+            font-weight: bold;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .popup-close:hover {
+            transform: scale(1.05);
+        }
+
+        /* ================= Save indicator ================= */
+        .save-indicator {
+            position: fixed;
+            bottom: 10px; left: 10px;
+            font-size: 0.7em;
+            color: rgba(255,255,255,0.3);
+            z-index: 50;
+        }
+
+        /* ================= DNA Helix decorative ================= */
+        .helix-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.06;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <div class="title-chapter">Chapter Two</div>
+            <h1 class="title-main">THE 100-YEAR LIFE</h1>
+            <div class="subtitle">Human Longevity Inc. &bull; La Jolla, California</div>
+        </div>
+
+        <div class="game-area">
+            <!-- Left: Genome Dashboard -->
+            <div class="genome-dashboard" id="genome-dashboard">
+                <div class="scan-line"></div>
+
+                <!-- Dashboard info overlay -->
+                <div class="dashboard-info">
+                    <div><span class="label">Patient: </span><span class="value" id="patient-name">Awaiting first scan...</span></div>
+                    <div><span class="label">Scan Status: </span><span class="value" id="scan-status">IDLE</span></div>
+                    <div><span class="label">AI Confidence: </span><span class="value" id="ai-confidence">--</span></div>
+                </div>
+
+                <!-- Human body silhouette -->
+                <div class="body-display">
+                    <svg class="body-silhouette" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Head -->
+                        <ellipse cx="100" cy="40" rx="28" ry="32" fill="none" stroke="#00e5ff" stroke-width="1" opacity="0.5"/>
+                        <!-- Neck -->
+                        <rect x="90" y="70" width="20" height="20" rx="5" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.4"/>
+                        <!-- Torso -->
+                        <path d="M60 90 Q60 80 80 80 L120 80 Q140 80 140 90 L145 220 Q145 240 125 240 L75 240 Q55 240 55 220 Z"
+                              fill="none" stroke="#00e5ff" stroke-width="1" opacity="0.5"/>
+                        <!-- Ribcage suggestion -->
+                        <path d="M75 110 Q100 115 125 110" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.25"/>
+                        <path d="M73 125 Q100 130 127 125" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.25"/>
+                        <path d="M72 140 Q100 145 128 140" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.25"/>
+                        <!-- Heart -->
+                        <circle cx="108" cy="130" r="8" fill="rgba(255,80,80,0.15)" stroke="#ff5050" stroke-width="0.8" opacity="0.6">
+                            <animate attributeName="r" values="8;9;8" dur="1s" repeatCount="indefinite"/>
+                        </circle>
+                        <!-- Lungs -->
+                        <ellipse cx="82" cy="135" rx="12" ry="20" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.3"/>
+                        <ellipse cx="118" cy="135" rx="12" ry="20" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.3"/>
+                        <!-- Arms -->
+                        <path d="M60 90 L30 180 L25 240" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.4"/>
+                        <path d="M140 90 L170 180 L175 240" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.4"/>
+                        <!-- Legs -->
+                        <path d="M80 240 L70 340 L65 385" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.4"/>
+                        <path d="M120 240 L130 340 L135 385" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.4"/>
+                        <!-- DNA double helix decorative in torso -->
+                        <g opacity="0.15">
+                            <path d="M90 160 Q100 170 110 160 Q100 150 90 160" fill="none" stroke="#00e5ff" stroke-width="0.8"/>
+                            <path d="M90 175 Q100 185 110 175 Q100 165 90 175" fill="none" stroke="#00e5ff" stroke-width="0.8"/>
+                            <path d="M90 190 Q100 200 110 190 Q100 180 90 190" fill="none" stroke="#00e5ff" stroke-width="0.8"/>
+                        </g>
+                    </svg>
+
+                    <!-- Floating data points -->
+                    <div class="body-data-point" style="top:15%;left:-80px;">BRCA1: Normal</div>
+                    <div class="body-data-point" style="top:35%;right:-90px;animation-delay:0.5s;">TP53: Sequencing...</div>
+                    <div class="body-data-point" style="top:55%;left:-85px;animation-delay:1s;">APOE: e3/e3</div>
+                    <div class="body-data-point" style="top:70%;right:-95px;animation-delay:1.5s;">BMI: Calculating...</div>
+                </div>
+
+                <!-- Patient markers (populated by JS) -->
+                <div id="patient-markers"></div>
+
+                <!-- Venter avatar -->
+                <div class="venter-avatar" onclick="craigSpeaks()" title="Dr. Craig Venter">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Lab coat body -->
+                        <path d="M5 100 L15 65 Q25 55 50 55 Q75 55 85 65 L95 100 Z" fill="#f0f0f0"/>
+                        <path d="M40 55 L42 100" stroke="#ddd" stroke-width="0.5"/>
+                        <path d="M60 55 L58 100" stroke="#ddd" stroke-width="0.5"/>
+                        <!-- Collar -->
+                        <path d="M35 60 L45 55 L50 62 L55 55 L65 60" fill="none" stroke="#ccc" stroke-width="1"/>
+                        <!-- Head -->
+                        <ellipse cx="50" cy="35" rx="20" ry="22" fill="#c98a5a"/>
+                        <!-- Bald shine -->
+                        <ellipse cx="48" cy="20" rx="12" ry="6" fill="#ffe4c4" opacity="0.5"/>
+                        <!-- Eyes -->
+                        <ellipse cx="42" cy="38" rx="2.5" ry="1.5" fill="#fff"/>
+                        <circle cx="42" cy="38" r="1" fill="#2c5d8a"/>
+                        <ellipse cx="58" cy="38" rx="2.5" ry="1.5" fill="#fff"/>
+                        <circle cx="58" cy="38" r="1" fill="#2c5d8a"/>
+                        <!-- Smile -->
+                        <path d="M42 47 Q50 52 58 47" fill="none" stroke="#8b5a2b" stroke-width="0.8"/>
+                        <!-- Glasses -->
+                        <rect x="35" y="34" width="14" height="8" rx="3" fill="none" stroke="#333" stroke-width="0.8"/>
+                        <rect x="51" y="34" width="14" height="8" rx="3" fill="none" stroke="#333" stroke-width="0.8"/>
+                        <line x1="49" y1="38" x2="51" y2="38" stroke="#333" stroke-width="0.6"/>
+                        <!-- Stethoscope hint -->
+                        <path d="M45 60 Q45 70 50 75 Q55 70 55 60" fill="none" stroke="#00e5ff" stroke-width="1"/>
+                        <circle cx="50" cy="77" r="2" fill="#00e5ff"/>
+                        <!-- ID badge -->
+                        <rect x="70" y="68" width="12" height="16" rx="2" fill="#fff" stroke="#00e5ff" stroke-width="0.5"/>
+                        <rect x="72" y="71" width="8" height="2" fill="#00e5ff" opacity="0.4"/>
+                        <rect x="72" y="75" width="8" height="1" fill="#ccc"/>
+                        <rect x="72" y="78" width="8" height="1" fill="#ccc"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Right: Controls -->
+            <div class="controls-panel">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="genomes-sequenced">0</div>
+                        <div class="stat-label">Genomes Sequenced</div>
+                    </div>
+                    <div class="stat-card accuracy">
+                        <div class="stat-value" id="ai-accuracy">50%</div>
+                        <div class="stat-label">AI Accuracy</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="diseases-predicted">0</div>
+                        <div class="stat-label">Diseases Predicted</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="clinics-built">0</div>
+                        <div class="stat-label">Clinics Built</div>
+                    </div>
+                    <div class="stat-card funding">
+                        <div class="stat-value" id="funding">$500,000</div>
+                        <div class="stat-label">Funding</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="patents-filed">0</div>
+                        <div class="stat-label">Patents Filed</div>
+                    </div>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="section-title">Clinic Operations</div>
+                <button class="btn" onclick="sequenceGenome()">
+                    Sequence Patient Genome <span class="btn-cost">$75,000</span>
+                </button>
+                <button class="btn" onclick="trainAI()">
+                    Train AI Diagnostic Model <span class="btn-cost">$100,000</span>
+                </button>
+                <button class="btn" onclick="buildClinic()">
+                    Build Health Nucleus Clinic <span class="btn-cost">$500,000</span>
+                </button>
+                <button class="btn" onclick="screenPatients()">
+                    Screen Patients for Disease <span class="btn-cost">$50,000</span>
+                </button>
+                <button class="btn" onclick="filePatent()">
+                    File Genomic Patent <span class="btn-cost">$150,000</span>
+                </button>
+                <button class="btn" onclick="publishFindings()">
+                    Publish Research <span class="btn-cost">Free</span>
+                </button>
+
+                <!-- Grand Challenges -->
+                <div class="section-title">Health Grand Challenges</div>
+                <div class="challenges-panel" id="challenges-list"></div>
+
+                <!-- Rivals -->
+                <div class="section-title">Rival Organizations</div>
+                <div id="rivals-list"></div>
+
+                <!-- Compound Library from Ch1 -->
+                <div class="section-title">Ocean Compound Library</div>
+                <div class="compound-library" id="compound-library">
+                    <div style="font-size:0.75em;color:rgba(255,255,255,0.35);padding:8px;">
+                        Compounds imported from Chapter 1 expeditions appear here.
+                    </div>
+                </div>
+
+                <!-- Save indicator -->
+                <div class="save-indicator">
+                    <span id="save-status">Auto-save on</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup -->
+    <div class="popup-overlay" id="popup-overlay" onclick="closePopup(event)">
+        <div class="popup-box" onclick="event.stopPropagation()">
+            <div class="popup-title" id="popup-title"></div>
+            <div class="popup-text" id="popup-text"></div>
+            <button class="popup-close" onclick="closePopup()">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        const SAVE_KEY = 'sorcerer2.ch2.v1';
+        let _initComplete = false;
+
+        // ============ Game State ============
+        const gameState = {
+            genomesSequenced: 0,
+            diseasesPredicted: 0,
+            clinicsBuilt: 0,
+            aiAccuracy: 50,
+            patentsFiled: 0,
+            funding: 500000,
+            papersPublished: 0,
+            patientsScanned: 0,
+            activeChallenges: [],
+            challengesCompleted: 0,
+            rivals: [],
+            compoundLibrary: [],
+            ch2Complete: false
+        };
+
+        // ============ Data ============
+        const patientNames = [
+            'Maria Santos', 'James Chen', 'Aisha Patel', 'Robert Kim',
+            'Elena Volkov', 'David Okafor', 'Yuki Tanaka', 'Sarah Mitchell',
+            'Ahmad Hassan', 'Lisa Johansson', 'Carlos Rivera', 'Priya Sharma'
+        ];
+
+        const diseases = [
+            { name: "Alzheimer's Risk", gene: 'APOE', severity: 'high', icon: '🧠' },
+            { name: 'Breast Cancer Marker', gene: 'BRCA1', severity: 'high', icon: '🎗' },
+            { name: 'Type 2 Diabetes Risk', gene: 'TCF7L2', severity: 'medium', icon: '💉' },
+            { name: 'Cardiovascular Risk', gene: 'LDLR', severity: 'high', icon: '❤' },
+            { name: 'Parkinson\'s Risk', gene: 'LRRK2', severity: 'medium', icon: '🧬' },
+            { name: 'Macular Degeneration', gene: 'CFH', severity: 'low', icon: '👁' },
+            { name: 'Celiac Disease', gene: 'HLA-DQ', severity: 'low', icon: '🍞' },
+            { name: 'Cystic Fibrosis Carrier', gene: 'CFTR', severity: 'medium', icon: '🫁' }
+        ];
+
+        const CHALLENGE_TEMPLATES = [
+            {
+                id: 'alzheimers', name: "Alzheimer's Early Detection", icon: '🧠',
+                desc: 'Develop an AI model that can predict Alzheimer\'s onset 10 years before symptoms.',
+                requirement: { genomesSequenced: 20, aiAccuracy: 75, diseasesPredicted: 10 },
+                reward: 2000000,
+                victoryQuote: '"We detected what no doctor could see. The brain reveals its secrets in the genome."'
+            },
+            {
+                id: 'cancer', name: 'Universal Cancer Screen', icon: '🎗',
+                desc: 'Create a single blood test that screens for 50+ cancer types simultaneously.',
+                requirement: { genomesSequenced: 30, aiAccuracy: 80, patentsFiled: 3 },
+                reward: 3000000,
+                victoryQuote: '"A single drop of blood, and we know every cancer lurking in your future. That\'s power."'
+            },
+            {
+                id: 'diabetes', name: 'Diabetes Prevention Protocol', icon: '💉',
+                desc: 'Design a personalized prevention plan based on genomic risk factors.',
+                requirement: { genomesSequenced: 15, clinicsBuilt: 2, diseasesPredicted: 8 },
+                reward: 1500000,
+                victoryQuote: '"We didn\'t cure diabetes. We made it so no one ever gets it. That\'s better."'
+            },
+            {
+                id: 'longevity', name: 'Longevity Blueprint', icon: '⏳',
+                desc: 'Map the genomic signatures of centenarians and create a longevity optimization protocol.',
+                requirement: { genomesSequenced: 50, aiAccuracy: 85, papersPublished: 3 },
+                reward: 5000000,
+                victoryQuote: '"The 100-year life isn\'t a dream. It\'s a genome we now know how to read."'
+            },
+            {
+                id: 'rare', name: 'Rare Disease Decoder', icon: '🔬',
+                desc: 'Use AI to diagnose rare genetic disorders that have stumped doctors for decades.',
+                requirement: { genomesSequenced: 25, aiAccuracy: 70, diseasesPredicted: 15 },
+                reward: 2500000,
+                victoryQuote: '"For 20 years she had no diagnosis. We gave her one in 20 minutes."'
+            }
+        ];
+
+        const RIVAL_TEMPLATES = [
+            { name: 'Pfizer Genomics', icon: '💊', speed: 1.2 },
+            { name: '23andMe Health', icon: '🧪', speed: 0.9 },
+            { name: 'Google DeepHealth', icon: '🤖', speed: 1.5 }
+        ];
+
+        const craigQuotes = [
+            "The ocean gave us the raw materials. Now we turn them into medicine.",
+            "Every human genome is a 3-billion-letter autobiography. We're learning to read them.",
+            "23andMe gives you ancestry. We give you your future.",
+            "The doctor of the future won't wait for you to get sick. They'll read your genome and prevent it.",
+            "We sequenced the ocean. Now we sequence humanity. The pattern is the same: read, understand, transform.",
+            "Privacy is important, but so is not dying of a preventable disease. I know which one I'd choose.",
+            "Pfizer makes drugs after you're sick. We read your genome before you ever will be. That's the disruption.",
+            "The human body is the most complex machine on Earth. And I intend to reverse-engineer it completely."
+        ];
+
+        const rejectionReasons = [
+            "Reviewers question the sample size for clinical significance.",
+            "Competing lab published similar findings last week.",
+            "Ethical review board requests additional privacy safeguards.",
+            "Statistical methodology questioned by peer reviewers."
+        ];
+
+        // ============ Core Functions ============
+
+        function sequenceGenome() {
+            if (gameState.funding < 75000) {
+                showPopup('Insufficient Funding', 'Genome sequencing costs $75,000. Publish research or file patents for more funding.');
+                return;
+            }
+            gameState.funding -= 75000;
+            gameState.genomesSequenced++;
+
+            const patient = patientNames[Math.floor(Math.random() * patientNames.length)];
+            document.getElementById('patient-name').textContent = patient;
+            document.getElementById('scan-status').textContent = 'SEQUENCING...';
+
+            // Create patient marker on dashboard
+            createPatientMarker();
+
+            // Possible disease detection
+            const detected = [];
+            if (Math.random() < 0.4 + (gameState.aiAccuracy / 200)) {
+                const disease = diseases[Math.floor(Math.random() * diseases.length)];
+                detected.push(disease);
+                gameState.diseasesPredicted++;
+            }
+
+            setTimeout(() => {
+                document.getElementById('scan-status').textContent = 'COMPLETE';
+                const msg = detected.length > 0
+                    ? `Patient: ${patient}\n\n${detected.map(d => `${d.icon} ${d.name} detected (Gene: ${d.gene})\nSeverity: ${d.severity.toUpperCase()}`).join('\n\n')}\n\nEarly detection could save this patient's life.`
+                    : `Patient: ${patient}\n\nNo significant risk markers detected.\nGenome added to AI training database.`;
+                showPopup('Genome Sequenced', msg);
+            }, 1500);
+
+            updateDisplay();
+        }
+
+        function trainAI() {
+            if (gameState.funding < 100000) {
+                showPopup('Insufficient Funding', 'AI model training requires $100,000.');
+                return;
+            }
+            if (gameState.genomesSequenced < 5) {
+                showPopup('Insufficient Data', 'You need at least 5 sequenced genomes to train the AI model.');
+                return;
+            }
+            gameState.funding -= 100000;
+
+            // AI accuracy improves with more data, diminishing returns
+            const improvement = Math.max(1, Math.floor(10 * (1 - gameState.aiAccuracy / 100)));
+            gameState.aiAccuracy = Math.min(99, gameState.aiAccuracy + improvement);
+
+            showPopup('AI Model Updated',
+                `Model retrained on ${gameState.genomesSequenced} genomes.\n\n` +
+                `Accuracy: ${gameState.aiAccuracy}% (+${improvement}%)\n\n` +
+                `"Every genome we add makes the model smarter. We're teaching silicon to read the language of life." — Dr. Venter`);
+
+            updateDisplay();
+        }
+
+        function buildClinic() {
+            if (gameState.funding < 500000) {
+                showPopup('Insufficient Funding', 'A Health Nucleus clinic costs $500,000 to establish.');
+                return;
+            }
+            gameState.funding -= 500000;
+            gameState.clinicsBuilt++;
+
+            const cities = ['San Diego', 'Singapore', 'London', 'Dubai', 'Shanghai', 'Boston', 'Tokyo', 'Berlin'];
+            const city = cities[(gameState.clinicsBuilt - 1) % cities.length];
+
+            showPopup('New Clinic Opened!',
+                `Health Nucleus clinic #${gameState.clinicsBuilt} opened in ${city}!\n\n` +
+                `Patient throughput increased.\n` +
+                `Revenue generation: +$25,000/cycle\n\n` +
+                `"Every clinic is a node in the network. Connect enough of them, and you've got a global immune system for humanity." — Dr. Venter`);
+
+            updateDisplay();
+        }
+
+        function screenPatients() {
+            if (gameState.funding < 50000) {
+                showPopup('Insufficient Funding', 'Patient screening costs $50,000.');
+                return;
+            }
+            if (gameState.clinicsBuilt < 1) {
+                showPopup('No Clinics', 'Build at least one Health Nucleus clinic before screening patients.');
+                return;
+            }
+
+            gameState.funding -= 50000;
+            const batchSize = Math.min(gameState.clinicsBuilt * 3, 15);
+            let detected = 0;
+
+            for (let i = 0; i < batchSize; i++) {
+                if (Math.random() < gameState.aiAccuracy / 150) {
+                    detected++;
+                    gameState.diseasesPredicted++;
+                }
+                gameState.patientsScanned++;
+                createPatientMarker();
+            }
+
+            // Revenue from screening
+            const revenue = batchSize * 8000;
+            gameState.funding += revenue;
+
+            showPopup('Screening Complete',
+                `Screened ${batchSize} patients across ${gameState.clinicsBuilt} clinic${gameState.clinicsBuilt > 1 ? 's' : ''}.\n\n` +
+                `Diseases detected early: ${detected}\n` +
+                `Revenue earned: $${revenue.toLocaleString()}\n` +
+                `Total patients scanned: ${gameState.patientsScanned}`);
+
+            updateDisplay();
+        }
+
+        function filePatent() {
+            if (gameState.funding < 150000) {
+                showPopup('Insufficient Funding', 'Filing a genomic patent costs $150,000.');
+                return;
+            }
+            if (gameState.genomesSequenced < 10) {
+                showPopup('Insufficient Research', 'You need at least 10 sequenced genomes before filing a meaningful patent.');
+                return;
+            }
+
+            gameState.funding -= 150000;
+
+            if (Math.random() < 0.3) {
+                showPopup('Patent Rejected',
+                    'The patent office found prior art. Your claim was not sufficiently novel.\n\n' +
+                    'Continue research to develop more unique insights.');
+                updateDisplay();
+                return;
+            }
+
+            gameState.patentsFiled++;
+            const royalty = 50000 + gameState.patentsFiled * 25000;
+            gameState.funding += royalty;
+
+            const patentTypes = [
+                'Genomic Biomarker for Early Cancer Detection',
+                'AI-Driven Disease Risk Prediction Method',
+                'Novel Gene Therapy Delivery Mechanism',
+                'Personalized Drug Response Predictor',
+                'Microbiome-Genome Interaction Framework'
+            ];
+            const patentName = patentTypes[Math.floor(Math.random() * patentTypes.length)];
+
+            showPopup('Patent Granted!',
+                `Patent: "${patentName}"\n\n` +
+                `Licensing revenue: $${royalty.toLocaleString()}\n` +
+                `Total patents: ${gameState.patentsFiled}\n\n` +
+                `"You can't just discover things. You have to own them. That's how you fund the next discovery." — Dr. Venter`);
+
+            updateDisplay();
+        }
+
+        function publishFindings() {
+            if (gameState.genomesSequenced < 5) {
+                showPopup('Insufficient Data', 'You need at least 5 sequenced genomes to publish.');
+                return;
+            }
+
+            if (Math.random() < 0.25) {
+                const reason = rejectionReasons[Math.floor(Math.random() * rejectionReasons.length)];
+                showPopup('Paper Rejected', `Your submission was rejected.\n\n"${reason}"\n\nRevise and resubmit.`);
+                return;
+            }
+
+            gameState.papersPublished++;
+            const grant = 200000 + gameState.genomesSequenced * 10000 + gameState.diseasesPredicted * 20000;
+            gameState.funding += grant;
+
+            showPopup('Research Published!',
+                `Groundbreaking paper published in Nature Medicine!\n\n` +
+                `Grant funding received: $${grant.toLocaleString()}\n\n` +
+                `"We're not just publishing papers. We're rewriting the textbook on human health." — Dr. Venter`);
+
+            updateDisplay();
+        }
+
+        // ============ Patient Markers ============
+        function createPatientMarker() {
+            const dashboard = document.getElementById('genome-dashboard');
+            const marker = document.createElement('div');
+            marker.className = 'patient-marker';
+            marker.style.left = (15 + Math.random() * 70) + '%';
+            marker.style.top = (15 + Math.random() * 70) + '%';
+            marker.style.animationDelay = (Math.random() * 2) + 's';
+
+            if (Math.random() < 0.2) marker.classList.add('risk-high');
+            else if (Math.random() < 0.5) marker.classList.add('scanned');
+
+            marker.onclick = () => {
+                const patient = patientNames[Math.floor(Math.random() * patientNames.length)];
+                showPopup('Patient Record', `Name: ${patient}\nStatus: ${marker.classList.contains('risk-high') ? 'HIGH RISK - Requires follow-up' : 'Genomic profile on file'}`);
+            };
+
+            dashboard.appendChild(marker);
+
+            // Limit visible markers
+            const markers = dashboard.querySelectorAll('.patient-marker');
+            if (markers.length > 20) markers[0].remove();
+        }
+
+        // ============ Craig Venter ============
+        function craigSpeaks() {
+            const quote = craigQuotes[Math.floor(Math.random() * craigQuotes.length)];
+            showPopup('Dr. Craig Venter says:', `"${quote}"`);
+        }
+
+        // ============ Challenges ============
+        function initChallenges() {
+            const shuffled = [...CHALLENGE_TEMPLATES].sort(() => Math.random() - 0.5);
+            gameState.activeChallenges = shuffled.slice(0, 3);
+        }
+
+        function updateChallengesUI() {
+            const list = document.getElementById('challenges-list');
+            if (!list) return;
+            list.innerHTML = gameState.activeChallenges.map((ch, i) => {
+                const req = ch.requirement;
+                let progress = 0;
+                let total = 0;
+                Object.entries(req).forEach(([key, val]) => {
+                    total++;
+                    if (gameState[key] >= val) progress++;
+                });
+                const pct = Math.floor((progress / total) * 100);
+                const canSolve = progress === total;
+
+                return `<div class="challenge-card">
+                    <div class="challenge-name">${ch.icon} ${ch.name}</div>
+                    <div class="challenge-desc">${ch.desc}</div>
+                    <div class="challenge-reward">Reward: $${ch.reward.toLocaleString()}</div>
+                    <div class="challenge-progress"><div class="challenge-progress-bar" style="width:${pct}%"></div></div>
+                    ${canSolve ? `<button class="btn" style="margin-top:8px;" onclick="solveChallenge(${i})">Deploy Solution</button>` : ''}
+                </div>`;
+            }).join('');
+        }
+
+        function solveChallenge(idx) {
+            const ch = gameState.activeChallenges[idx];
+            if (!ch) return;
+
+            gameState.funding += ch.reward;
+            gameState.challengesCompleted++;
+
+            // Replace with new challenge
+            const activeIds = gameState.activeChallenges.map(c => c.id);
+            const remaining = CHALLENGE_TEMPLATES.filter(t => !activeIds.includes(t.id));
+            if (remaining.length > 0) {
+                gameState.activeChallenges[idx] = remaining[Math.floor(Math.random() * remaining.length)];
+            } else {
+                gameState.activeChallenges.splice(idx, 1);
+            }
+
+            showPopup(`${ch.icon} ${ch.name} — SOLVED!`,
+                `Your research has saved lives worldwide!\n\n` +
+                `Grant Reward: $${ch.reward.toLocaleString()}\n\n` +
+                `${ch.victoryQuote}`);
+
+            updateDisplay();
+        }
+
+        // ============ Rivals ============
+        function initRivals() {
+            gameState.rivals = RIVAL_TEMPLATES.map(r => ({
+                ...r,
+                progress: Math.floor(Math.random() * 20)
+            }));
+        }
+
+        function updateRivalsUI() {
+            const list = document.getElementById('rivals-list');
+            if (!list) return;
+            list.innerHTML = gameState.rivals.map(r => {
+                return `<div class="rival-row">
+                    <span class="rival-icon">${r.icon}</span>
+                    <span class="rival-name">${r.name}</span>
+                    <div class="rival-bar"><div class="rival-bar-fill" style="width:${r.progress}%"></div></div>
+                </div>`;
+            }).join('');
+        }
+
+        function tickRivals() {
+            gameState.rivals.forEach(r => {
+                r.progress = Math.min(100, r.progress + r.speed * (Math.random() * 3));
+                if (r.progress >= 100) {
+                    r.progress = 0;
+                    // Rival published — pressure on player
+                    if (Math.random() < 0.3) {
+                        showPopup('Rival Publication',
+                            `${r.icon} ${r.name} just published a major paper!\n\nYour funding competitiveness may be affected.`);
+                    }
+                }
+            });
+            updateRivalsUI();
+
+            // Clinic revenue
+            if (gameState.clinicsBuilt > 0) {
+                gameState.funding += gameState.clinicsBuilt * 25000;
+            }
+            saveGame();
+        }
+
+        // ============ Compound Library (Ch1 import) ============
+        function importCh1Compounds() {
+            try {
+                const ch1Data = localStorage.getItem('sorcerer2.ch1.complete');
+                if (!ch1Data) return;
+                const data = JSON.parse(ch1Data);
+                if (data.specimens && data.specimens.length > 0) {
+                    gameState.compoundLibrary = data.specimens
+                        .filter(s => s.processed)
+                        .map(s => ({
+                            name: s.name,
+                            type: s.type,
+                            traits: s.revealedTraits || [],
+                            origin: s.location || 'Unknown'
+                        }));
+                }
+            } catch (e) { /* ignore */ }
+        }
+
+        function updateCompoundLibraryUI() {
+            const lib = document.getElementById('compound-library');
+            if (!lib) return;
+            if (gameState.compoundLibrary.length === 0) {
+                lib.innerHTML = '<div style="font-size:0.75em;color:rgba(255,255,255,0.35);padding:8px;">Complete Chapter 1 to import ocean compounds.</div>';
+                return;
+            }
+            lib.innerHTML = gameState.compoundLibrary.slice(0, 10).map(c => {
+                const dotClass = c.traits.length > 2 ? 'rare' : (c.traits.length > 0 ? 'processed' : '');
+                return `<div class="compound-item">
+                    <div class="compound-dot ${dotClass}"></div>
+                    <div>${c.name} <span style="color:rgba(255,255,255,0.3);font-size:0.9em;">${c.origin}</span></div>
+                </div>`;
+            }).join('');
+        }
+
+        // ============ Display ============
+        function updateDisplay() {
+            document.getElementById('genomes-sequenced').textContent = gameState.genomesSequenced;
+            document.getElementById('ai-accuracy').textContent = gameState.aiAccuracy + '%';
+            document.getElementById('diseases-predicted').textContent = gameState.diseasesPredicted;
+            document.getElementById('clinics-built').textContent = gameState.clinicsBuilt;
+            document.getElementById('funding').textContent = '$' + gameState.funding.toLocaleString();
+            document.getElementById('patents-filed').textContent = gameState.patentsFiled;
+            document.getElementById('ai-confidence').textContent = gameState.aiAccuracy + '%';
+
+            updateChallengesUI();
+            updateRivalsUI();
+            updateCompoundLibraryUI();
+
+            saveGame();
+        }
+
+        // ============ Popup ============
+        function showPopup(title, text) {
+            document.getElementById('popup-title').textContent = title;
+            document.getElementById('popup-text').textContent = text;
+            document.getElementById('popup-overlay').classList.add('active');
+        }
+
+        function closePopup(event) {
+            if (event && event.target !== document.getElementById('popup-overlay')) return;
+            document.getElementById('popup-overlay').classList.remove('active');
+        }
+
+        // ============ Save / Load ============
+        function saveGame() {
+            if (!_initComplete) return;
+            try {
+                const payload = {
+                    genomesSequenced:   gameState.genomesSequenced,
+                    diseasesPredicted:  gameState.diseasesPredicted,
+                    clinicsBuilt:       gameState.clinicsBuilt,
+                    aiAccuracy:         gameState.aiAccuracy,
+                    patentsFiled:       gameState.patentsFiled,
+                    funding:            gameState.funding,
+                    papersPublished:    gameState.papersPublished,
+                    patientsScanned:    gameState.patientsScanned,
+                    activeChallenges:   gameState.activeChallenges,
+                    challengesCompleted: gameState.challengesCompleted,
+                    rivals:             gameState.rivals,
+                    compoundLibrary:    gameState.compoundLibrary,
+                    ch2Complete:        gameState.ch2Complete,
+                    savedAt:            Date.now()
+                };
+                localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
+            } catch (e) {
+                console.warn('Save failed:', e);
+            }
+        }
+
+        function loadGame() {
+            try {
+                const raw = localStorage.getItem(SAVE_KEY);
+                if (!raw) return false;
+                const data = JSON.parse(raw);
+                Object.assign(gameState, data);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // ============ Init ============
+        const _resumed = loadGame();
+
+        if (!_resumed) {
+            initChallenges();
+            initRivals();
+            importCh1Compounds();
+        }
+
+        _initComplete = true;
+        updateDisplay();
+
+        if (_resumed) {
+            const status = document.getElementById('save-status');
+            if (status) {
+                status.textContent = 'Progress restored';
+                setTimeout(() => { status.textContent = 'Auto-save on'; }, 2500);
+            }
+        } else {
+            setTimeout(() => {
+                showPopup('Welcome to Chapter 2',
+                    `The ocean expedition revealed the building blocks of life. Now we turn that knowledge inward — to the human genome.\n\n` +
+                    `You are Dr. Craig Venter, founder of Human Longevity Inc.\n\n` +
+                    `Your mission: Build a network of genomic clinics, train AI to predict disease before it strikes, and race Big Pharma to patent the future of medicine.\n\n` +
+                    `"We decoded the ocean. Now we decode ourselves." — Dr. Venter`);
+            }, 1000);
+
+            // Seed some initial patient markers
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => createPatientMarker(), i * 400);
+            }
+        }
+
+        // Rival tick every 10 seconds
+        setInterval(tickRivals, 10000);
+    </script>
+</body>
+</html>
