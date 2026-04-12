@@ -80,6 +80,236 @@
             padding-top: 15px;
         }
 
+        /* ================= Chapter Progress Indicator ================= */
+        .chapter-progress {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 12px;
+        }
+        .chapter-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255,255,255,0.4);
+            background: transparent;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .chapter-dot.active {
+            background: #4a90e2;
+            border-color: #4a90e2;
+            box-shadow: 0 0 8px rgba(74,144,226,0.6);
+        }
+        .chapter-dot.completed {
+            background: #ffd700;
+            border-color: #ffd700;
+            box-shadow: 0 0 6px rgba(255,215,0,0.4);
+        }
+        .chapter-connector {
+            width: 20px; height: 1px;
+            background: rgba(255,255,255,0.15);
+        }
+        .chapter-connector.lit {
+            background: linear-gradient(90deg, #ffd700, #4a90e2);
+        }
+        .chapter-label {
+            font-size: 0.65em;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            margin-top: 6px;
+        }
+        .chapter-label strong {
+            color: #4a90e2;
+            font-weight: 600;
+        }
+
+        /* ================= About / Story Button ================= */
+        .about-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 6px 18px;
+            font-size: 0.7em;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: transparent;
+            font-family: inherit;
+        }
+        .about-btn:hover {
+            color: #fff;
+            border-color: #4a90e2;
+            box-shadow: 0 0 12px rgba(74,144,226,0.2);
+            background: rgba(74,144,226,0.08);
+        }
+
+        /* ================= Story Overlay ================= */
+        .story-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 4000;
+            background: rgba(0,0,0,0.92);
+            overflow-y: auto;
+            animation: storyFadeIn 0.4s ease-out;
+        }
+        .story-overlay.active { display: block; }
+        @keyframes storyFadeIn {
+            0%   { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .story-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 25px 60px;
+            position: relative;
+        }
+        .story-close {
+            position: fixed;
+            top: 20px; right: 25px;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            font-size: 1.2em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 4001;
+            transition: all 0.2s;
+        }
+        .story-close:hover {
+            border-color: #4a90e2;
+            background: rgba(74,144,226,0.2);
+        }
+        .story-hero {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        .story-hero-title {
+            font-size: 1.8em;
+            font-weight: 100;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .story-hero-sub {
+            font-size: 0.85em;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 2px;
+        }
+        .story-hero-line {
+            width: 60px; height: 1px;
+            background: linear-gradient(90deg, transparent, #4a90e2, transparent);
+            margin: 20px auto;
+        }
+        .story-section {
+            margin-bottom: 30px;
+        }
+        .story-section-title {
+            font-size: 0.75em;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #4a90e2;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(74,144,226,0.15);
+        }
+        .story-text {
+            font-size: 0.92em;
+            line-height: 1.75;
+            color: rgba(255,255,255,0.7);
+            font-weight: 300;
+        }
+        .story-text strong {
+            color: #fff;
+            font-weight: 500;
+        }
+        .story-text em {
+            color: #4a90e2;
+            font-style: normal;
+        }
+        .story-chapter-map {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .story-chapter-card {
+            background: rgba(74,144,226,0.05);
+            border: 1px solid rgba(74,144,226,0.12);
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+        .story-chapter-card.current {
+            border-color: rgba(74,144,226,0.35);
+            background: rgba(74,144,226,0.08);
+        }
+        .story-chapter-num {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+            flex-shrink: 0;
+            color: rgba(255,255,255,0.5);
+        }
+        .story-chapter-card.current .story-chapter-num {
+            border-color: #4a90e2;
+            color: #4a90e2;
+            box-shadow: 0 0 8px rgba(74,144,226,0.3);
+        }
+        .story-chapter-name {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 3px;
+        }
+        .story-chapter-desc {
+            font-size: 0.75em;
+            color: rgba(255,255,255,0.45);
+            line-height: 1.5;
+        }
+        .story-quote {
+            text-align: center;
+            padding: 20px;
+            margin: 25px 0;
+            border-left: 2px solid rgba(74,144,226,0.3);
+            border-right: 2px solid rgba(74,144,226,0.3);
+        }
+        .story-quote-text {
+            font-size: 1em;
+            font-style: italic;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.6;
+        }
+        .story-quote-attr {
+            font-size: 0.75em;
+            color: #4a90e2;
+            margin-top: 8px;
+        }
+        @media (max-width: 768px) {
+            .story-container { padding: 30px 15px 40px; }
+            .story-hero-title { font-size: 1.4em; letter-spacing: 3px; }
+            .chapter-progress { gap: 4px; }
+            .chapter-connector { width: 12px; }
+            .chapter-dot { width: 8px; height: 8px; }
+        }
+
         .game-area {
             display: flex;
             height: calc(100vh - 150px);
@@ -2223,6 +2453,17 @@
                 <div class="title-sorcerer">SORCERER II</div>
             </h1>
             <p class="subtitle">The expedition that unlocked the secrets of the ocean's microbiome</p>
+            <div class="chapter-progress" id="chapter-progress">
+                <div class="chapter-dot active" title="Chapter 1: Voyage of the Sorcerer II"></div>
+                <div class="chapter-connector"></div>
+                <div class="chapter-dot" title="Chapter 2: The 100-Year Life"></div>
+                <div class="chapter-connector"></div>
+                <div class="chapter-dot" title="Chapter 3: Life at the Speed of Light"></div>
+                <div class="chapter-connector"></div>
+                <div class="chapter-dot" title="Chapter 4: Fax Me a Martian"></div>
+            </div>
+            <div class="chapter-label">Chapter <strong>1</strong> of 4 &mdash; <span id="chapter-status-text">The Ocean Awaits</span></div>
+            <button class="about-btn" onclick="openStory()">About This Expedition</button>
         </div>
         
         <div class="game-area">
@@ -2747,6 +2988,99 @@
         </div>
     </div>
     
+    <!-- Story / About Overlay -->
+    <div class="story-overlay" id="story-overlay">
+        <button class="story-close" onclick="closeStory()">&times;</button>
+        <div class="story-container">
+            <div class="story-hero">
+                <div class="story-hero-title">The Sorcerer II Expedition</div>
+                <div class="story-hero-sub">A Game of Science, Discovery, and the Code of Life</div>
+                <div class="story-hero-line"></div>
+            </div>
+
+            <div class="story-section">
+                <div class="story-section-title">The True Story</div>
+                <div class="story-text">
+                    In 2003, <strong>Dr. J. Craig Venter</strong> &mdash; the maverick scientist who raced the U.S. government to sequence the human genome &mdash; did something no one expected. He boarded his 92-foot sailing yacht, the <em>Sorcerer II</em>, and set off across the world's oceans on a voyage that would revolutionize biology.
+                    <br><br>
+                    His mission was audacious: <strong>collect and sequence every microorganism in the sea.</strong> Every drop of seawater, it turns out, contains thousands of unknown species &mdash; bacteria, viruses, archaea, and phages that no one had ever cataloged. Venter's team filtered ocean water through fine mesh, extracted the DNA, and shipped it back to his lab. What they found stunned the scientific world.
+                    <br><br>
+                    In a single expedition, the Sorcerer II discovered <strong>more new genes than all previous research in history combined.</strong> Millions of new proteins. Thousands of new species. Entire metabolic pathways unknown to science. The ocean wasn't just full of water &mdash; it was full of <em>code</em>. And Venter was the first person to read it at scale.
+                </div>
+            </div>
+
+            <div class="story-quote">
+                <div class="story-quote-text">"The future of medicine, energy, and the environment lies in understanding the genetic blueprints hidden in the ocean. We're just beginning to scratch the surface."</div>
+                <div class="story-quote-attr">&mdash; Dr. Craig Venter</div>
+            </div>
+
+            <div class="story-section">
+                <div class="story-section-title">Your Role</div>
+                <div class="story-text">
+                    <strong>You are Craig Venter.</strong> You stand on the deck of the Sorcerer II with the Pacific stretching to every horizon. You have a world-class sequencing lab below deck, a crew of brilliant scientists, and a burning conviction that the ocean holds the answers to humanity's greatest challenges.
+                    <br><br>
+                    Your mission spans four chapters &mdash; each based on a real phase of Venter's career. You'll <em>collect specimens</em> from the world's most biodiverse waters, <em>sequence their DNA</em> to unlock hidden traits, <em>solve Grand Challenges</em> facing humanity, <em>publish research</em> to secure funding, and outrace rival expeditions who want to scoop your discoveries.
+                    <br><br>
+                    But this is bigger than one ocean. The story that starts here on the water leads to <strong>human longevity clinics</strong>, <strong>biological teleportation</strong>, and eventually &mdash; if you're bold enough &mdash; <strong>printing life on Mars</strong>.
+                </div>
+            </div>
+
+            <div class="story-section">
+                <div class="story-section-title">The Four Chapters</div>
+                <div class="story-chapter-map">
+                    <div class="story-chapter-card current">
+                        <div class="story-chapter-num">1</div>
+                        <div>
+                            <div class="story-chapter-name">Voyage of the Sorcerer II</div>
+                            <div class="story-chapter-desc">Deploy collection nets across the world's oceans. Sequence marine DNA. Discover new species. Solve global biological Grand Challenges. Race rival expeditions. Engineer synthetic organisms in the onboard lab. <strong style="color:#4a90e2;">You are here.</strong></div>
+                        </div>
+                    </div>
+                    <div class="story-chapter-card">
+                        <div class="story-chapter-num">2</div>
+                        <div>
+                            <div class="story-chapter-name">The 100-Year Life</div>
+                            <div class="story-chapter-desc">Turn your ocean discoveries inward. Found Human Longevity Inc. Build genomic clinics worldwide. Train AI to predict disease before it strikes. Race Big Pharma to patent the future of medicine. Every ocean compound becomes a potential drug.</div>
+                        </div>
+                    </div>
+                    <div class="story-chapter-card">
+                        <div class="story-chapter-num">3</div>
+                        <div>
+                            <div class="story-chapter-name">Life at the Speed of Light</div>
+                            <div class="story-chapter-desc">Build a global network of Digital-to-Biological Converters &mdash; machines that receive DNA digitally and print living organisms. Transmit vaccines at the speed of light. Fight pandemics in real time. Repair corrupted signals. Extend your reach to the Moon.</div>
+                        </div>
+                    </div>
+                    <div class="story-chapter-card">
+                        <div class="story-chapter-num">4</div>
+                        <div>
+                            <div class="story-chapter-name">Fax Me a Martian</div>
+                            <div class="story-chapter-desc">The final frontier. Control a Mars rover. Sequence alien soil. Beam genomes across 225 million kilometers of space. Decode alien base pairs. Print terraforming organisms on the Red Planet. This is where biology meets the cosmos.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="story-quote">
+                <div class="story-quote-text">"People ask me why I sailed around the world collecting microbes. I tell them: because every one of those organisms has been solving problems for 3.5 billion years. I just had to learn to read their answers."</div>
+                <div class="story-quote-attr">&mdash; Dr. Craig Venter</div>
+            </div>
+
+            <div class="story-section">
+                <div class="story-section-title">The Science Is Real</div>
+                <div class="story-text">
+                    Every mechanic in this game is grounded in <strong>real science</strong>. The Sorcerer II expedition actually happened. The Global Ocean Sampling project really did discover millions of new genes. Venter really did found Human Longevity Inc. and build the Health Nucleus clinics. The Digital-to-Biological Converter is a <em>real prototype</em> in his lab. And yes &mdash; he really did propose "faxing" DNA to Mars.
+                    <br><br>
+                    The Grand Challenges you solve &mdash; biofuel production, antibiotic resistance, carbon capture, disease prediction &mdash; are real problems that marine genomics and synthetic biology are actively helping to address.
+                    <br><br>
+                    This game doesn't just entertain. It teaches. <strong>Every click is a lesson in the science that's reshaping our world.</strong>
+                </div>
+            </div>
+
+            <div class="story-section" style="text-align:center; padding-top: 15px;">
+                <button class="about-btn" onclick="closeStory()" style="font-size:0.85em; padding: 10px 30px;">Begin Your Voyage</button>
+            </div>
+        </div>
+    </div>
+
     <div class="popup-overlay" id="popup-overlay" onclick="closePopup()"></div>
     <div class="discovery-popup" id="discovery-popup">
         <h2 id="popup-title">🎉 Major Discovery!</h2>
@@ -4271,6 +4605,61 @@
                 }, 2000);
             }
         })();
+
+        /* ============================================
+           STORY OVERLAY + CHAPTER PROGRESS
+           ============================================ */
+
+        function openStory() {
+            document.getElementById('story-overlay').classList.add('active');
+        }
+
+        function closeStory() {
+            document.getElementById('story-overlay').classList.remove('active');
+        }
+
+        // Update the chapter progress dots and status text based on game state
+        function updateChapterProgress() {
+            const dots = document.querySelectorAll('#chapter-progress .chapter-dot');
+            const connectors = document.querySelectorAll('#chapter-progress .chapter-connector');
+            const statusEl = document.getElementById('chapter-status-text');
+
+            // Chapter 1 is always active (we're in it)
+            // Determine a status message based on progress
+            const challenges = gameState.challengesCompleted || 0;
+            const species = gameState.speciesFound || 0;
+            const genes = gameState.genesSequenced || 0;
+            const papers = gameState.papersPublished || 0;
+
+            let statusText = 'The Ocean Awaits';
+            if (genes > 0 && species === 0) statusText = 'First Sequences Running';
+            if (species >= 1) statusText = 'New Species Emerging';
+            if (papers >= 1) statusText = 'Research Gaining Attention';
+            if (challenges >= 1) statusText = 'Grand Challenge Conquered';
+            if (challenges >= 2) statusText = 'Global Impact Growing';
+            if (challenges >= 3) statusText = 'Chapter 1 Complete!';
+
+            if (statusEl) statusEl.textContent = statusText;
+
+            // Mark ch1 dot
+            if (dots[0]) {
+                if (gameState.ch1Complete) {
+                    dots[0].classList.remove('active');
+                    dots[0].classList.add('completed');
+                    if (connectors[0]) connectors[0].classList.add('lit');
+                } else {
+                    dots[0].classList.add('active');
+                }
+            }
+        }
+
+        // Run on init and hook into updateDisplay
+        const _origUpdateDisplay = updateDisplay;
+        updateDisplay = function() {
+            _origUpdateDisplay();
+            updateChapterProgress();
+        };
+        updateChapterProgress();
 
         /* ============================================
            CINEMATIC ANIMATION OVERLAYS — JS
