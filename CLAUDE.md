@@ -28,15 +28,14 @@ This game is designed as a four-chapter series. Each chapter is its own HTML fil
 - 14 DBC cities including Lunar Relay, WHO/China/Pharma rivals
 - Challenges: Rapid Pandemic Response, Global Network, Perfect Signal, Mass Vaccination, Lunar Transmission
 
-### Chapter 4 — Fax Me a Martian (chapter4.html)
-- Setting: Deep space. Mars surface. The Sorcerer II as interplanetary relay station.
-- Core loop: Control Mars rover → sequence alien soil DNA → radio genome back to Earth → 
-  decode alien base pairs → beam engineered organisms to terraform Mars atmosphere
-- New mechanics: 8-minute signal delay (real Mars lag), containment crisis events, 
-  global ethics vote mechanic, rival China rover
-- Real science basis: Venter + Musk discussed printing terraforming bacteria on Mars.
-  Venter proposed "faxing" Martian DNA back to Earth via DBC.
-- Cinematic moments: alien genome decoder, first contact moment, terraforming time-lapse
+### Chapter 4 — Fax Me a Martian (chapter4.html) ✅ COMPLETE
+- Setting: Mars surface with animated terrain, rover, stars, dust, rock formations
+- Core loop: Drill soil → sequence alien DNA → transmit to Earth (8-min delay) → beam terraformers
+- Key systems: rover upgrades (5 levels), signal delay reduction, ethics vote modal,
+  alien genome decoder cinematic, terraforming progress bar, containment crisis events
+- 5 Grand Challenges: First Martian Life, Fax Home, First Breath, Alien Codex, New Earth
+- Rivals: China Tianwen Rover, ESA ExoMars, SpaceX BioLab
+- Game Complete screen when terraforming >= 50% and 4+ challenges solved
 
 ## Design Principles
 - ALWAYS single HTML files. No frameworks, no npm, no build step.
@@ -69,9 +68,9 @@ This game is designed as a four-chapter series. Each chapter is its own HTML fil
   * Paper publication (Nature magazine cover slides in, confetti explosion)
 
 ### Next to build:
-- Chapter 4: Fax Me a Martian (chapter4.html)
 - Chapter complete unlock screens for Ch2 and Ch3
 - Cinematic animations for Ch2 and Ch3 actions
+- Cross-chapter navigation on all chapters (ch2, ch3, ch4 headers)
 
 ## File Structure
 ```

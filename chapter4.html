@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Fax Me a Martian">
+    <title>Fax Me a Martian — Chapter 4</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0400;
+            color: white;
+            overflow-x: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .game-container { min-height: 100vh; position: relative; }
+
+        /* ================= Header ================= */
+        .header {
+            text-align: center;
+            padding: 18px 20px;
+            background: linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(20,8,0,0.98) 100%);
+            border-bottom: 2px solid #e85d04;
+            position: relative;
+        }
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, #e85d04, transparent);
+            box-shadow: 0 0 20px rgba(232,93,4,0.5);
+        }
+        .title-chapter {
+            font-size: 0.65em; letter-spacing: 6px; text-transform: uppercase;
+            color: #fb923c; font-weight: 300; margin-bottom: 2px;
+        }
+        .title-main {
+            font-size: 2.4em; font-weight: 100; letter-spacing: 5px; text-transform: uppercase;
+            text-shadow: 0 0 30px rgba(232,93,4,0.3);
+        }
+        .subtitle {
+            font-size: 0.75em; opacity: 0.45; font-weight: 300;
+            letter-spacing: 3px; text-transform: uppercase; margin-top: 2px;
+        }
+
+        /* ================= Layout ================= */
+        .game-area { display: flex; height: calc(100vh - 105px); }
+        @media (max-width: 768px) {
+            .game-area { flex-direction: column; height: auto; min-height: calc(100vh - 95px); }
+            .mars-panel { flex: none; height: 50vh; min-height: 280px; }
+            .controls-panel { flex: none; height: auto; max-height: 50vh; overflow-y: auto; padding: 12px; }
+            .title-main { font-size: 1.5em; letter-spacing: 3px; }
+            .header { padding: 12px 10px; }
+            .rover-svg { width: 60px; height: 40px; }
+        }
+
+        /* ================= Mars Surface Panel ================= */
+        .mars-panel {
+            flex: 2;
+            background: linear-gradient(180deg,
+                #000000 0%,
+                #0a0205 8%,
+                #1a0a0a 20%,
+                #2d1810 35%,
+                #4a2818 50%,
+                #6b3a20 62%,
+                #8b4a28 72%,
+                #a05830 80%,
+                #b86838 88%,
+                #c47840 95%,
+                #d08848 100%
+            );
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Stars in upper sky */
+        .mars-stars {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 40%;
+            pointer-events: none; z-index: 1;
+        }
+        .mars-star {
+            position: absolute;
+            width: 1.5px; height: 1.5px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.9; }
+        }
+
+        /* Horizon glow */
+        .mars-horizon {
+            position: absolute;
+            bottom: 38%; left: 0; width: 100%; height: 8%;
+            background: linear-gradient(0deg, rgba(232,93,4,0.08) 0%, transparent 100%);
+            pointer-events: none; z-index: 2;
+        }
+
+        /* Terrain features */
+        .mars-terrain {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 50%;
+            z-index: 3; pointer-events: none;
+        }
+
+        /* Rock formations */
+        .mars-rock {
+            position: absolute;
+            background: linear-gradient(135deg, #5a3018, #3a1e0c);
+            border-radius: 40% 50% 30% 45%;
+            box-shadow: inset 0 -3px 6px rgba(0,0,0,0.4);
+        }
+
+        /* Dust particles */
+        .mars-dust {
+            position: absolute;
+            width: 2px; height: 2px;
+            background: rgba(200,150,100,0.3);
+            border-radius: 50%;
+            animation: dustDrift var(--dur) linear infinite;
+            animation-delay: var(--delay);
+            pointer-events: none; z-index: 4;
+        }
+        @keyframes dustDrift {
+            0% { transform: translateX(0) translateY(0); opacity: 0.3; }
+            50% { opacity: 0.6; }
+            100% { transform: translateX(80px) translateY(-30px); opacity: 0; }
+        }
+
+        /* Rover */
+        .rover-container {
+            position: absolute;
+            bottom: 22%; left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            transition: left 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .rover-svg {
+            width: 80px; height: 50px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+        }
+
+        /* Signal beam from rover to sky */
+        .signal-beam {
+            position: absolute;
+            left: 50%; bottom: 50%;
+            width: 2px; height: 0;
+            background: linear-gradient(0deg, #e85d04, rgba(232,93,4,0) 100%);
+            transform: translateX(-50%);
+            z-index: 9;
+            transition: height 1s;
+            opacity: 0;
+        }
+        .signal-beam.active {
+            height: 300px;
+            opacity: 0.6;
+            animation: beamPulse 2s ease-in-out infinite;
+        }
+        @keyframes beamPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Soil sample markers */
+        .soil-marker {
+            position: absolute;
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(232,93,4,0.6), rgba(150,60,10,0.3));
+            border: 1.5px solid rgba(232,93,4,0.5);
+            cursor: pointer;
+            z-index: 8;
+            animation: soilGlow 2.5s ease-in-out infinite;
+            transition: transform 0.2s;
+        }
+        .soil-marker:hover {
+            transform: scale(1.4);
+            box-shadow: 0 0 15px rgba(232,93,4,0.7);
+        }
+        .soil-marker.collected {
+            background: radial-gradient(circle, rgba(16,185,129,0.6), rgba(5,100,60,0.3));
+            border-color: rgba(16,185,129,0.5);
+            animation: none;
+        }
+        .soil-marker.alien {
+            background: radial-gradient(circle, rgba(0,255,150,0.7), rgba(0,180,100,0.3));
+            border-color: #00ff96;
+            animation: alienPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes soilGlow {
+            0%, 100% { box-shadow: 0 0 4px rgba(232,93,4,0.3); }
+            50% { box-shadow: 0 0 12px rgba(232,93,4,0.6); }
+        }
+        @keyframes alienPulse {
+            0%, 100% { box-shadow: 0 0 6px rgba(0,255,150,0.3); transform: scale(1); }
+            50% { box-shadow: 0 0 18px rgba(0,255,150,0.8); transform: scale(1.1); }
+        }
+
+        /* Mars info overlay */
+        .mars-info {
+            position: absolute;
+            top: 10px; left: 10px;
+            background: rgba(0,0,0,0.75);
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(232,93,4,0.2);
+            font-size: 0.72em;
+            z-index: 20;
+        }
+        .mars-info .label { color: rgba(255,255,255,0.4); font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; }
+        .mars-info .value { color: #fb923c; font-weight: bold; }
+        .mars-info div { margin-bottom: 3px; }
+
+        /* Signal delay indicator */
+        .signal-delay {
+            position: absolute;
+            top: 10px; right: 10px;
+            background: rgba(0,0,0,0.75);
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(232,93,4,0.2);
+            font-size: 0.72em;
+            z-index: 20;
+            text-align: center;
+        }
+        .delay-value {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #e85d04;
+            text-shadow: 0 0 10px rgba(232,93,4,0.4);
+        }
+        .delay-label {
+            font-size: 0.7em;
+            color: rgba(255,255,255,0.35);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Terraforming progress bar at bottom */
+        .terraform-bar {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 6px;
+            background: rgba(0,0,0,0.5);
+            z-index: 15;
+        }
+        .terraform-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e85d04, #10b981, #22d3ee);
+            width: 0%;
+            transition: width 1s;
+            box-shadow: 0 0 10px rgba(16,185,129,0.5);
+        }
+
+        /* Venter Avatar — Space suit */
+        .venter-avatar {
+            position: absolute;
+            bottom: 12px; right: 12px;
+            width: 55px; height: 55px;
+            border-radius: 50%;
+            border: 2px solid rgba(232,93,4,0.3);
+            background: radial-gradient(circle at 30% 30%, #b57745, #8b5a2b);
+            cursor: pointer;
+            z-index: 20;
+            transition: transform 0.2s, box-shadow 0.2s;
+            overflow: hidden;
+        }
+        .venter-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 18px rgba(232,93,4,0.4);
+        }
+        .venter-avatar svg { width: 100%; height: 100%; }
+
+        /* ================= Controls Panel ================= */
+        .controls-panel {
+            flex: 1;
+            background: rgba(10,4,0,0.8);
+            padding: 16px;
+            overflow-y: auto;
+            border-left: 1px solid rgba(232,93,4,0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 7px;
+            margin-bottom: 14px;
+        }
+        .stat-card {
+            background: rgba(232,93,4,0.04);
+            border: 1px solid rgba(232,93,4,0.1);
+            border-radius: 8px;
+            padding: 9px;
+            text-align: center;
+        }
+        .stat-card .stat-value {
+            font-size: 1.3em; font-weight: bold;
+            color: #fb923c;
+            text-shadow: 0 0 8px rgba(232,93,4,0.3);
+        }
+        .stat-card .stat-label {
+            font-size: 0.6em; text-transform: uppercase;
+            letter-spacing: 1px; color: rgba(255,255,255,0.35); margin-top: 2px;
+        }
+        .stat-card.funding .stat-value { color: #fbbf24; }
+        .stat-card.terraform .stat-value { color: #10b981; }
+
+        .section-title {
+            font-size: 0.75em; text-transform: uppercase; letter-spacing: 3px;
+            color: rgba(255,255,255,0.3); margin: 14px 0 7px 0;
+            padding-bottom: 4px; border-bottom: 1px solid rgba(232,93,4,0.1);
+        }
+
+        .btn {
+            width: 100%; padding: 10px 12px; margin-bottom: 5px;
+            border: 1px solid rgba(232,93,4,0.2); border-radius: 8px;
+            background: linear-gradient(135deg, rgba(232,93,4,0.07), rgba(232,93,4,0.02));
+            color: #fff; font-size: 0.8em; font-weight: 500;
+            cursor: pointer; transition: all 0.2s; text-align: left;
+        }
+        .btn:hover {
+            background: linear-gradient(135deg, rgba(232,93,4,0.16), rgba(232,93,4,0.05));
+            border-color: rgba(232,93,4,0.45);
+            box-shadow: 0 0 10px rgba(232,93,4,0.12);
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn .btn-cost { float: right; color: #fbbf24; font-size: 0.9em; }
+
+        /* ================= Challenges ================= */
+        .challenge-card {
+            background: rgba(232,93,4,0.04); border: 1px solid rgba(232,93,4,0.1);
+            border-radius: 8px; padding: 9px; margin-bottom: 5px;
+        }
+        .challenge-name { font-size: 0.82em; font-weight: bold; color: #fb923c; margin-bottom: 2px; }
+        .challenge-desc { font-size: 0.68em; color: rgba(255,255,255,0.4); line-height: 1.4; }
+        .challenge-reward { font-size: 0.62em; color: #fbbf24; margin-top: 4px; }
+        .challenge-progress { height: 3px; background: rgba(232,93,4,0.1); border-radius: 2px; margin-top: 5px; overflow: hidden; }
+        .challenge-progress-bar { height: 100%; background: #e85d04; border-radius: 2px; transition: width 0.5s; }
+
+        /* ================= Rivals ================= */
+        .rival-row {
+            display: flex; align-items: center; gap: 8px;
+            padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.72em;
+        }
+        .rival-icon { font-size: 1.1em; }
+        .rival-name { flex: 1; font-weight: 500; }
+        .rival-bar { width: 65px; height: 4px; background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden; }
+        .rival-bar-fill { height: 100%; background: linear-gradient(90deg, #ef4444, #f97316); transition: width 0.5s; }
+
+        /* ================= Ethics Vote Modal ================= */
+        .ethics-overlay {
+            display: none; position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.88); z-index: 2000;
+            justify-content: center; align-items: center;
+        }
+        .ethics-overlay.active { display: flex; }
+        .ethics-box {
+            background: linear-gradient(135deg, #1a0a0a, #2d1810);
+            border: 1px solid rgba(232,93,4,0.35); border-radius: 12px;
+            padding: 25px; max-width: 480px; width: 92%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(232,93,4,0.1);
+        }
+        .ethics-title { font-size: 1.1em; font-weight: bold; color: #fb923c; text-align: center; margin-bottom: 8px; }
+        .ethics-desc { font-size: 0.85em; color: rgba(255,255,255,0.65); line-height: 1.6; text-align: center; margin-bottom: 18px; }
+        .ethics-options { display: flex; flex-direction: column; gap: 8px; }
+        .ethics-option {
+            padding: 12px 16px; border-radius: 8px;
+            border: 1px solid rgba(232,93,4,0.2);
+            background: rgba(232,93,4,0.06);
+            cursor: pointer; transition: all 0.2s; text-align: left;
+        }
+        .ethics-option:hover {
+            border-color: rgba(232,93,4,0.5);
+            background: rgba(232,93,4,0.12);
+        }
+        .ethics-option-title { font-size: 0.9em; font-weight: bold; color: #fff; margin-bottom: 3px; }
+        .ethics-option-desc { font-size: 0.72em; color: rgba(255,255,255,0.45); }
+
+        /* ================= Cinematic: Alien Decoder ================= */
+        .alien-decoder-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2500; pointer-events: none;
+            background: rgba(0,0,0,0.92);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            opacity: 0;
+            animation: fadeInOverlay 0.5s ease-out forwards;
+        }
+        @keyframes fadeInOverlay { to { opacity: 1; } }
+        .alien-helix {
+            width: 300px; height: 150px; margin-bottom: 20px;
+        }
+        .alien-text {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em; color: #00ff96;
+            text-shadow: 0 0 10px rgba(0,255,150,0.5);
+            letter-spacing: 4px; text-align: center;
+        }
+        .alien-label {
+            font-size: 1.2em; color: #fb923c;
+            letter-spacing: 4px; text-transform: uppercase;
+            margin-top: 15px;
+            text-shadow: 0 0 20px rgba(232,93,4,0.5);
+        }
+
+        /* ================= Cinematic: Terraforming ================= */
+        .terraform-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2500; pointer-events: none;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            opacity: 0;
+            animation: fadeInOverlay 0.5s ease-out forwards;
+        }
+        .terraform-progress-text {
+            font-size: 2em; font-weight: 100;
+            letter-spacing: 6px; text-transform: uppercase;
+            color: #10b981;
+            text-shadow: 0 0 30px rgba(16,185,129,0.4);
+        }
+
+        /* ================= Popup ================= */
+        .popup-overlay {
+            display: none; position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 1500;
+            justify-content: center; align-items: center;
+        }
+        .popup-overlay.active { display: flex; }
+        .popup-box {
+            background: linear-gradient(135deg, #1a0a0a, #2d1810);
+            border: 1px solid rgba(232,93,4,0.3); border-radius: 12px;
+            padding: 22px; max-width: 420px; width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(232,93,4,0.08);
+        }
+        .popup-title { font-size: 1.1em; font-weight: bold; color: #fb923c; margin-bottom: 10px; }
+        .popup-text { font-size: 0.82em; line-height: 1.5; color: rgba(255,255,255,0.7); margin-bottom: 14px; white-space: pre-line; }
+        .popup-close {
+            padding: 10px 28px;
+            background: linear-gradient(135deg, #e85d04, #c44d00);
+            border: none; border-radius: 25px;
+            color: #fff; font-weight: bold; font-size: 0.82em;
+            cursor: pointer; transition: transform 0.2s;
+        }
+        .popup-close:hover { transform: scale(1.05); }
+
+        .save-indicator {
+            position: fixed; bottom: 8px; left: 10px;
+            font-size: 0.6em; color: rgba(255,255,255,0.2); z-index: 50;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <div class="title-chapter">The Final Chapter</div>
+            <h1 class="title-main">FAX ME A MARTIAN</h1>
+            <div class="subtitle">Mars Surface Operations &bull; 225 Million Kilometers from Earth</div>
+        </div>
+
+        <div class="game-area">
+            <!-- Left: Mars Surface -->
+            <div class="mars-panel" id="mars-panel">
+                <!-- Stars -->
+                <div class="mars-stars" id="mars-stars"></div>
+                <!-- Horizon glow -->
+                <div class="mars-horizon"></div>
+                <!-- Terrain -->
+                <div class="mars-terrain" id="mars-terrain"></div>
+
+                <!-- Rover -->
+                <div class="rover-container" id="rover">
+                    <div class="signal-beam" id="signal-beam"></div>
+                    <svg class="rover-svg" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Wheels -->
+                        <circle cx="20" cy="50" r="8" fill="#3a3a3a" stroke="#555" stroke-width="1.5"/>
+                        <circle cx="50" cy="52" r="7" fill="#3a3a3a" stroke="#555" stroke-width="1.5"/>
+                        <circle cx="80" cy="50" r="8" fill="#3a3a3a" stroke="#555" stroke-width="1.5"/>
+                        <!-- Axles -->
+                        <line x1="20" y1="42" x2="20" y2="35" stroke="#666" stroke-width="2"/>
+                        <line x1="50" y1="45" x2="50" y2="35" stroke="#666" stroke-width="2"/>
+                        <line x1="80" y1="42" x2="80" y2="35" stroke="#666" stroke-width="2"/>
+                        <!-- Body -->
+                        <rect x="10" y="20" width="80" height="18" rx="4" fill="#c8c8c8" stroke="#999" stroke-width="1"/>
+                        <!-- Solar panel -->
+                        <rect x="5" y="12" width="35" height="8" rx="1" fill="#2563eb" stroke="#1d4ed8" stroke-width="0.5"/>
+                        <line x1="10" y1="12" x2="10" y2="20" stroke="#aaa" stroke-width="0.8"/>
+                        <!-- Antenna mast -->
+                        <line x1="75" y1="20" x2="75" y2="5" stroke="#999" stroke-width="1.5"/>
+                        <circle cx="75" cy="4" r="2.5" fill="#e85d04" stroke="#c44d00" stroke-width="0.5">
+                            <animate attributeName="fill" values="#e85d04;#fb923c;#e85d04" dur="2s" repeatCount="indefinite"/>
+                        </circle>
+                        <!-- Camera head -->
+                        <rect x="55" y="10" width="14" height="10" rx="2" fill="#ddd" stroke="#aaa" stroke-width="0.8"/>
+                        <circle cx="62" cy="15" r="3" fill="#1a1a1a"/>
+                        <circle cx="62" cy="15" r="1.5" fill="#2563eb"/>
+                        <!-- Drill arm -->
+                        <line x1="25" y1="38" x2="15" y2="48" stroke="#888" stroke-width="2"/>
+                        <circle cx="14" cy="49" r="2" fill="#e85d04"/>
+                        <!-- Label -->
+                        <text x="50" y="32" text-anchor="middle" fill="#666" font-size="4" font-family="monospace">VENTER-1</text>
+                    </svg>
+                </div>
+
+                <!-- Soil sample markers (populated by JS) -->
+                <div id="soil-markers"></div>
+
+                <!-- Mars info -->
+                <div class="mars-info">
+                    <div><span class="label">Rover: </span><span class="value" id="rover-status">Standby</span></div>
+                    <div><span class="label">Soil Samples: </span><span class="value" id="soil-count">0</span></div>
+                    <div><span class="label">Alien Sequences: </span><span class="value" id="alien-count" style="color:#00ff96;">0</span></div>
+                </div>
+
+                <!-- Signal delay indicator -->
+                <div class="signal-delay">
+                    <div class="delay-value" id="delay-display">8:00</div>
+                    <div class="delay-label">Signal Delay</div>
+                </div>
+
+                <!-- Terraforming bar -->
+                <div class="terraform-bar">
+                    <div class="terraform-fill" id="terraform-fill"></div>
+                </div>
+
+                <!-- Venter avatar (space suit) -->
+                <div class="venter-avatar" onclick="craigSpeaks()" title="Dr. Craig Venter">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Space suit body -->
+                        <path d="M10 100 L20 58 Q30 48 50 48 Q70 48 80 58 L90 100 Z" fill="#e8e8e8"/>
+                        <path d="M30 60 L50 55 L70 60" fill="none" stroke="#ccc" stroke-width="1"/>
+                        <!-- Helmet -->
+                        <ellipse cx="50" cy="30" rx="24" ry="26" fill="#ddd" stroke="#bbb" stroke-width="1.5"/>
+                        <!-- Visor -->
+                        <ellipse cx="50" cy="32" rx="18" ry="16" fill="#1a3a5c" opacity="0.85"/>
+                        <ellipse cx="50" cy="32" rx="18" ry="16" fill="none" stroke="#e85d04" stroke-width="1"/>
+                        <!-- Face behind visor -->
+                        <ellipse cx="50" cy="34" rx="14" ry="12" fill="#c98a5a"/>
+                        <ellipse cx="44" cy="33" rx="1.8" ry="1.1" fill="#fff"/>
+                        <circle cx="44" cy="33" r="0.7" fill="#2c5d8a"/>
+                        <ellipse cx="56" cy="33" rx="1.8" ry="1.1" fill="#fff"/>
+                        <circle cx="56" cy="33" r="0.7" fill="#2c5d8a"/>
+                        <path d="M44 39 Q50 43 56 39" fill="none" stroke="#8b5a2b" stroke-width="0.6"/>
+                        <!-- Visor shine -->
+                        <ellipse cx="42" cy="26" rx="6" ry="3" fill="#fff" opacity="0.15"/>
+                        <!-- Suit details -->
+                        <rect x="38" y="62" width="24" height="4" rx="2" fill="#ccc"/>
+                        <circle cx="50" cy="70" r="3" fill="#e85d04"/>
+                        <!-- Mission patch -->
+                        <circle cx="30" cy="72" r="6" fill="none" stroke="#e85d04" stroke-width="0.8"/>
+                        <text x="30" y="74" text-anchor="middle" fill="#e85d04" font-size="4" font-weight="bold">V</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Right: Controls -->
+            <div class="controls-panel">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="samples-collected">0</div>
+                        <div class="stat-label">Soil Samples</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="genomes-decoded">0</div>
+                        <div class="stat-label">Genomes Decoded</div>
+                    </div>
+                    <div class="stat-card" style="--accent:#00ff96;">
+                        <div class="stat-value" id="alien-species" style="color:#00ff96;">0</div>
+                        <div class="stat-label">Alien Species</div>
+                    </div>
+                    <div class="stat-card terraform">
+                        <div class="stat-value" id="terraform-pct">0%</div>
+                        <div class="stat-label">Terraformed</div>
+                    </div>
+                    <div class="stat-card funding">
+                        <div class="stat-value" id="funding">$5,000,000</div>
+                        <div class="stat-label">Funding</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="transmissions-earth">0</div>
+                        <div class="stat-label">Earth Transmissions</div>
+                    </div>
+                </div>
+
+                <div class="section-title">Rover Operations</div>
+                <button class="btn" onclick="drillSoil()">
+                    Drill Soil Sample <span class="btn-cost">$200,000</span>
+                </button>
+                <button class="btn" onclick="sequenceAlienDNA()">
+                    Sequence Alien DNA <span class="btn-cost">$500,000</span>
+                </button>
+                <button class="btn" onclick="transmitToEarth()">
+                    Transmit Genome to Earth <span class="btn-cost">$300,000</span>
+                </button>
+                <button class="btn" onclick="beamOrganism()">
+                    Beam Terraforming Organism <span class="btn-cost">$1,000,000</span>
+                </button>
+                <button class="btn" onclick="upgradeRover()">
+                    Upgrade Rover Systems <span class="btn-cost">$400,000</span>
+                </button>
+                <button class="btn" onclick="publishFindings()">
+                    Publish Research <span class="btn-cost">Free</span>
+                </button>
+
+                <div class="section-title">Mars Grand Challenges</div>
+                <div id="challenges-list"></div>
+
+                <div class="section-title">Rival Missions</div>
+                <div id="rivals-list"></div>
+
+                <div class="save-indicator"><span id="save-status">Auto-save on</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup -->
+    <div class="popup-overlay" id="popup-overlay" onclick="closePopup(event)">
+        <div class="popup-box" onclick="event.stopPropagation()">
+            <div class="popup-title" id="popup-title"></div>
+            <div class="popup-text" id="popup-text"></div>
+            <button class="popup-close" onclick="closePopup()">Continue</button>
+        </div>
+    </div>
+
+    <!-- Ethics Vote -->
+    <div class="ethics-overlay" id="ethics-overlay">
+        <div class="ethics-box">
+            <div class="ethics-title" id="ethics-title"></div>
+            <div class="ethics-desc" id="ethics-desc"></div>
+            <div class="ethics-options" id="ethics-options"></div>
+        </div>
+    </div>
+
+    <script>
+        const SAVE_KEY = 'sorcerer2.ch4.v1';
+        let _initComplete = false;
+
+        // ============ Game State ============
+        const gameState = {
+            funding: 5000000,
+            soilSamples: 0,
+            genomesDecoded: 0,
+            alienSpecies: 0,
+            terraformPct: 0,
+            transmissionsToEarth: 0,
+            roverLevel: 1,
+            signalDelayMin: 8,
+            papersPublished: 0,
+            containmentEvents: 0,
+            ethicsVotes: 0,
+            activeChallenges: [],
+            challengesCompleted: 0,
+            rivals: [],
+            soilMarkers: [],
+            ch4Complete: false
+        };
+
+        // ============ Data ============
+        const ALIEN_BASE_PAIRS = 'XYZQWJ';
+        const EARTH_BASES = 'ATCG';
+
+        const SOIL_TYPES = [
+            { name: 'Iron-oxide Regolith', rarity: 0.3, desc: 'Common Martian soil, rich in iron compounds' },
+            { name: 'Subsurface Ice Core', rarity: 0.5, desc: 'Frozen water with potential organic traces' },
+            { name: 'Volcanic Basalt Fragment', rarity: 0.4, desc: 'Ancient volcanic rock, could harbor extremophiles' },
+            { name: 'Clay Mineral Deposit', rarity: 0.6, desc: 'Water-altered minerals — prime habitat for ancient life' },
+            { name: 'Perchlorate Crystal', rarity: 0.7, desc: 'Toxic salts — but some Earth microbes thrive in these' },
+            { name: 'Deep Borehole Sample', rarity: 0.8, desc: 'From 3 meters below surface — shielded from radiation' }
+        ];
+
+        const ALIEN_ORGANISMS = [
+            'Ferrobacter martensis',
+            'Cryomicrobia olympia',
+            'Perchloridophage vallis',
+            'Radiotolerans borealis',
+            'Methanarchaeum acidalium',
+            'Phototroph nocturnis'
+        ];
+
+        const ETHICS_SCENARIOS = [
+            {
+                title: 'Containment Protocol Override',
+                desc: 'Your rover detected a living organism in the soil. Earth scientists want you to beam its genome back immediately. But the containment AI flags a 12% chance the organism could survive DBC printing on Earth. Do you transmit?',
+                options: [
+                    { label: 'Transmit Immediately', desc: 'Science can\'t wait. The discovery is too important.', effect: { funding: 500000, alienSpecies: 1, containmentEvents: 1 } },
+                    { label: 'Quarantine First', desc: 'Run 48 more hours of containment analysis. Slower but safer.', effect: { funding: -200000, alienSpecies: 1, ethicsVotes: 1 } }
+                ]
+            },
+            {
+                title: 'Global Ethics Vote: Terraform Mars?',
+                desc: 'The UN calls an emergency vote. Your terraforming organisms are working — Mars is changing. But some nations argue we have no right to alter another planet. The vote will determine if you can continue.',
+                options: [
+                    { label: 'Advocate for Terraforming', desc: 'Humanity\'s survival requires a second home. Push forward.', effect: { terraformPct: 5, funding: 1000000, ethicsVotes: 1 } },
+                    { label: 'Accept the Moratorium', desc: 'Pause terraforming. Focus on pure research instead.', effect: { funding: 2000000, papersPublished: 1, ethicsVotes: 1 } }
+                ]
+            },
+            {
+                title: 'Black Market Genome Interception',
+                desc: 'Intelligence reports that an unauthorized lab is intercepting your Mars-to-Earth genome transmissions and synthesizing alien organisms without containment protocols.',
+                options: [
+                    { label: 'Encrypt All Transmissions', desc: 'Secure the channel. Costs more, slower transmissions.', effect: { funding: -500000, signalDelayMin: 2, ethicsVotes: 1 } },
+                    { label: 'Make Genomes Open-Source', desc: 'If everyone has it, no one profits from piracy. Radical transparency.', effect: { funding: 800000, papersPublished: 2, ethicsVotes: 1 } }
+                ]
+            },
+            {
+                title: 'Alien Organism Shows Intelligence',
+                desc: 'The latest genome you decoded contains structures that resemble neural signaling pathways. This organism may have a primitive form of awareness. Publishing this would change human history — but also invite chaos.',
+                options: [
+                    { label: 'Publish Immediately', desc: 'The world deserves to know. Science must be open.', effect: { papersPublished: 3, funding: 3000000, ethicsVotes: 1 } },
+                    { label: 'Classified Briefing Only', desc: 'Brief world leaders privately. Control the narrative.', effect: { funding: 1000000, ethicsVotes: 2 } }
+                ]
+            }
+        ];
+
+        const CHALLENGE_TEMPLATES = [
+            {
+                id: 'first_life', name: 'First Martian Life', icon: '👽',
+                desc: 'Collect and sequence your first confirmed alien organism from Martian soil.',
+                requirement: { alienSpecies: 1, soilSamples: 5 },
+                reward: 3000000,
+                victoryQuote: '"We are not alone. I always knew it. The universe is teeming with code."'
+            },
+            {
+                id: 'genome_earth', name: 'Fax Home', icon: '📡',
+                desc: 'Successfully transmit 5 alien genomes across 225 million km to Earth.',
+                requirement: { transmissionsToEarth: 5, genomesDecoded: 5 },
+                reward: 4000000,
+                victoryQuote: '"We just faxed an alien. Let that sink in."'
+            },
+            {
+                id: 'terraform_start', name: 'First Breath', icon: '🌱',
+                desc: 'Begin Mars terraforming — raise atmosphere oxygen by beaming engineered organisms.',
+                requirement: { terraformPct: 10, alienSpecies: 3 },
+                reward: 5000000,
+                victoryQuote: '"A single engineered bacterium. That\'s all it takes to start turning a dead world green."'
+            },
+            {
+                id: 'decode_all', name: 'Alien Codex', icon: '🧬',
+                desc: 'Decode 10 alien genomes and catalog a complete Martian biosphere.',
+                requirement: { genomesDecoded: 10, alienSpecies: 5 },
+                reward: 6000000,
+                victoryQuote: '"Mars has its own tree of life. 4 billion years of parallel evolution. It\'s magnificent."'
+            },
+            {
+                id: 'terraform_complete', name: 'New Earth', icon: '🌍',
+                desc: 'Terraform Mars to 50% — the point of no return. A second home for humanity.',
+                requirement: { terraformPct: 50, transmissionsToEarth: 15, challengesCompleted: 3 },
+                reward: 20000000,
+                victoryQuote: '"We didn\'t just find life on Mars. We created it. And in doing so, we saved our own."'
+            }
+        ];
+
+        const RIVAL_TEMPLATES = [
+            { name: 'China Tianwen Rover', icon: '🇨🇳', speed: 1.3, desc: 'State-funded, aggressive' },
+            { name: 'ESA ExoMars', icon: '🇪🇺', speed: 0.8, desc: 'Cautious, thorough' },
+            { name: 'SpaceX BioLab', icon: '🚀', speed: 1.6, desc: 'Move fast, break things' }
+        ];
+
+        const craigQuotes = [
+            "We faxed life across the solar system. I'd say that's a pretty good Tuesday.",
+            "Mars doesn't know it yet, but it's about to get a lot more interesting.",
+            "225 million kilometers. 8 minutes of signal delay. And we're still faster than peer review.",
+            "The Sorcerer II sailed the oceans. Now my rover sails the sands of Mars. Same mission, bigger ocean.",
+            "People told me sequencing the ocean was crazy. Then they told me sequencing humans was crazy. Now Mars? I see a pattern.",
+            "Every alien base pair we decode rewrites the textbook on biology. Not the chapter — the whole textbook.",
+            "Elon builds the rockets. I build what we send on them. Fair division of labor.",
+            "If there's DNA on Mars, I will find it. If there isn't, I'll put some there. Either way, I win."
+        ];
+
+        const rejectionReasons = [
+            "Reviewers question whether Martian samples are truly biological in origin.",
+            "Peer reviewers request Earth-based replication of alien genome synthesis.",
+            "Ethics board delays publication pending containment review.",
+            "Competing preprint from China Tianwen team undermines novelty claim."
+        ];
+
+        // ============ Core Functions ============
+
+        function drillSoil() {
+            if (gameState.funding < 200000) {
+                showPopup('Insufficient Funding', 'Drilling costs $200,000 in rover power and equipment wear.');
+                return;
+            }
+            gameState.funding -= 200000;
+            gameState.soilSamples++;
+
+            const type = SOIL_TYPES[Math.floor(Math.random() * SOIL_TYPES.length)];
+            const hasAlien = Math.random() < type.rarity * 0.4;
+
+            // Move rover slightly
+            moveRover();
+
+            // Create soil marker
+            createSoilMarker(hasAlien);
+
+            document.getElementById('rover-status').textContent = 'DRILLING...';
+            setTimeout(() => {
+                document.getElementById('rover-status').textContent = 'Standby';
+
+                const alienMsg = hasAlien
+                    ? '\n\nALERT: Potential biological signatures detected! Sequence this sample immediately.'
+                    : '\n\nNo biological signatures detected in this sample. Keep drilling.';
+
+                showPopup('Soil Sample Collected',
+                    `Sample: ${type.name}\n${type.desc}\n${alienMsg}`);
+            }, 1500);
+
+            updateDisplay();
+        }
+
+        function sequenceAlienDNA() {
+            if (gameState.funding < 500000) {
+                showPopup('Insufficient Funding', 'Alien DNA sequencing costs $500,000.');
+                return;
+            }
+            if (gameState.soilSamples < 2) {
+                showPopup('Need More Samples', 'Collect at least 2 soil samples before sequencing.');
+                return;
+            }
+
+            gameState.funding -= 500000;
+            gameState.genomesDecoded++;
+
+            // Chance of alien species discovery
+            const discoveryChance = 0.3 + (gameState.roverLevel * 0.05);
+            const foundAlien = Math.random() < discoveryChance;
+
+            // Show alien decoder cinematic
+            showAlienDecoder(foundAlien);
+
+            setTimeout(() => {
+                if (foundAlien) {
+                    gameState.alienSpecies++;
+                    const organism = ALIEN_ORGANISMS[Math.min(gameState.alienSpecies - 1, ALIEN_ORGANISMS.length - 1)];
+
+                    showPopup('ALIEN LIFE CONFIRMED!',
+                        `Species: ${organism}\n\n` +
+                        `Genome contains ${Math.floor(Math.random() * 5000) + 2000} genes using non-standard base pairs.\n\n` +
+                        `This organism has been surviving Mars conditions for an estimated ${Math.floor(Math.random() * 3) + 1} billion years.\n\n` +
+                        `"${organism}. Remember that name. It's the most important word spoken in 4 billion years of Earth history." — Dr. Venter`);
+
+                    // Chance of ethics event on alien discovery
+                    if (Math.random() < 0.35) {
+                        setTimeout(() => triggerEthicsVote(), 3000);
+                    }
+                } else {
+                    showPopup('Sequencing Complete',
+                        `No definitive alien genome found in this batch.\n\n` +
+                        `However, ${Math.floor(Math.random() * 200) + 50} novel mineral-organic compounds cataloged.\n\n` +
+                        `Keep drilling deeper. Life hides where radiation can't reach.`);
+                }
+            }, 4000);
+
+            updateDisplay();
+        }
+
+        function transmitToEarth() {
+            if (gameState.funding < 300000) {
+                showPopup('Insufficient Funding', 'Earth transmission costs $300,000.');
+                return;
+            }
+            if (gameState.genomesDecoded < 1) {
+                showPopup('Nothing to Transmit', 'Decode at least one genome before transmitting.');
+                return;
+            }
+
+            gameState.funding -= 300000;
+
+            // Activate signal beam
+            const beam = document.getElementById('signal-beam');
+            beam.classList.add('active');
+
+            document.getElementById('rover-status').textContent = 'TRANSMITTING...';
+
+            // Simulate signal delay
+            const delay = gameState.signalDelayMin;
+            const actualWait = Math.min(delay, 5); // Cap real wait at 5 seconds for playability
+
+            showPopup('Signal Dispatched',
+                `Genome transmission initiated.\n\n` +
+                `Signal traveling at speed of light...\n` +
+                `Distance: 225,000,000 km\n` +
+                `Estimated arrival: ${delay} minutes\n\n` +
+                `(Simulating ${delay}-minute delay...)`);
+
+            setTimeout(() => {
+                beam.classList.remove('active');
+                gameState.transmissionsToEarth++;
+                document.getElementById('rover-status').textContent = 'Standby';
+
+                const grant = 200000 + gameState.alienSpecies * 100000;
+                gameState.funding += grant;
+
+                showPopup('Transmission Received on Earth!',
+                    `Earth DBC network has received and printed the genome.\n\n` +
+                    `Grant funding: $${grant.toLocaleString()}\n` +
+                    `Total Earth transmissions: ${gameState.transmissionsToEarth}\n\n` +
+                    `"225 million kilometers. ${delay} minutes. One alien genome, now alive on Earth. This is the greatest fax ever sent." — Dr. Venter`);
+
+                updateDisplay();
+            }, actualWait * 1000);
+
+            updateDisplay();
+        }
+
+        function beamOrganism() {
+            if (gameState.funding < 1000000) {
+                showPopup('Insufficient Funding', 'Beaming a terraforming organism costs $1,000,000.');
+                return;
+            }
+            if (gameState.alienSpecies < 1) {
+                showPopup('No Alien Data', 'Discover at least one alien species first to design a terraforming organism.');
+                return;
+            }
+            if (gameState.transmissionsToEarth < 1) {
+                showPopup('Untested Link', 'Complete at least one successful Earth transmission first.');
+                return;
+            }
+
+            gameState.funding -= 1000000;
+
+            const increase = Math.floor(Math.random() * 5) + 3 + gameState.roverLevel;
+            gameState.terraformPct = Math.min(100, gameState.terraformPct + increase);
+
+            showTerraformAnimation(increase);
+
+            setTimeout(() => {
+                const organism = gameState.alienSpecies > 3
+                    ? 'hybrid alien-Earth photosynthetic bacterium'
+                    : 'engineered extremophile based on Martian genome data';
+
+                showPopup('Terraforming Organism Deployed!',
+                    `A ${organism} has been beamed to Mars and printed by the surface DBC.\n\n` +
+                    `Atmosphere change: +${increase}% oxygen generation\n` +
+                    `Total terraforming: ${gameState.terraformPct}%\n\n` +
+                    (gameState.terraformPct >= 50
+                        ? '"Point of no return. Mars is becoming a living world. What we started can never be undone." — Dr. Venter'
+                        : '"One bacterium at a time. That\'s how you turn a dead rock into a garden." — Dr. Venter'));
+
+                // Ethics event on high terraforming
+                if (gameState.terraformPct >= 25 && Math.random() < 0.4) {
+                    setTimeout(() => triggerEthicsVote(), 2000);
+                }
+
+                updateDisplay();
+            }, 4500);
+
+            updateDisplay();
+        }
+
+        function upgradeRover() {
+            if (gameState.funding < 400000) {
+                showPopup('Insufficient Funding', 'Rover upgrade costs $400,000.');
+                return;
+            }
+            if (gameState.roverLevel >= 5) {
+                showPopup('Maximum Upgrade', 'VENTER-1 rover is at maximum capability.');
+                return;
+            }
+
+            gameState.funding -= 400000;
+            gameState.roverLevel++;
+
+            const upgrades = [
+                'Enhanced drill bit — deeper soil penetration',
+                'Improved spectrometer — better alien DNA detection',
+                'Signal amplifier — reduced transmission errors',
+                'Extended battery — more operations per sol',
+                'AI co-pilot — autonomous sample prioritization'
+            ];
+
+            // Signal delay decreases with upgrades
+            gameState.signalDelayMin = Math.max(3, gameState.signalDelayMin - 1);
+
+            showPopup(`Rover Upgraded to Level ${gameState.roverLevel}`,
+                `${upgrades[gameState.roverLevel - 2]}\n\n` +
+                `Signal delay reduced to ${gameState.signalDelayMin} minutes\n\n` +
+                `"Every upgrade makes the rover smarter. Soon it won't even need us. Almost." — Dr. Venter`);
+
+            updateDisplay();
+        }
+
+        function publishFindings() {
+            if (gameState.genomesDecoded < 1) {
+                showPopup('Nothing to Publish', 'Decode at least one genome before publishing.');
+                return;
+            }
+
+            if (Math.random() < 0.2) {
+                const reason = rejectionReasons[Math.floor(Math.random() * rejectionReasons.length)];
+                showPopup('Paper Rejected', `Your submission was rejected.\n\n"${reason}"`);
+                return;
+            }
+
+            gameState.papersPublished++;
+            const grant = 500000 + gameState.alienSpecies * 200000 + gameState.transmissionsToEarth * 100000;
+            gameState.funding += grant;
+
+            showPopup('Research Published!',
+                `Historic paper published simultaneously in Nature, Science, and Cell!\n\n` +
+                `"Biological Evidence of Extraterrestrial Life: Genomic Analysis of Martian Soil Organisms"\n\n` +
+                `Grant funding: $${grant.toLocaleString()}\n\n` +
+                `"This isn't a paper. It's a species announcement. For an entire planet." — Dr. Venter`);
+
+            updateDisplay();
+        }
+
+        // ============ Rover & Mars Surface ============
+
+        function moveRover() {
+            const rover = document.getElementById('rover');
+            const currentLeft = parseFloat(rover.style.left) || 50;
+            const newLeft = Math.max(15, Math.min(85, currentLeft + (Math.random() * 20 - 10)));
+            rover.style.left = newLeft + '%';
+        }
+
+        function createSoilMarker(isAlien) {
+            const container = document.getElementById('soil-markers');
+            const marker = document.createElement('div');
+            marker.className = 'soil-marker' + (isAlien ? ' alien' : '');
+            marker.style.left = (15 + Math.random() * 70) + '%';
+            marker.style.bottom = (8 + Math.random() * 35) + '%';
+
+            marker.onclick = () => {
+                marker.classList.add('collected');
+                showPopup('Sample Point', isAlien
+                    ? 'This site showed biological signatures. Sequence the collected samples!'
+                    : 'Standard Martian regolith. No biological markers detected here.');
+            };
+
+            container.appendChild(marker);
+
+            // Limit visible markers
+            const markers = container.querySelectorAll('.soil-marker');
+            if (markers.length > 15) markers[0].remove();
+        }
+
+        function initMarsScene() {
+            // Stars
+            const starsContainer = document.getElementById('mars-stars');
+            for (let i = 0; i < 60; i++) {
+                const star = document.createElement('div');
+                star.className = 'mars-star';
+                star.style.left = (Math.random() * 100) + '%';
+                star.style.top = (Math.random() * 100) + '%';
+                star.style.animationDelay = (Math.random() * 3) + 's';
+                starsContainer.appendChild(star);
+            }
+
+            // Rocks
+            const terrain = document.getElementById('mars-terrain');
+            const rockSizes = [
+                { w: 30, h: 20, bottom: 15, left: 8 },
+                { w: 45, h: 25, bottom: 20, left: 70 },
+                { w: 20, h: 15, bottom: 10, left: 35 },
+                { w: 55, h: 30, bottom: 25, left: 85 },
+                { w: 25, h: 18, bottom: 12, left: 55 },
+                { w: 35, h: 22, bottom: 18, left: 20 }
+            ];
+            rockSizes.forEach(r => {
+                const rock = document.createElement('div');
+                rock.className = 'mars-rock';
+                rock.style.width = r.w + 'px';
+                rock.style.height = r.h + 'px';
+                rock.style.bottom = r.bottom + '%';
+                rock.style.left = r.left + '%';
+                terrain.appendChild(rock);
+            });
+
+            // Dust particles
+            const panel = document.getElementById('mars-panel');
+            for (let i = 0; i < 15; i++) {
+                const dust = document.createElement('div');
+                dust.className = 'mars-dust';
+                dust.style.left = (Math.random() * 90) + '%';
+                dust.style.bottom = (5 + Math.random() * 40) + '%';
+                dust.style.setProperty('--dur', (4 + Math.random() * 6) + 's');
+                dust.style.setProperty('--delay', (Math.random() * 5) + 's');
+                panel.appendChild(dust);
+            }
+        }
+
+        // ============ Ethics Vote ============
+
+        function triggerEthicsVote() {
+            const scenario = ETHICS_SCENARIOS[Math.floor(Math.random() * ETHICS_SCENARIOS.length)];
+
+            document.getElementById('ethics-title').textContent = scenario.title;
+            document.getElementById('ethics-desc').textContent = scenario.desc;
+
+            const optionsDiv = document.getElementById('ethics-options');
+            optionsDiv.innerHTML = '';
+
+            scenario.options.forEach((opt, i) => {
+                const optEl = document.createElement('div');
+                optEl.className = 'ethics-option';
+                optEl.innerHTML = `<div class="ethics-option-title">${opt.label}</div><div class="ethics-option-desc">${opt.desc}</div>`;
+                optEl.onclick = () => resolveEthicsVote(opt.effect);
+                optionsDiv.appendChild(optEl);
+            });
+
+            document.getElementById('ethics-overlay').classList.add('active');
+        }
+
+        function resolveEthicsVote(effect) {
+            document.getElementById('ethics-overlay').classList.remove('active');
+
+            Object.entries(effect).forEach(([key, val]) => {
+                if (key === 'signalDelayMin') {
+                    gameState.signalDelayMin += val;
+                } else if (typeof gameState[key] === 'number') {
+                    gameState[key] += val;
+                }
+            });
+
+            gameState.terraformPct = Math.min(100, Math.max(0, gameState.terraformPct));
+
+            showPopup('Decision Made',
+                `Your choice has been recorded. The consequences will unfold.\n\n` +
+                `"In science, every decision is an experiment. And every experiment teaches us something." — Dr. Venter`);
+
+            updateDisplay();
+        }
+
+        // ============ Cinematic: Alien Decoder ============
+
+        function showAlienDecoder(foundAlien) {
+            const overlay = document.createElement('div');
+            overlay.className = 'alien-decoder-overlay';
+
+            // Alien helix SVG
+            const helix = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            helix.setAttribute('class', 'alien-helix');
+            helix.setAttribute('viewBox', '0 0 400 100');
+            let s1 = 'M0,50', s2 = 'M0,50', rungs = '';
+            for (let x = 0; x <= 400; x += 4) {
+                const y1 = 50 + Math.sin(x * 0.04) * 35;
+                const y2 = 50 + Math.sin(x * 0.04 + Math.PI) * 35;
+                s1 += ` L${x},${y1}`;
+                s2 += ` L${x},${y2}`;
+                if (x % 20 === 0) {
+                    rungs += `<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="rgba(0,255,150,0.2)" stroke-width="1"/>`;
+                }
+            }
+            const color = foundAlien ? '#00ff96' : '#e85d04';
+            helix.innerHTML = `
+                ${rungs}
+                <path d="${s1}" fill="none" stroke="${color}" stroke-width="2" opacity="0.8">
+                    <animateTransform attributeName="transform" type="translate" values="-60,0;0,0;60,0" dur="3s" repeatCount="1"/>
+                </path>
+                <path d="${s2}" fill="none" stroke="${color}" stroke-width="2" opacity="0.6">
+                    <animateTransform attributeName="transform" type="translate" values="-60,0;0,0;60,0" dur="3s" repeatCount="1"/>
+                </path>
+            `;
+            overlay.appendChild(helix);
+
+            // Scrolling alien base pairs
+            const textEl = document.createElement('div');
+            textEl.className = 'alien-text';
+            const bases = foundAlien ? ALIEN_BASE_PAIRS : EARTH_BASES;
+            let seq = '';
+            for (let i = 0; i < 60; i++) {
+                seq += bases[Math.floor(Math.random() * bases.length)];
+                if ((i + 1) % 4 === 0) seq += ' ';
+            }
+            textEl.textContent = seq;
+            overlay.appendChild(textEl);
+
+            // Result label
+            const label = document.createElement('div');
+            label.className = 'alien-label';
+            label.style.opacity = '0';
+            label.textContent = foundAlien ? 'ALIEN GENOME DETECTED' : 'ANALYZING...';
+            label.style.color = color;
+            setTimeout(() => { label.style.opacity = '1'; label.style.transition = 'opacity 0.5s'; }, 2500);
+            overlay.appendChild(label);
+
+            document.body.appendChild(overlay);
+            setTimeout(() => { if (overlay.parentNode) overlay.remove(); }, 3800);
+        }
+
+        // ============ Cinematic: Terraforming ============
+
+        function showTerraformAnimation(increase) {
+            const overlay = document.createElement('div');
+            overlay.className = 'terraform-overlay';
+
+            // Mars transitions from red to slightly more green/blue
+            const greenness = Math.min(1, gameState.terraformPct / 100);
+            overlay.style.background = `radial-gradient(circle,
+                rgba(${Math.floor(180 - greenness * 80)}, ${Math.floor(50 + greenness * 150)}, ${Math.floor(20 + greenness * 60)}, 0.3) 0%,
+                rgba(0,0,0,0.9) 70%)`;
+
+            const text = document.createElement('div');
+            text.className = 'terraform-progress-text';
+            text.textContent = `TERRAFORMING +${increase}%`;
+            overlay.appendChild(text);
+
+            // Particles rising (organisms being deployed)
+            for (let i = 0; i < 30; i++) {
+                const p = document.createElement('div');
+                p.style.cssText = `
+                    position:absolute;
+                    width:${2 + Math.random() * 4}px;
+                    height:${2 + Math.random() * 4}px;
+                    background: ${Math.random() > 0.5 ? '#10b981' : '#22d3ee'};
+                    border-radius:50%;
+                    left:${Math.random() * 100}%;
+                    bottom:-10px;
+                    opacity:0;
+                    animation: terraParticle ${3 + Math.random() * 2}s ease-out ${Math.random() * 1.5}s forwards;
+                `;
+                overlay.appendChild(p);
+            }
+
+            // Add keyframes if not already added
+            if (!document.getElementById('terra-particle-style')) {
+                const style = document.createElement('style');
+                style.id = 'terra-particle-style';
+                style.textContent = `
+                    @keyframes terraParticle {
+                        0% { opacity: 0; transform: translateY(0); }
+                        20% { opacity: 0.8; }
+                        100% { opacity: 0; transform: translateY(-100vh); }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            document.body.appendChild(overlay);
+            setTimeout(() => { if (overlay.parentNode) overlay.remove(); }, 4500);
+        }
+
+        // ============ Challenges ============
+
+        function initChallenges() {
+            gameState.activeChallenges = CHALLENGE_TEMPLATES.slice(0, 3);
+        }
+
+        function updateChallengesUI() {
+            const list = document.getElementById('challenges-list');
+            if (!list) return;
+
+            list.innerHTML = gameState.activeChallenges.map((ch, i) => {
+                const req = ch.requirement;
+                let progress = 0, total = 0;
+                Object.entries(req).forEach(([key, val]) => {
+                    total++;
+                    if ((gameState[key] || 0) >= val) progress++;
+                });
+                const pct = Math.floor((progress / total) * 100);
+                const canSolve = progress === total;
+
+                return `<div class="challenge-card">
+                    <div class="challenge-name">${ch.icon} ${ch.name}</div>
+                    <div class="challenge-desc">${ch.desc}</div>
+                    <div class="challenge-reward">Reward: $${ch.reward.toLocaleString()}</div>
+                    <div class="challenge-progress"><div class="challenge-progress-bar" style="width:${pct}%"></div></div>
+                    ${canSolve ? `<button class="btn" style="margin-top:5px;" onclick="solveChallenge(${i})">Claim Victory</button>` : ''}
+                </div>`;
+            }).join('');
+        }
+
+        function solveChallenge(idx) {
+            const ch = gameState.activeChallenges[idx];
+            if (!ch) return;
+
+            gameState.funding += ch.reward;
+            gameState.challengesCompleted++;
+
+            const activeIds = gameState.activeChallenges.map(c => c.id);
+            const remaining = CHALLENGE_TEMPLATES.filter(t => !activeIds.includes(t.id));
+            if (remaining.length > 0) {
+                gameState.activeChallenges[idx] = remaining[0];
+            } else {
+                gameState.activeChallenges.splice(idx, 1);
+            }
+
+            showPopup(`${ch.icon} ${ch.name} — ACHIEVED!`,
+                `A milestone in the history of space exploration!\n\n` +
+                `Grant Reward: $${ch.reward.toLocaleString()}\n\n` +
+                `${ch.victoryQuote}`);
+
+            // Check for game completion
+            if (gameState.terraformPct >= 50 && gameState.challengesCompleted >= 4) {
+                gameState.ch4Complete = true;
+                setTimeout(() => showGameComplete(), 3000);
+            }
+
+            updateDisplay();
+        }
+
+        // ============ Game Complete (all 4 chapters) ============
+
+        function showGameComplete() {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position:fixed; top:0; left:0; width:100%; height:100%;
+                z-index:5000; background:radial-gradient(ellipse, #0a1e36, #000);
+                display:flex; flex-direction:column; align-items:center; justify-content:center;
+                opacity:0; animation: fadeInOverlay 2s ease-out forwards;
+                text-align:center; padding:30px;
+            `;
+
+            overlay.innerHTML = `
+                <div style="font-size:3em;margin-bottom:15px;">🌌</div>
+                <div style="font-size:2em;font-weight:100;letter-spacing:8px;text-transform:uppercase;color:#ffd700;text-shadow:0 0 30px rgba(255,215,0,0.4);margin-bottom:8px;">GAME COMPLETE</div>
+                <div style="font-size:0.9em;letter-spacing:3px;color:rgba(255,255,255,0.5);margin-bottom:30px;">The Sorcerer Saga</div>
+                <div style="max-width:500px;font-size:0.9em;line-height:1.7;color:rgba(255,255,255,0.6);font-style:italic;margin-bottom:25px;">
+                    "We started on a sailboat in the Sargasso Sea, collecting microbes with a net. We ended on Mars, printing life from digital code beamed across the solar system. Every step of the way, the doubters said it couldn't be done. Every step of the way, we did it anyway. That's not arrogance. That's science."
+                    <br><br>— Dr. J. Craig Venter
+                </div>
+                <div style="display:flex;gap:25px;margin-bottom:30px;">
+                    <div style="text-align:center;"><div style="font-size:1.8em;color:#4a90e2;">Ch.1</div><div style="font-size:0.6em;color:rgba(255,255,255,0.35);">Ocean</div></div>
+                    <div style="color:rgba(255,255,255,0.2);">→</div>
+                    <div style="text-align:center;"><div style="font-size:1.8em;color:#00e5ff;">Ch.2</div><div style="font-size:0.6em;color:rgba(255,255,255,0.35);">Clinic</div></div>
+                    <div style="color:rgba(255,255,255,0.2);">→</div>
+                    <div style="text-align:center;"><div style="font-size:1.8em;color:#a78bfa;">Ch.3</div><div style="font-size:0.6em;color:rgba(255,255,255,0.35);">Global</div></div>
+                    <div style="color:rgba(255,255,255,0.2);">→</div>
+                    <div style="text-align:center;"><div style="font-size:1.8em;color:#fb923c;">Ch.4</div><div style="font-size:0.6em;color:rgba(255,255,255,0.35);">Mars</div></div>
+                </div>
+                <div style="font-size:0.7em;color:rgba(255,255,255,0.3);letter-spacing:2px;">THE SCIENCE IS REAL. THE ADVENTURE NEVER ENDS.</div>
+            `;
+
+            document.body.appendChild(overlay);
+        }
+
+        // ============ Rivals ============
+
+        function initRivals() {
+            gameState.rivals = RIVAL_TEMPLATES.map(r => ({
+                ...r, progress: Math.floor(Math.random() * 10)
+            }));
+        }
+
+        function updateRivalsUI() {
+            const list = document.getElementById('rivals-list');
+            if (!list) return;
+            list.innerHTML = gameState.rivals.map(r =>
+                `<div class="rival-row">
+                    <span class="rival-icon">${r.icon}</span>
+                    <span class="rival-name">${r.name}</span>
+                    <div class="rival-bar"><div class="rival-bar-fill" style="width:${Math.min(100, r.progress)}%"></div></div>
+                </div>`
+            ).join('');
+        }
+
+        function tickRivals() {
+            gameState.rivals.forEach(r => {
+                r.progress = Math.min(100, r.progress + r.speed * (Math.random() * 2));
+                if (r.progress >= 100) {
+                    r.progress = 0;
+                    if (Math.random() < 0.2) {
+                        showPopup('Rival Discovery',
+                            `${r.icon} ${r.name} announced a major finding!\n\n${r.desc}`);
+                    }
+                }
+            });
+            updateRivalsUI();
+
+            // Random ethics event
+            if (Math.random() < 0.06 && gameState.alienSpecies > 0) {
+                triggerEthicsVote();
+            }
+
+            saveGame();
+        }
+
+        // ============ Craig Venter ============
+
+        function craigSpeaks() {
+            const quote = craigQuotes[Math.floor(Math.random() * craigQuotes.length)];
+            showPopup('Dr. Craig Venter says:', `"${quote}"`);
+        }
+
+        // ============ Display ============
+
+        function updateDisplay() {
+            document.getElementById('samples-collected').textContent = gameState.soilSamples;
+            document.getElementById('genomes-decoded').textContent = gameState.genomesDecoded;
+            document.getElementById('alien-species').textContent = gameState.alienSpecies;
+            document.getElementById('terraform-pct').textContent = gameState.terraformPct + '%';
+            document.getElementById('funding').textContent = '$' + gameState.funding.toLocaleString();
+            document.getElementById('transmissions-earth').textContent = gameState.transmissionsToEarth;
+            document.getElementById('soil-count').textContent = gameState.soilSamples;
+            document.getElementById('alien-count').textContent = gameState.alienSpecies;
+            document.getElementById('delay-display').textContent = gameState.signalDelayMin + ':00';
+            document.getElementById('terraform-fill').style.width = gameState.terraformPct + '%';
+
+            updateChallengesUI();
+            updateRivalsUI();
+            saveGame();
+        }
+
+        // ============ Popup ============
+
+        function showPopup(title, text) {
+            document.getElementById('popup-title').textContent = title;
+            document.getElementById('popup-text').textContent = text;
+            document.getElementById('popup-overlay').classList.add('active');
+        }
+
+        function closePopup(event) {
+            if (event && event.target !== document.getElementById('popup-overlay') && event.target.className !== 'popup-close') return;
+            document.getElementById('popup-overlay').classList.remove('active');
+        }
+
+        // ============ Save / Load ============
+
+        function saveGame() {
+            if (!_initComplete) return;
+            try {
+                localStorage.setItem(SAVE_KEY, JSON.stringify({
+                    funding: gameState.funding,
+                    soilSamples: gameState.soilSamples,
+                    genomesDecoded: gameState.genomesDecoded,
+                    alienSpecies: gameState.alienSpecies,
+                    terraformPct: gameState.terraformPct,
+                    transmissionsToEarth: gameState.transmissionsToEarth,
+                    roverLevel: gameState.roverLevel,
+                    signalDelayMin: gameState.signalDelayMin,
+                    papersPublished: gameState.papersPublished,
+                    containmentEvents: gameState.containmentEvents,
+                    ethicsVotes: gameState.ethicsVotes,
+                    activeChallenges: gameState.activeChallenges,
+                    challengesCompleted: gameState.challengesCompleted,
+                    rivals: gameState.rivals,
+                    ch4Complete: gameState.ch4Complete,
+                    savedAt: Date.now()
+                }));
+            } catch (e) { console.warn('Save failed:', e); }
+        }
+
+        function loadGame() {
+            try {
+                const raw = localStorage.getItem(SAVE_KEY);
+                if (!raw) return false;
+                Object.assign(gameState, JSON.parse(raw));
+                return true;
+            } catch (e) { return false; }
+        }
+
+        // ============ Init ============
+
+        const _resumed = loadGame();
+
+        if (!_resumed) {
+            initChallenges();
+            initRivals();
+        }
+
+        initMarsScene();
+        _initComplete = true;
+        updateDisplay();
+
+        if (_resumed) {
+            const status = document.getElementById('save-status');
+            if (status) {
+                status.textContent = 'Progress restored';
+                setTimeout(() => { status.textContent = 'Auto-save on'; }, 2500);
+            }
+        } else {
+            setTimeout(() => {
+                showPopup('Welcome to Chapter 4: The Final Frontier',
+                    `You decoded the ocean. You predicted human disease. You transmitted life at the speed of light.\n\n` +
+                    `Now you stand on Mars — 225 million kilometers from home — with a rover, a drill, and a dream.\n\n` +
+                    `Your mission: Find alien life in the Martian soil. Sequence its genome. Beam it back to Earth. Then turn Mars green.\n\n` +
+                    `"They asked me what's left after you've conquered the ocean, the human genome, and biological teleportation. I said: Mars. Obviously." — Dr. Venter`);
+            }, 800);
+
+            // Seed initial soil markers
+            for (let i = 0; i < 4; i++) {
+                setTimeout(() => createSoilMarker(Math.random() < 0.3), i * 400);
+            }
+        }
+
+        // Game tick
+        setInterval(tickRivals, 12000);
+    </script>
+</body>
+</html>
