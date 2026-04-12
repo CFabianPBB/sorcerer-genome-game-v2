@@ -95,6 +95,18 @@
             background: transparent;
             transition: all 0.3s;
             position: relative;
+            cursor: pointer;
+        }
+        .chapter-dot:hover {
+            transform: scale(1.3);
+            border-color: rgba(255,255,255,0.7);
+        }
+        .chapter-dot.locked {
+            cursor: default;
+            opacity: 0.35;
+        }
+        .chapter-dot.locked:hover {
+            transform: none;
         }
         .chapter-dot.active {
             background: #4a90e2;
@@ -105,6 +117,10 @@
             background: #ffd700;
             border-color: #ffd700;
             box-shadow: 0 0 6px rgba(255,215,0,0.4);
+        }
+        .chapter-dot.unlocked {
+            background: rgba(74,144,226,0.3);
+            border-color: #4a90e2;
         }
         .chapter-connector {
             width: 20px; height: 1px;
@@ -2454,13 +2470,13 @@
             </h1>
             <p class="subtitle">The expedition that unlocked the secrets of the ocean's microbiome</p>
             <div class="chapter-progress" id="chapter-progress">
-                <div class="chapter-dot active" title="Chapter 1: Voyage of the Sorcerer II"></div>
+                <div class="chapter-dot active" data-chapter="1" data-href="index.html" title="Chapter 1: Voyage of the Sorcerer II" onclick="navigateChapter(this)"></div>
                 <div class="chapter-connector"></div>
-                <div class="chapter-dot" title="Chapter 2: The 100-Year Life"></div>
+                <div class="chapter-dot locked" data-chapter="2" data-href="chapter2.html" title="Chapter 2: The 100-Year Life" onclick="navigateChapter(this)"></div>
                 <div class="chapter-connector"></div>
-                <div class="chapter-dot" title="Chapter 3: Life at the Speed of Light"></div>
+                <div class="chapter-dot locked" data-chapter="3" data-href="chapter3.html" title="Chapter 3: Life at the Speed of Light" onclick="navigateChapter(this)"></div>
                 <div class="chapter-connector"></div>
-                <div class="chapter-dot" title="Chapter 4: Fax Me a Martian"></div>
+                <div class="chapter-dot locked" data-chapter="4" data-href="chapter4.html" title="Chapter 4: Fax Me a Martian (Coming Soon)" onclick="navigateChapter(this)"></div>
             </div>
             <div class="chapter-label">Chapter <strong>1</strong> of 4 &mdash; <span id="chapter-status-text">The Ocean Awaits</span></div>
             <button class="about-btn" onclick="openStory()">About This Expedition</button>
@@ -3683,6 +3699,19 @@
                     if (!s.revealedTraits) s.revealedTraits = [];
                     if (typeof s.deployed !== 'boolean') s.deployed = false;
                 });
+                // Retroactive: if player already beat 3 challenges, mark ch1 complete
+                if (gameState.challengesCompleted >= 3 && !gameState.ch1Complete) {
+                    gameState.ch1Complete = true;
+                    try {
+                        localStorage.setItem('sorcerer2.ch1.complete', JSON.stringify({
+                            speciesFound: gameState.speciesFound,
+                            genesSequenced: gameState.genesSequenced,
+                            challengesCompleted: gameState.challengesCompleted,
+                            specimens: gameState.specimens,
+                            completedAt: Date.now()
+                        }));
+                    } catch (e) { /* ignore */ }
+                }
                 return true;
             } catch (e) {
                 console.warn('Load failed:', e);
@@ -4590,7 +4619,7 @@
             document.body.appendChild(overlay);
         }
 
-        // Show "Continue to Ch2" button on load if chapter was already completed
+        // Show "Continue to Ch2" banner on load if chapter was already completed
         (function checkCh1ReturnVisit() {
             if (gameState.ch1Complete) {
                 setTimeout(() => {
@@ -4598,11 +4627,31 @@
                     if (existing) return;
                     const banner = document.createElement('div');
                     banner.id = 'ch2-continue-banner';
-                    banner.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:500;background:linear-gradient(135deg,#ffd700,#ffaa00);color:#000;padding:12px 24px;border-radius:30px;font-weight:bold;font-size:0.9em;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.3);letter-spacing:1px;pointer-events:auto;';
-                    banner.textContent = 'Continue to Chapter 2 \u2192';
+                    banner.style.cssText = `
+                        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+                        z-index: 500;
+                        background: linear-gradient(135deg, #ffd700, #ffaa00);
+                        color: #000; padding: 14px 32px; border-radius: 30px;
+                        font-weight: bold; font-size: 1em; cursor: pointer;
+                        box-shadow: 0 4px 20px rgba(255,215,0,0.4), 0 0 40px rgba(255,215,0,0.15);
+                        letter-spacing: 1.5px; pointer-events: auto;
+                        animation: bannerPulse 2s ease-in-out infinite;
+                        text-align: center;
+                    `;
+                    banner.textContent = 'Chapter 1 Complete \u2014 Continue to Chapter 2 \u2192';
                     banner.onclick = () => { window.location.href = 'chapter2.html'; };
+
+                    // Add the pulse animation dynamically
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        @keyframes bannerPulse {
+                            0%, 100% { box-shadow: 0 4px 20px rgba(255,215,0,0.4), 0 0 40px rgba(255,215,0,0.15); }
+                            50% { box-shadow: 0 4px 30px rgba(255,215,0,0.6), 0 0 60px rgba(255,215,0,0.25); }
+                        }
+                    `;
+                    document.head.appendChild(style);
                     document.body.appendChild(banner);
-                }, 2000);
+                }, 500);
             }
         })();
 
@@ -4624,8 +4673,6 @@
             const connectors = document.querySelectorAll('#chapter-progress .chapter-connector');
             const statusEl = document.getElementById('chapter-status-text');
 
-            // Chapter 1 is always active (we're in it)
-            // Determine a status message based on progress
             const challenges = gameState.challengesCompleted || 0;
             const species = gameState.speciesFound || 0;
             const genes = gameState.genesSequenced || 0;
@@ -4641,15 +4688,58 @@
 
             if (statusEl) statusEl.textContent = statusText;
 
-            // Mark ch1 dot
+            // Dot 0: Chapter 1 (always at least active)
             if (dots[0]) {
                 if (gameState.ch1Complete) {
-                    dots[0].classList.remove('active');
+                    dots[0].classList.remove('active', 'locked');
                     dots[0].classList.add('completed');
                     if (connectors[0]) connectors[0].classList.add('lit');
                 } else {
+                    dots[0].classList.remove('locked');
                     dots[0].classList.add('active');
                 }
+            }
+
+            // Dot 1: Chapter 2 — unlocked when Ch1 complete
+            if (dots[1]) {
+                if (gameState.ch1Complete) {
+                    dots[1].classList.remove('locked');
+                    dots[1].classList.add('unlocked');
+                } else {
+                    dots[1].classList.add('locked');
+                }
+            }
+
+            // Dot 2: Chapter 3 — unlocked when Ch2 exists in localStorage
+            if (dots[2]) {
+                try {
+                    const ch2Save = localStorage.getItem('sorcerer2.ch2.v1');
+                    if (ch2Save && gameState.ch1Complete) {
+                        dots[2].classList.remove('locked');
+                        dots[2].classList.add('unlocked');
+                    }
+                } catch (e) {}
+            }
+
+            // Dot 3: Chapter 4 — always locked for now (not yet built)
+            if (dots[3]) {
+                dots[3].classList.add('locked');
+            }
+        }
+
+        function navigateChapter(dot) {
+            if (dot.classList.contains('locked')) {
+                const chapter = dot.getAttribute('data-chapter');
+                if (chapter === '4') {
+                    showPopup('Coming Soon', 'Chapter 4: Fax Me a Martian is not yet available.\n\nComplete the earlier chapters to unlock the final frontier!');
+                } else {
+                    showPopup('Chapter Locked', `Complete earlier chapters to unlock Chapter ${chapter}.\n\nSolve 3 Grand Challenges in your current chapter to advance.`);
+                }
+                return;
+            }
+            const href = dot.getAttribute('data-href');
+            if (href && href !== 'index.html') {
+                window.location.href = href;
             }
         }
 
