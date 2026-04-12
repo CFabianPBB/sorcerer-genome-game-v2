@@ -108,56 +108,120 @@
         /* ================= World Map Panel ================= */
         .world-map-panel {
             flex: 2;
-            background: radial-gradient(ellipse at 50% 50%, #0d1526 0%, #060b16 60%, #020510 100%);
+            background: radial-gradient(ellipse at 50% 40%, #0c1628 0%, #060b18 50%, #020510 100%);
             position: relative;
             overflow: hidden;
         }
-        /* Star field */
-        .world-map-panel::before {
-            content: '';
+        /* Animated scan line */
+        .map-scanline {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background:
-                radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.4), transparent),
-                radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.3), transparent),
-                radial-gradient(1px 1px at 50% 10%, rgba(255,255,255,0.5), transparent),
-                radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.3), transparent),
-                radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.4), transparent),
-                radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,0.3), transparent),
-                radial-gradient(1px 1px at 85% 15%, rgba(255,255,255,0.5), transparent),
-                radial-gradient(1px 1px at 45% 45%, rgba(255,255,255,0.2), transparent),
-                radial-gradient(1px 1px at 60% 30%, rgba(255,255,255,0.4), transparent),
-                radial-gradient(1px 1px at 25% 70%, rgba(255,255,255,0.3), transparent);
+            top: 0; left: 0; width: 100%; height: 1px;
+            background: linear-gradient(90deg, transparent 10%, rgba(124,58,237,0.15) 50%, transparent 90%);
+            z-index: 3;
             pointer-events: none;
-            z-index: 0;
+            animation: mapScan 8s linear infinite;
         }
-        /* Subtle grid */
+        @keyframes mapScan {
+            0% { top: -1px; opacity: 0; }
+            5% { opacity: 1; }
+            95% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        /* Grid with latitude/longitude feel */
         .map-grid {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             background:
-                linear-gradient(rgba(124,58,237,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(124,58,237,0.02) 1px, transparent 1px);
-            background-size: 50px 50px;
+                linear-gradient(rgba(124,58,237,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(124,58,237,0.025) 1px, transparent 1px);
+            background-size: 8.33% 10%;
             pointer-events: none;
             z-index: 1;
+        }
+        /* Equator line */
+        .map-equator {
+            position: absolute;
+            top: 50%; left: 0; width: 100%; height: 1px;
+            background: rgba(124,58,237,0.06);
+            z-index: 1; pointer-events: none;
         }
 
         /* SVG world map container */
         .map-svg-container {
             position: absolute;
-            top: 5%; left: 5%; width: 90%; height: 90%;
+            top: 3%; left: 2%; width: 96%; height: 94%;
             z-index: 2;
         }
         .map-svg-container svg {
             width: 100%; height: 100%;
         }
-        /* Continent outlines */
+        /* Continent fills */
         .continent {
-            fill: rgba(124,58,237,0.08);
-            stroke: rgba(124,58,237,0.2);
+            fill: rgba(124,58,237,0.06);
+            stroke: rgba(124,58,237,0.25);
+            stroke-width: 0.8;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 0 3px rgba(124,58,237,0.1));
+            transition: fill 0.5s, stroke 0.5s;
+        }
+        .continent:hover {
+            fill: rgba(124,58,237,0.12);
+            stroke: rgba(124,58,237,0.4);
+        }
+        /* Coastline glow */
+        .continent-glow {
+            fill: none;
+            stroke: rgba(124,58,237,0.08);
+            stroke-width: 4;
+            stroke-linejoin: round;
+            filter: blur(3px);
+        }
+        /* Ocean current lines */
+        .ocean-current {
+            fill: none;
+            stroke: rgba(124,58,237,0.04);
             stroke-width: 0.5;
-            transition: fill 0.3s;
+            stroke-dasharray: 8 12;
+            animation: currentFlow 20s linear infinite;
+        }
+        @keyframes currentFlow {
+            0% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -200; }
+        }
+        /* Network connection lines between DBC nodes */
+        .network-line {
+            fill: none;
+            stroke: rgba(124,58,237,0.12);
+            stroke-width: 0.6;
+            stroke-dasharray: 4 6;
+        }
+        .network-line.active {
+            stroke: rgba(16,185,129,0.2);
+            animation: networkPulse 3s ease-in-out infinite;
+        }
+        @keyframes networkPulse {
+            0%, 100% { stroke-opacity: 0.15; }
+            50% { stroke-opacity: 0.35; }
+        }
+        /* Node glow on map surface */
+        .node-glow {
+            fill: url(#nodeGlowGrad);
+            opacity: 0.4;
+            animation: nodeGlowPulse 4s ease-in-out infinite;
+        }
+        @keyframes nodeGlowPulse {
+            0%, 100% { opacity: 0.25; }
+            50% { opacity: 0.5; }
+        }
+        /* Ambient data particles */
+        .ambient-particle {
+            position: absolute;
+            width: 2px; height: 2px;
+            border-radius: 50%;
+            background: #a78bfa;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 6;
         }
 
         /* DBC Node markers on map */
@@ -644,38 +708,80 @@
             <!-- Left: World Map -->
             <div class="world-map-panel" id="world-map">
                 <div class="map-grid"></div>
+                <div class="map-equator"></div>
+                <div class="map-scanline"></div>
 
-                <!-- Map SVG (simplified world) -->
+                <!-- Map SVG — realistic continents -->
                 <div class="map-svg-container">
                     <svg viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg" id="map-svg">
                         <defs>
                             <linearGradient id="signalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                                 <stop offset="0%" stop-color="#7c3aed" stop-opacity="0"/>
-                                <stop offset="40%" stop-color="#a78bfa" stop-opacity="1"/>
-                                <stop offset="60%" stop-color="#a78bfa" stop-opacity="1"/>
+                                <stop offset="30%" stop-color="#a78bfa" stop-opacity="1"/>
+                                <stop offset="70%" stop-color="#a78bfa" stop-opacity="1"/>
                                 <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
                             </linearGradient>
+                            <radialGradient id="nodeGlowGrad">
+                                <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.3"/>
+                                <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+                            </radialGradient>
                         </defs>
-                        <!-- Simplified continent outlines -->
+
+                        <!-- Ocean current lines -->
+                        <path class="ocean-current" d="M50,250 Q200,230 350,260 Q500,290 650,250 Q800,210 950,240"/>
+                        <path class="ocean-current" d="M50,300 Q150,320 300,290 Q450,260 600,300 Q750,340 950,310" style="animation-delay:-7s"/>
+                        <path class="ocean-current" d="M50,180 Q200,160 400,190 Q600,220 800,180 Q900,160 950,170" style="animation-delay:-13s"/>
+
+                        <!-- Coastline glow layers (behind continents) -->
+                        <!-- North America glow -->
+                        <path class="continent-glow" d="M55,55 Q80,45 110,40 L155,35 Q175,38 190,50 L210,55 Q230,60 245,70 L255,85 Q265,100 270,115 L272,135 Q273,155 265,170 L255,185 Q240,195 225,205 L210,210 Q195,215 180,225 L165,238 Q155,248 148,260 L140,268 Q130,260 120,250 L110,235 Q95,215 85,200 L75,185 Q60,165 55,145 L50,125 Q48,105 50,85 Z"/>
+                        <!-- Africa glow -->
+                        <path class="continent-glow" d="M435,155 Q450,148 465,145 L485,142 Q500,145 515,155 L530,168 Q545,185 555,205 L560,225 Q562,250 558,275 L550,300 Q540,325 525,345 L510,365 Q495,380 475,388 L460,390 Q445,385 435,370 L425,350 Q418,325 415,300 L413,270 Q415,240 420,215 L425,195 Q430,175 435,155 Z"/>
+
                         <!-- North America -->
-                        <path class="continent" d="M120,80 L180,60 L240,70 L260,100 L270,140 L250,180 L220,200 L180,210 L150,240 L130,220 L100,200 L80,160 L90,120 Z"/>
+                        <path class="continent" d="M55,55 Q80,45 110,40 L155,35 Q175,38 190,50 L210,55 Q230,60 245,70 L255,85 Q265,100 270,115 L272,135 Q273,155 265,170 L255,185 Q240,195 225,205 L210,210 Q195,215 180,225 L165,238 Q155,248 148,260 L140,268 Q130,260 120,250 L110,235 Q95,215 85,200 L75,185 Q60,165 55,145 L50,125 Q48,105 50,85 Z"/>
+                        <!-- Central America -->
+                        <path class="continent" d="M148,260 Q155,265 162,272 L170,280 Q175,290 172,298 L168,305 Q160,308 155,302 L148,295 Q142,285 140,275 Z"/>
                         <!-- South America -->
-                        <path class="continent" d="M210,250 L240,240 L270,260 L280,300 L270,350 L250,400 L220,420 L200,400 L190,350 L195,300 Z"/>
+                        <path class="continent" d="M175,300 Q190,290 210,285 L230,282 Q248,285 260,295 L268,310 Q272,330 270,350 L265,370 Q255,390 242,405 L225,418 Q210,425 195,420 L185,410 Q178,395 175,375 L172,350 Q170,325 175,300 Z"/>
+                        <!-- Greenland -->
+                        <path class="continent" d="M250,25 Q270,18 290,22 L305,30 Q310,40 305,50 L295,55 Q280,58 265,52 L255,42 Q248,35 250,25 Z"/>
+                        <!-- UK + Ireland -->
+                        <path class="continent" d="M420,72 Q428,68 435,72 L438,80 Q436,88 430,90 L424,86 Q420,80 420,72 Z"/>
                         <!-- Europe -->
-                        <path class="continent" d="M440,70 L480,60 L520,70 L530,100 L520,130 L490,140 L460,130 L440,110 Z"/>
+                        <path class="continent" d="M440,55 Q458,48 478,50 L500,55 Q518,58 530,68 L540,80 Q545,95 540,108 L532,118 Q520,128 505,132 L488,135 Q470,132 455,125 L442,115 Q435,105 433,92 L432,78 Q434,65 440,55 Z"/>
+                        <!-- Scandinavia -->
+                        <path class="continent" d="M468,25 Q478,18 490,22 L500,30 Q505,42 498,52 L488,48 Q480,42 475,35 L468,25 Z"/>
                         <!-- Africa -->
-                        <path class="continent" d="M440,160 L480,150 L530,170 L550,220 L560,280 L540,340 L510,380 L470,390 L440,360 L420,300 L420,240 L430,200 Z"/>
-                        <!-- Asia -->
-                        <path class="continent" d="M530,50 L600,40 L680,50 L750,70 L800,100 L820,140 L800,170 L750,180 L700,170 L650,160 L600,150 L560,130 L540,100 Z"/>
+                        <path class="continent" d="M435,155 Q450,148 465,145 L485,142 Q500,145 515,155 L530,168 Q545,185 555,205 L560,225 Q562,250 558,275 L550,300 Q540,325 525,345 L510,365 Q495,380 475,388 L460,390 Q445,385 435,370 L425,350 Q418,325 415,300 L413,270 Q415,240 420,215 L425,195 Q430,175 435,155 Z"/>
+                        <!-- Madagascar -->
+                        <path class="continent" d="M572,330 Q578,322 582,330 L580,350 Q576,360 570,355 L568,340 Z"/>
+                        <!-- Middle East -->
+                        <path class="continent" d="M545,130 Q560,125 575,130 L590,140 Q598,155 595,170 L585,178 Q570,180 560,172 L548,160 Q542,145 545,130 Z"/>
+                        <!-- Russia / Central Asia -->
+                        <path class="continent" d="M540,45 Q580,35 630,30 L690,28 Q740,32 780,45 L810,58 Q830,72 835,90 L830,78 Q815,65 795,55 L770,48 Q740,42 700,40 L660,42 Q620,48 590,60 L560,72 Q545,65 540,55 Z"/>
                         <!-- India -->
-                        <path class="continent" d="M640,180 L670,170 L690,200 L680,250 L650,270 L630,250 L620,220 L630,190 Z"/>
-                        <!-- Southeast Asia / Indonesia -->
-                        <path class="continent" d="M720,200 L760,190 L800,200 L830,210 L820,230 L780,240 L740,230 L720,220 Z"/>
-                        <!-- Australia -->
-                        <path class="continent" d="M770,310 L830,300 L870,320 L880,360 L860,390 L820,400 L780,390 L760,360 L760,330 Z"/>
+                        <path class="continent" d="M625,180 Q640,172 658,175 L672,182 Q682,195 685,215 L682,238 Q675,258 662,270 L648,275 Q635,270 628,255 L622,235 Q618,210 625,180 Z"/>
+                        <!-- China / East Asia -->
+                        <path class="continent" d="M680,65 Q710,58 740,62 L770,72 Q790,82 800,98 L805,115 Q802,135 790,148 L772,158 Q750,165 725,160 L700,152 Q680,140 670,122 L665,105 Q668,82 680,65 Z"/>
+                        <!-- Southeast Asia -->
+                        <path class="continent" d="M710,185 Q725,178 742,182 L758,190 Q768,200 770,215 L765,228 Q755,235 740,232 L725,225 Q715,215 712,200 Z"/>
+                        <!-- Indonesia -->
+                        <path class="continent" d="M720,248 Q740,242 760,245 L785,250 Q805,258 820,252 L830,256 Q825,268 810,270 L785,268 Q760,265 740,268 L725,265 Q718,258 720,248 Z"/>
                         <!-- Japan -->
-                        <path class="continent" d="M830,90 L845,80 L850,100 L840,120 L830,110 Z"/>
-                        <!-- Signal arcs drawn here by JS -->
+                        <path class="continent" d="M828,78 Q835,70 842,75 L845,88 Q842,102 838,112 L832,108 Q828,95 828,78 Z"/>
+                        <!-- Philippines -->
+                        <path class="continent" d="M798,195 Q804,188 808,195 L806,210 Q802,218 798,212 Z"/>
+                        <!-- Australia -->
+                        <path class="continent" d="M760,310 Q785,298 815,300 L845,308 Q868,320 878,342 L882,365 Q878,388 862,400 L838,408 Q812,410 788,400 L768,385 Q755,368 752,345 L755,325 Z"/>
+                        <!-- New Zealand -->
+                        <path class="continent" d="M895,385 Q900,378 905,382 L908,395 Q905,408 900,405 L895,395 Z"/>
+
+                        <!-- Network lines drawn by JS -->
+                        <g id="network-lines"></g>
+                        <!-- Node glows drawn by JS -->
+                        <g id="node-glows"></g>
+                        <!-- Signal arcs drawn by JS -->
                         <g id="signal-arcs"></g>
                     </svg>
                 </div>
@@ -1092,58 +1198,119 @@
             const container = document.getElementById('dbc-nodes');
             container.innerHTML = '';
 
+            const installed = DBC_CITIES.filter(c => gameState.dbcNodes.includes(c.id));
+
+            // Draw network lines between installed nodes (SVG)
+            const linesGroup = document.getElementById('network-lines');
+            const glowsGroup = document.getElementById('node-glows');
+            linesGroup.innerHTML = '';
+            glowsGroup.innerHTML = '';
+
+            installed.forEach((city, i) => {
+                // Node glow on map
+                const glow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                glow.setAttribute('cx', city.x * 10);
+                glow.setAttribute('cy', city.y * 5);
+                glow.setAttribute('r', '25');
+                glow.setAttribute('class', 'node-glow');
+                glow.style.animationDelay = (i * 0.5) + 's';
+                glowsGroup.appendChild(glow);
+
+                // Network lines to other installed nodes
+                for (let j = i + 1; j < installed.length; j++) {
+                    const other = installed[j];
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', city.x * 10);
+                    line.setAttribute('y1', city.y * 5);
+                    line.setAttribute('x2', other.x * 10);
+                    line.setAttribute('y2', other.y * 5);
+                    line.setAttribute('class', 'network-line active');
+                    line.style.animationDelay = (Math.random() * 3) + 's';
+                    linesGroup.appendChild(line);
+                }
+            });
+
+            // Render DBC node markers
             DBC_CITIES.forEach(city => {
-                const installed = gameState.dbcNodes.includes(city.id);
-                if (!installed) return;
+                const isInstalled = gameState.dbcNodes.includes(city.id);
 
                 const node = document.createElement('div');
-                node.className = 'dbc-node active';
-
-                // Check if this city has an outbreak
                 const hasOutbreak = gameState.activeOutbreaks.some(o => o.cityId === city.id);
-                if (hasOutbreak) node.className = 'dbc-node outbreak';
+
+                if (isInstalled) {
+                    node.className = hasOutbreak ? 'dbc-node outbreak' : 'dbc-node active';
+                } else {
+                    node.className = 'dbc-node';
+                    node.style.opacity = '0.15';
+                    node.style.animation = 'none';
+                    node.style.width = '8px';
+                    node.style.height = '8px';
+                    node.style.borderWidth = '1px';
+                }
 
                 node.style.left = city.x + '%';
                 node.style.top = city.y + '%';
                 node.style.transform = 'translate(-50%, -50%)';
 
-                node.onclick = () => {
-                    const status = hasOutbreak ? 'OUTBREAK IN PROGRESS' : 'Online';
-                    showPopup(`DBC Node: ${city.name}`,
-                        `Status: ${status}\n` +
-                        `Continent: ${city.continent}\n` +
-                        (city.special ? `Special: Lunar relay station\n` : '') +
-                        `Signal integrity: ${gameState.signalIntegrity}%`);
-                };
+                if (isInstalled) {
+                    node.onclick = () => {
+                        const status = hasOutbreak ? 'OUTBREAK IN PROGRESS' : 'Online';
+                        showPopup(`DBC Node: ${city.name}`,
+                            `Status: ${status}\nContinent: ${city.continent}\n` +
+                            (city.special ? 'Special: Lunar relay station\n' : '') +
+                            `Signal integrity: ${gameState.signalIntegrity}%`);
+                    };
+                }
 
                 const label = document.createElement('div');
                 label.className = 'dbc-node-label';
                 label.textContent = city.name;
+                if (!isInstalled) label.style.opacity = '0.25';
                 node.appendChild(label);
 
                 container.appendChild(node);
             });
 
-            // Show uninstalled cities as dim markers
-            DBC_CITIES.forEach(city => {
-                if (gameState.dbcNodes.includes(city.id)) return;
-                const ghost = document.createElement('div');
-                ghost.className = 'dbc-node';
-                ghost.style.left = city.x + '%';
-                ghost.style.top = city.y + '%';
-                ghost.style.transform = 'translate(-50%, -50%)';
-                ghost.style.opacity = '0.2';
-                ghost.style.cursor = 'default';
-                ghost.style.animation = 'none';
+            // Start ambient data flow if we have 2+ nodes
+            if (installed.length >= 2) startAmbientFlow();
+        }
 
-                const label = document.createElement('div');
-                label.className = 'dbc-node-label';
-                label.textContent = city.name;
-                label.style.opacity = '0.3';
-                ghost.appendChild(label);
+        // ============ Ambient Data Flow Particles ============
+        let _ambientFlowInterval = null;
 
-                container.appendChild(ghost);
-            });
+        function startAmbientFlow() {
+            if (_ambientFlowInterval) return;
+            _ambientFlowInterval = setInterval(() => {
+                const installed = DBC_CITIES.filter(c => gameState.dbcNodes.includes(c.id));
+                if (installed.length < 2) return;
+
+                const from = installed[Math.floor(Math.random() * installed.length)];
+                let to = installed[Math.floor(Math.random() * installed.length)];
+                if (to.id === from.id) return;
+
+                const panel = document.getElementById('world-map');
+                const particle = document.createElement('div');
+                particle.className = 'ambient-particle';
+                particle.style.left = from.x + '%';
+                particle.style.top = from.y + '%';
+                particle.style.background = Math.random() > 0.5 ? '#a78bfa' : '#10b981';
+                panel.appendChild(particle);
+
+                requestAnimationFrame(() => {
+                    particle.style.transition = 'left 3s linear, top 3s linear, opacity 3s';
+                    particle.style.opacity = '0.6';
+                    particle.style.left = to.x + '%';
+                    particle.style.top = to.y + '%';
+                });
+
+                setTimeout(() => {
+                    particle.style.opacity = '0';
+                }, 2500);
+
+                setTimeout(() => {
+                    if (particle.parentNode) particle.remove();
+                }, 3500);
+            }, 800);
         }
 
         // ============ Signal Arc Animation ============
