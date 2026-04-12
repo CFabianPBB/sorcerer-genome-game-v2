@@ -1642,9 +1642,18 @@
                 status.textContent = 'Progress restored';
                 setTimeout(() => { status.textContent = 'Auto-save on'; }, 2500);
             }
+            // Welcome back message
+            setTimeout(() => {
+                showPopup('Chapter 3: Life at the Speed of Light',
+                    `Welcome back, Dr. Venter.\n\n` +
+                    `Network: ${gameState.dbcNodes.length} DBC nodes online | ${gameState.transmissions} transmissions | ${gameState.vaccinesPrinted} vaccines printed\n` +
+                    `Signal Integrity: ${gameState.signalIntegrity}% | Outbreaks Stopped: ${gameState.outbreaksStopped}\n\n` +
+                    `Your mission: Build DBC printers worldwide, transmit genomes at the speed of light, synthesize vaccines on demand, and stop pandemics before they spread.\n\n` +
+                    `"We decoded life. Then we learned to predict it. Now we learn to transmit it." — Dr. Venter`);
+            }, 600);
         } else {
             setTimeout(() => {
-                showPopup('Welcome to Chapter 3',
+                showPopup('Welcome to Chapter 3: Life at the Speed of Light',
                     `The clinic proved genomics could predict disease. Now we go further — transmitting biology itself.\n\n` +
                     `You are Dr. Craig Venter, deploying a global network of Digital-to-Biological Converters.\n\n` +
                     `Your mission: Build DBC printers worldwide, transmit genomes at the speed of light, synthesize vaccines on demand, and stop pandemics before they spread.\n\n` +

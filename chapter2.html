@@ -1202,9 +1202,18 @@
                 status.textContent = 'Progress restored';
                 setTimeout(() => { status.textContent = 'Auto-save on'; }, 2500);
             }
+            // Welcome back message
+            setTimeout(() => {
+                showPopup('Chapter 2: The 100-Year Life',
+                    `Welcome back, Dr. Venter.\n\n` +
+                    `Progress: ${gameState.genomesSequenced} genomes sequenced, ${gameState.diseasesPredicted} diseases predicted, ${gameState.clinicsBuilt} clinics built.\n` +
+                    `AI Accuracy: ${gameState.aiAccuracy}%\n\n` +
+                    `Your mission: Build a network of genomic clinics, train AI to predict disease before it strikes, and race Big Pharma to patent the future of medicine.\n\n` +
+                    `"We decoded the ocean. Now we decode ourselves." — Dr. Venter`);
+            }, 600);
         } else {
             setTimeout(() => {
-                showPopup('Welcome to Chapter 2',
+                showPopup('Welcome to Chapter 2: The 100-Year Life',
                     `The ocean expedition revealed the building blocks of life. Now we turn that knowledge inward — to the human genome.\n\n` +
                     `You are Dr. Craig Venter, founder of Human Longevity Inc.\n\n` +
                     `Your mission: Build a network of genomic clinics, train AI to predict disease before it strikes, and race Big Pharma to patent the future of medicine.\n\n` +

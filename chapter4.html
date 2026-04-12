@@ -1473,6 +1473,15 @@
                 status.textContent = 'Progress restored';
                 setTimeout(() => { status.textContent = 'Auto-save on'; }, 2500);
             }
+            // Welcome back message
+            setTimeout(() => {
+                showPopup('Chapter 4: Fax Me a Martian',
+                    `Welcome back, Dr. Venter.\n\n` +
+                    `Rover Level: ${gameState.roverLevel} | Soil Samples: ${gameState.soilSamples} | Alien Species: ${gameState.alienSpecies}\n` +
+                    `Terraforming: ${gameState.terraformPct}% | Earth Transmissions: ${gameState.transmissionsToEarth}\n\n` +
+                    `Your mission: Find alien life in the Martian soil. Sequence its genome. Beam it back to Earth. Then turn Mars green.\n\n` +
+                    `"They asked me what's left after you've conquered the ocean, the human genome, and biological teleportation. I said: Mars. Obviously." — Dr. Venter`);
+            }, 600);
         } else {
             setTimeout(() => {
                 showPopup('Welcome to Chapter 4: The Final Frontier',
