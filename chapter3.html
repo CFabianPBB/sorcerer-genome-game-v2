@@ -7,6 +7,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Speed of Light">
     <title>Life at the Speed of Light — Chapter 3</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -205,7 +207,7 @@
         }
         /* Node glow on map surface */
         .node-glow {
-            fill: url(#nodeGlowGrad);
+            fill: rgba(124,58,237,0.15);
             opacity: 0.4;
             animation: nodeGlowPulse 4s ease-in-out infinite;
         }
@@ -276,8 +278,8 @@
         /* Signal arc animation (SVG-based, drawn in JS) */
         .signal-arc {
             fill: none;
-            stroke: url(#signalGrad);
-            stroke-width: 2;
+            stroke: #00ff88;
+            stroke-width: 1.5;
             stroke-linecap: round;
             opacity: 0;
             animation: arcFire 2.5s ease-in-out forwards;
@@ -853,64 +855,9 @@
                 <div class="map-equator"></div>
                 <div class="map-scanline"></div>
 
-                <!-- Map SVG — realistic continents -->
-                <div class="map-svg-container">
-                    <svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg" id="map-svg">
-                        <defs>
-                            <linearGradient id="signalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#7c3aed" stop-opacity="0"/>
-                                <stop offset="30%" stop-color="#a78bfa" stop-opacity="1"/>
-                                <stop offset="70%" stop-color="#a78bfa" stop-opacity="1"/>
-                                <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
-                            </linearGradient>
-                            <radialGradient id="nodeGlowGrad">
-                                <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.3"/>
-                                <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
-                            </radialGradient>
-                        </defs>
-
-                        <!-- Ocean background -->
-                        <rect width="700" height="420" fill="#050510"/>
-
-                        <!-- Ocean current lines -->
-                        <path class="ocean-current" d="M0,210 Q100,195 210,215 Q320,235 420,210 Q530,185 700,205"/>
-                        <path class="ocean-current" d="M0,260 Q85,278 200,250 Q300,225 410,260 Q520,290 700,265" style="animation-delay:-7s"/>
-                        <path class="ocean-current" d="M0,160 Q130,140 270,165 Q410,190 550,155 Q630,140 700,150" style="animation-delay:-13s"/>
-
-                        <!-- NORTH AMERICA -->
-                        <path class="continent" d="M180,80 C160,85 140,95 135,110 C125,130 128,150 135,165 C120,170 105,185 110,200 C115,215 125,220 135,225 C145,240 150,260 145,275 C155,280 165,275 170,265 C180,255 185,245 195,240 C210,238 220,242 225,250 C230,258 225,268 220,272 C228,278 238,278 245,272 C252,265 255,255 252,245 C260,238 270,238 275,245 C268,252 265,262 270,270 C278,265 285,255 282,245 C290,235 300,230 308,232 C305,220 295,215 288,218 C295,208 302,200 298,192 C290,185 280,185 272,190 C268,180 270,168 278,162 C272,155 262,153 255,158 C248,145 248,132 255,122 C245,115 232,115 225,122 C218,112 215,100 220,90 C210,85 195,83 180,80 Z"/>
-
-                        <!-- SOUTH AMERICA -->
-                        <path class="continent" d="M245,280 C235,285 228,295 232,308 C225,315 218,325 222,338 C228,348 238,350 245,345 C250,355 248,368 242,375 C248,385 258,390 265,385 C272,378 275,368 272,358 C280,350 290,348 295,352 C292,362 288,372 292,380 C298,375 305,368 308,358 C315,348 318,335 312,325 C318,315 322,302 315,292 C308,285 298,283 290,288 C285,278 280,268 272,265 C262,268 252,272 245,280 Z"/>
-
-                        <!-- EUROPE -->
-                        <path class="continent" d="M470,72 C462,68 455,72 452,80 C445,78 438,82 438,90 C432,88 425,92 425,100 C430,108 438,110 445,106 C448,115 445,125 438,128 C445,132 455,130 460,122 C468,125 472,135 468,142 C475,138 482,132 480,122 C488,118 495,122 495,132 C502,128 508,120 505,110 C512,105 518,110 518,120 C525,115 528,105 522,98 C515,92 505,92 498,98 C492,88 485,80 478,78 C474,74 471,72 470,72 Z"/>
-
-                        <!-- AFRICA -->
-                        <path class="continent" d="M462,145 C452,148 445,158 448,170 C440,175 432,185 435,198 C428,205 422,218 425,232 C430,242 440,248 450,245 C455,258 452,272 445,280 C452,290 462,295 470,290 C478,300 478,315 472,322 C480,328 490,328 495,322 C502,330 505,342 500,350 C508,348 515,340 515,330 C522,322 528,312 525,300 C532,295 540,298 542,308 C548,302 550,292 545,283 C548,272 552,262 548,252 C542,245 532,243 525,248 C518,238 518,225 525,218 C518,210 508,210 502,218 C495,208 495,195 502,188 C495,180 485,178 480,185 C472,175 472,160 480,152 C472,148 466,145 462,145 Z"/>
-
-                        <!-- ASIA (major landmass) -->
-                        <path class="continent" d="M525,72 C518,68 510,70 505,78 C498,75 490,78 488,88 C495,95 505,95 510,88 C518,92 525,100 520,110 C528,108 538,105 540,95 C548,100 558,105 555,115 C562,112 570,108 568,98 C578,102 588,108 585,118 C592,115 600,110 598,100 C608,105 618,112 615,122 C622,118 628,110 625,100 C632,95 640,98 640,108 C648,105 655,98 652,88 C645,82 635,82 630,88 C622,80 618,68 625,60 C615,58 605,60 600,68 C592,60 582,58 578,65 C570,58 560,58 558,65 C548,60 538,60 535,67 C530,65 525,70 525,72 Z"/>
-
-                        <!-- INDIA subcontinent -->
-                        <path class="continent" d="M565,145 C558,148 555,158 558,168 C555,175 548,185 552,198 C558,210 568,215 575,210 C582,218 580,230 575,238 C582,242 590,238 592,228 C598,222 602,228 602,238 C608,232 612,222 608,212 C615,208 620,215 618,225 C625,218 628,208 622,198 C618,188 610,182 605,175 C598,168 590,158 582,152 C575,148 570,145 565,145 Z"/>
-
-                        <!-- AUSTRALIA -->
-                        <path class="continent" d="M620,280 C610,275 600,278 595,288 C588,285 580,288 578,298 C582,308 592,312 600,308 C605,318 602,330 595,335 C602,340 612,340 618,332 C625,338 628,348 622,355 C630,352 638,345 638,335 C645,330 652,332 652,340 C658,335 660,325 655,318 C660,310 665,302 660,295 C652,290 642,292 638,300 C630,292 628,280 635,272 C628,270 622,273 620,280 Z"/>
-
-                        <!-- JAPAN islands -->
-                        <path class="continent" d="M645,72 C642,68 638,72 638,78 C635,82 638,88 642,88 C645,92 642,98 638,102 C642,105 648,102 650,95 C652,100 650,108 645,112 C650,112 655,105 655,98 C658,95 660,100 658,105 C662,102 665,95 662,88 C660,82 655,78 650,78 C648,75 647,72 645,72 Z"/>
-
-                        <!-- UK/Ireland small -->
-                        <path class="continent" d="M435,75 C432,72 428,75 428,80 C430,85 435,88 438,85 C440,82 438,78 435,75 Z"/>
-
-                        <!-- Network lines drawn by JS -->
-                        <g id="network-lines"></g>
-                        <!-- Node glows drawn by JS -->
-                        <g id="node-glows"></g>
-                        <!-- Signal arcs drawn by JS -->
-                        <g id="signal-arcs"></g>
-                    </svg>
+                <!-- D3.js rendered world map -->
+                <div class="map-svg-container" id="d3-map-container">
+                    <svg id="map-svg" style="width:100%;height:100%;"></svg>
                 </div>
 
                 <!-- DBC nodes placed by JS -->
@@ -1066,21 +1013,39 @@
 
         // ============ DBC City Data ============
         const DBC_CITIES = [
-            { id: 'sandiego',   name: 'San Diego',    x: 14, y: 36, continent: 'NA' },
-            { id: 'newyork',    name: 'New York',     x: 22, y: 30, continent: 'NA' },
-            { id: 'saopaulo',   name: 'Sao Paulo',    x: 24, y: 68, continent: 'SA' },
-            { id: 'london',     name: 'London',       x: 46, y: 22, continent: 'EU' },
-            { id: 'berlin',     name: 'Berlin',       x: 50, y: 20, continent: 'EU' },
-            { id: 'lagos',      name: 'Lagos',        x: 46, y: 52, continent: 'AF' },
-            { id: 'nairobi',    name: 'Nairobi',      x: 54, y: 56, continent: 'AF' },
-            { id: 'dubai',      name: 'Dubai',        x: 58, y: 40, continent: 'ME' },
-            { id: 'mumbai',     name: 'Mumbai',       x: 64, y: 44, continent: 'AS' },
-            { id: 'shanghai',   name: 'Shanghai',     x: 76, y: 34, continent: 'AS' },
-            { id: 'tokyo',      name: 'Tokyo',        x: 84, y: 28, continent: 'AS' },
-            { id: 'singapore',  name: 'Singapore',    x: 74, y: 54, continent: 'AS' },
-            { id: 'sydney',     name: 'Sydney',       x: 84, y: 72, continent: 'OC' },
-            { id: 'moonbase',   name: 'Lunar Relay',  x: 50, y: 6,  continent: 'MOON', cost: 5000000, special: true }
+            { id: 'sandiego',   name: 'San Diego',    lon: -117.2, lat: 32.7,  continent: 'NA' },
+            { id: 'newyork',    name: 'New York',     lon: -74.0,  lat: 40.7,  continent: 'NA' },
+            { id: 'saopaulo',   name: 'Sao Paulo',    lon: -46.6,  lat: -23.5, continent: 'SA' },
+            { id: 'london',     name: 'London',       lon: -0.1,   lat: 51.5,  continent: 'EU' },
+            { id: 'berlin',     name: 'Berlin',       lon: 13.4,   lat: 52.5,  continent: 'EU' },
+            { id: 'lagos',      name: 'Lagos',        lon: 3.4,    lat: 6.5,   continent: 'AF' },
+            { id: 'nairobi',    name: 'Nairobi',      lon: 36.8,   lat: -1.3,  continent: 'AF' },
+            { id: 'dubai',      name: 'Dubai',        lon: 55.3,   lat: 25.3,  continent: 'ME' },
+            { id: 'mumbai',     name: 'Mumbai',       lon: 72.8,   lat: 19.0,  continent: 'AS' },
+            { id: 'shanghai',   name: 'Shanghai',     lon: 121.5,  lat: 31.2,  continent: 'AS' },
+            { id: 'tokyo',      name: 'Tokyo',        lon: 139.7,  lat: 35.7,  continent: 'AS' },
+            { id: 'singapore',  name: 'Singapore',    lon: 103.8,  lat: 1.35,  continent: 'AS' },
+            { id: 'sydney',     name: 'Sydney',       lon: 151.2,  lat: -33.9, continent: 'OC' },
+            { id: 'moonbase',   name: 'Lunar Relay',  lon: 0,      lat: 85,    continent: 'MOON', cost: 5000000, special: true }
         ];
+
+        // D3 projection stored globally for use in rendering functions
+        let _mapProjection = null;
+        let _mapSvg = null;
+        let _mapWidth = 0;
+        let _mapHeight = 0;
+
+        // Get pixel coords for a city using D3 projection
+        function cityPixelCoords(city) {
+            if (!_mapProjection) return [0, 0];
+            return _mapProjection([city.lon, city.lat]) || [0, 0];
+        }
+
+        // Get city coords as percentage of map container (for DOM positioned nodes)
+        function cityPercentCoords(city) {
+            const [px, py] = cityPixelCoords(city);
+            return { x: (px / _mapWidth) * 100, y: (py / _mapHeight) * 100 };
+        }
 
         // ============ Challenges ============
         const CHALLENGE_TEMPLATES = [
@@ -1327,39 +1292,49 @@
 
             const installed = DBC_CITIES.filter(c => gameState.dbcNodes.includes(c.id));
 
-            // Draw network lines between installed nodes (SVG)
+            // Draw network lines between installed nodes (SVG via D3)
             const linesGroup = document.getElementById('network-lines');
             const glowsGroup = document.getElementById('node-glows');
-            linesGroup.innerHTML = '';
-            glowsGroup.innerHTML = '';
+            if (linesGroup) linesGroup.innerHTML = '';
+            if (glowsGroup) glowsGroup.innerHTML = '';
 
             installed.forEach((city, i) => {
+                const [cx, cy] = cityPixelCoords(city);
+                if (!cx && !cy) return;
+
                 // Node glow on map
-                const glow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                glow.setAttribute('cx', city.x * 7);
-                glow.setAttribute('cy', city.y * 4.2);
-                glow.setAttribute('r', '18');
-                glow.setAttribute('class', 'node-glow');
-                glow.style.animationDelay = (i * 0.5) + 's';
-                glowsGroup.appendChild(glow);
+                if (glowsGroup) {
+                    const glow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    glow.setAttribute('cx', cx);
+                    glow.setAttribute('cy', cy);
+                    glow.setAttribute('r', '18');
+                    glow.setAttribute('class', 'node-glow');
+                    glow.style.animationDelay = (i * 0.5) + 's';
+                    glowsGroup.appendChild(glow);
+                }
 
                 // Network lines to other installed nodes
-                for (let j = i + 1; j < installed.length; j++) {
-                    const other = installed[j];
-                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                    line.setAttribute('x1', city.x * 7);
-                    line.setAttribute('y1', city.y * 4.2);
-                    line.setAttribute('x2', other.x * 7);
-                    line.setAttribute('y2', other.y * 4.2);
-                    line.setAttribute('class', 'network-line active');
-                    line.style.animationDelay = (Math.random() * 3) + 's';
-                    linesGroup.appendChild(line);
+                if (linesGroup) {
+                    for (let j = i + 1; j < installed.length; j++) {
+                        const other = installed[j];
+                        const [ox, oy] = cityPixelCoords(other);
+                        if (!ox && !oy) continue;
+                        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                        line.setAttribute('x1', cx);
+                        line.setAttribute('y1', cy);
+                        line.setAttribute('x2', ox);
+                        line.setAttribute('y2', oy);
+                        line.setAttribute('class', 'network-line active');
+                        line.style.animationDelay = (Math.random() * 3) + 's';
+                        linesGroup.appendChild(line);
+                    }
                 }
             });
 
-            // Render DBC node markers
+            // Render DBC node markers as DOM overlays
             DBC_CITIES.forEach(city => {
                 const isInstalled = gameState.dbcNodes.includes(city.id);
+                const pct = cityPercentCoords(city);
 
                 const node = document.createElement('div');
                 const hasOutbreak = gameState.activeOutbreaks.some(o => o.cityId === city.id);
@@ -1375,8 +1350,8 @@
                     node.style.borderWidth = '1px';
                 }
 
-                node.style.left = city.x + '%';
-                node.style.top = city.y + '%';
+                node.style.left = pct.x + '%';
+                node.style.top = pct.y + '%';
                 node.style.transform = 'translate(-50%, -50%)';
 
                 if (isInstalled) {
@@ -1415,28 +1390,26 @@
                 let to = installed[Math.floor(Math.random() * installed.length)];
                 if (to.id === from.id) return;
 
+                const fromPct = cityPercentCoords(from);
+                const toPct = cityPercentCoords(to);
+
                 const panel = document.getElementById('world-map');
                 const particle = document.createElement('div');
                 particle.className = 'ambient-particle';
-                particle.style.left = from.x + '%';
-                particle.style.top = from.y + '%';
+                particle.style.left = fromPct.x + '%';
+                particle.style.top = fromPct.y + '%';
                 particle.style.background = Math.random() > 0.5 ? '#a78bfa' : '#10b981';
                 panel.appendChild(particle);
 
                 requestAnimationFrame(() => {
                     particle.style.transition = 'left 3s linear, top 3s linear, opacity 3s';
                     particle.style.opacity = '0.6';
-                    particle.style.left = to.x + '%';
-                    particle.style.top = to.y + '%';
+                    particle.style.left = toPct.x + '%';
+                    particle.style.top = toPct.y + '%';
                 });
 
-                setTimeout(() => {
-                    particle.style.opacity = '0';
-                }, 2500);
-
-                setTimeout(() => {
-                    if (particle.parentNode) particle.remove();
-                }, 3500);
+                setTimeout(() => { particle.style.opacity = '0'; }, 2500);
+                setTimeout(() => { if (particle.parentNode) particle.remove(); }, 3500);
             }, 800);
         }
 
@@ -1454,9 +1427,9 @@
             const arcsGroup = document.getElementById('signal-arcs');
             const arc = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
-            // Convert percentages to SVG viewBox coords (700x420)
-            const x1 = from.x * 7, y1 = from.y * 4.2;
-            const x2 = to.x * 7, y2 = to.y * 4.2;
+            // Convert geo coords to SVG pixel coords via D3 projection
+            const [x1, y1] = cityPixelCoords(from);
+            const [x2, y2] = cityPixelCoords(to);
             const mx = (x1 + x2) / 2;
             const my = Math.min(y1, y2) - 40 - Math.abs(x2 - x1) * 0.1; // Arc height
 
@@ -1504,21 +1477,19 @@
                 const particle = document.createElement('div');
                 particle.className = 'signal-particle';
 
-                const startX = from.x;
-                const startY = from.y;
-                const endX = to.x;
-                const endY = to.y;
+                const fromPct = cityPercentCoords(from);
+                const toPct = cityPercentCoords(to);
 
-                particle.style.left = startX + '%';
-                particle.style.top = startY + '%';
+                particle.style.left = fromPct.x + '%';
+                particle.style.top = fromPct.y + '%';
 
                 const delay = i * 120;
                 const duration = 1500 + Math.random() * 500;
 
                 setTimeout(() => {
                     particle.style.transition = `left ${duration}ms cubic-bezier(0.4,0,0.2,1), top ${duration}ms cubic-bezier(0.4,0,0.2,1), opacity ${duration}ms`;
-                    particle.style.left = (endX + (Math.random() - 0.5) * 3) + '%';
-                    particle.style.top = (endY + (Math.random() - 0.5) * 3) + '%';
+                    particle.style.left = (toPct.x + (Math.random() - 0.5) * 3) + '%';
+                    particle.style.top = (toPct.y + (Math.random() - 0.5) * 3) + '%';
                     particle.style.opacity = '0';
                 }, delay + 50);
 
@@ -1707,16 +1678,17 @@
             const panel = document.getElementById('world-map');
             const flash = document.createElement('div');
             flash.className = 'pandemic-flash';
-            flash.style.setProperty('--cx', city.x + '%');
-            flash.style.setProperty('--cy', city.y + '%');
+            const cPct = cityPercentCoords(city);
+            flash.style.setProperty('--cx', cPct.x + '%');
+            flash.style.setProperty('--cy', cPct.y + '%');
             panel.appendChild(flash);
 
             // Expanding rings
             for (let i = 0; i < 3; i++) {
                 const ring = document.createElement('div');
                 ring.className = 'outbreak-ring';
-                ring.style.left = `calc(${city.x}% - 10px)`;
-                ring.style.top = `calc(${city.y}% - 10px)`;
+                ring.style.left = `calc(${cPct.x}% - 10px)`;
+                ring.style.top = `calc(${cPct.y}% - 10px)`;
                 ring.style.animationDelay = (i * 0.5) + 's';
                 panel.appendChild(ring);
                 setTimeout(() => { if (ring.parentNode) ring.remove(); }, 3500);
@@ -1954,6 +1926,88 @@
             } catch (e) { return false; }
         }
 
+        // ============ D3 World Map ============
+
+        async function initWorldMap() {
+            const container = document.getElementById('d3-map-container');
+            const svg = d3.select('#map-svg');
+            const width = container.offsetWidth || 960;
+            const height = container.offsetHeight || 500;
+            _mapWidth = width;
+            _mapHeight = height;
+
+            svg.attr('viewBox', `0 0 ${width} ${height}`)
+               .style('background', '#050518');
+
+            const projection = d3.geoNaturalEarth1()
+                .scale(width / 6.5)
+                .translate([width / 2, height / 2]);
+            _mapProjection = projection;
+
+            const path = d3.geoPath().projection(projection);
+
+            try {
+                const world = await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+
+                // Ocean background
+                svg.append('rect').attr('width', width).attr('height', height).attr('fill', '#050518');
+
+                // Graticule
+                const graticule = d3.geoGraticule();
+                svg.append('path').datum(graticule()).attr('d', path)
+                    .attr('fill', 'none').attr('stroke', '#1a1a4a').attr('stroke-width', 0.3).attr('opacity', 0.6);
+
+                // Countries
+                svg.append('g').attr('class', 'countries')
+                    .selectAll('path')
+                    .data(topojson.feature(world, world.objects.countries).features)
+                    .enter().append('path')
+                    .attr('d', path)
+                    .attr('fill', '#1a1a3e')
+                    .attr('stroke', '#6644cc')
+                    .attr('stroke-width', 0.8)
+                    .attr('opacity', 0.9)
+                    .on('mouseover', function() { d3.select(this).attr('fill', '#2a2a5e'); })
+                    .on('mouseout', function() { d3.select(this).attr('fill', '#1a1a3e'); });
+
+                // Country borders
+                svg.append('path')
+                    .datum(topojson.mesh(world, world.objects.countries, (a, b) => a !== b))
+                    .attr('d', path).attr('fill', 'none').attr('stroke', '#3a2a6e').attr('stroke-width', 0.3);
+
+                // Globe outline
+                svg.append('path').datum({type: 'Sphere'}).attr('d', path)
+                    .attr('fill', 'none').attr('stroke', '#2244aa').attr('stroke-width', 1.5).attr('opacity', 0.5);
+
+                // Ocean labels
+                const oceanLabels = [
+                    { name: 'PACIFIC OCEAN',   lon: -150, lat: 0   },
+                    { name: 'ATLANTIC OCEAN',  lon: -30,  lat: 10  },
+                    { name: 'INDIAN OCEAN',    lon: 75,   lat: -20 },
+                ];
+                oceanLabels.forEach(label => {
+                    const coords = projection([label.lon, label.lat]);
+                    if (!coords) return;
+                    svg.append('text').attr('x', coords[0]).attr('y', coords[1])
+                        .attr('text-anchor', 'middle').attr('fill', '#1a2a5e')
+                        .attr('font-size', '10px').attr('font-family', 'monospace')
+                        .attr('letter-spacing', '2px').attr('opacity', 0.7).text(label.name);
+                });
+
+                // SVG groups for network overlays
+                _mapSvg = svg;
+                svg.append('g').attr('id', 'network-lines');
+                svg.append('g').attr('id', 'node-glows');
+                svg.append('g').attr('id', 'signal-arcs');
+
+            } catch(e) {
+                console.error('Map load failed:', e);
+                svg.append('text').attr('x', '50%').attr('y', '50%')
+                    .attr('fill', '#6644cc').attr('text-anchor', 'middle')
+                    .attr('font-family', 'monospace').text('MAP LOADING...');
+            }
+        }
+
         // ============ Init ============
 
         const _resumed = loadGame();
@@ -1963,9 +2017,12 @@
             initRivals();
         }
 
-        renderDBCNodes();
-        _initComplete = true;
-        updateDisplay();
+        // Init D3 map then render nodes
+        initWorldMap().then(() => {
+            renderDBCNodes();
+            _initComplete = true;
+            updateDisplay();
+        });
 
         if (_resumed) {
             const status = document.getElementById('save-status');
