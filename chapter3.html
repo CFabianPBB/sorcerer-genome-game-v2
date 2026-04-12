@@ -684,6 +684,92 @@
             color: rgba(255,255,255,0.25);
             z-index: 50;
         }
+        /* Mission Briefing Button & Modal */
+        .mission-briefing-btn {
+            position: absolute;
+            top: 14px; right: 18px;
+            background: rgba(124,58,237,0.1);
+            border: 1px solid rgba(124,58,237,0.35);
+            color: #a78bfa;
+            font-family: 'Courier New', monospace;
+            font-size: 0.7em;
+            padding: 6px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            z-index: 100;
+            transition: all 0.3s;
+        }
+        .mission-briefing-btn:hover {
+            background: rgba(124,58,237,0.22);
+            border-color: #a78bfa;
+            box-shadow: 0 0 15px rgba(124,58,237,0.3);
+        }
+        .mission-modal-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(2,5,16,0.92);
+            z-index: 9999;
+            justify-content: center; align-items: center;
+            animation: modalFadeIn 0.4s ease;
+        }
+        .mission-modal-overlay.active { display: flex; }
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        .mission-modal {
+            background: linear-gradient(135deg, #0a0f1e 0%, #0d1530 50%, #0a0f1e 100%);
+            border: 1px solid rgba(124,58,237,0.25);
+            border-radius: 12px;
+            max-width: 620px; width: 90%;
+            max-height: 85vh; overflow-y: auto;
+            padding: 36px 32px;
+            box-shadow: 0 0 60px rgba(124,58,237,0.1), inset 0 0 30px rgba(124,58,237,0.03);
+            position: relative;
+        }
+        .mission-modal-close {
+            position: absolute; top: 12px; right: 16px;
+            background: none; border: none;
+            color: rgba(124,58,237,0.5); font-size: 1.5em;
+            cursor: pointer;
+        }
+        .mission-modal-close:hover { color: #a78bfa; }
+        .mission-modal h2 {
+            color: #a78bfa; font-family: 'Courier New', monospace;
+            font-size: 1.1em; letter-spacing: 2px;
+            margin: 0 0 6px 0; text-transform: uppercase;
+        }
+        .mission-modal .mission-chapter-label {
+            color: rgba(124,58,237,0.4); font-size: 0.7em;
+            letter-spacing: 3px; margin-bottom: 18px;
+            font-family: 'Courier New', monospace;
+        }
+        .mission-modal h3 {
+            color: #00e5ff; font-size: 0.85em;
+            margin: 18px 0 8px 0; text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Courier New', monospace;
+        }
+        .mission-modal p, .mission-modal li {
+            color: rgba(200,220,255,0.8); font-size: 0.82em;
+            line-height: 1.6; margin: 0 0 10px 0;
+        }
+        .mission-modal ul { padding-left: 18px; }
+        .mission-modal li { margin-bottom: 6px; }
+        .mission-modal .venter-quote {
+            border-left: 2px solid rgba(124,58,237,0.3);
+            padding: 10px 16px; margin: 16px 0;
+            font-style: italic;
+            color: rgba(167,139,250,0.7);
+            background: rgba(124,58,237,0.03);
+            border-radius: 0 6px 6px 0;
+        }
+        .mission-modal .venter-attr {
+            color: rgba(124,58,237,0.4); font-size: 0.75em;
+            margin-top: 6px; font-style: normal;
+        }
     </style>
 </head>
 <body>
@@ -702,6 +788,41 @@
                 <div class="chapter-nav-dot" title="Chapter 4: Fax Me a Martian" onclick="window.location.href='chapter4.html'"></div>
             </div>
             <div class="chapter-nav-label">Chapter 3 of 4</div>
+            <button class="mission-briefing-btn" onclick="document.getElementById('mission-modal').classList.add('active')">Mission Briefing</button>
+        </div>
+
+        <!-- Mission Briefing Modal -->
+        <div class="mission-modal-overlay" id="mission-modal" onclick="if(event.target===this)this.classList.remove('active')">
+            <div class="mission-modal">
+                <button class="mission-modal-close" onclick="document.getElementById('mission-modal').classList.remove('active')">&times;</button>
+                <div class="mission-chapter-label">CHAPTER THREE</div>
+                <h2>Life at the Speed of Light</h2>
+
+                <h3>The Story</h3>
+                <p>Craig Venter imagined a world where biology could be transmitted like email. His Digital-to-Biological Converter (DBC) &mdash; sometimes called a "biological teleporter" &mdash; can receive a digital DNA sequence over the internet and physically print the corresponding organism: a vaccine, an antibiotic, a synthetic cell. No shipping. No cold chain. Just data in, life out.</p>
+                <p>The vision: a global network of DBC printers stationed in hospitals, clinics, and field stations around the world. When a pandemic erupts in Lagos, the genome is sequenced, transmitted digitally to every node on the network, and within hours, vaccines are printing on-site &mdash; no planes, no customs, no delay.</p>
+
+                <div class="venter-quote">
+                    "We can digitize biology, transmit it at the speed of light, and reconstruct it at the other end. We are entering an era where we can 'fax' life to anywhere on Earth &mdash; or beyond."
+                    <div class="venter-attr">&mdash; Craig Venter</div>
+                </div>
+
+                <h3>Your Role</h3>
+                <p>You are the network operations commander for the global DBC deployment. The world map before you is your command center. Each glowing node is a DBC printer &mdash; or a city waiting for one. You must build and maintain a signal network spanning continents, keep transmissions clean, and respond instantly when outbreaks erupt.</p>
+
+                <h3>How to Play</h3>
+                <ul>
+                    <li><strong>Install DBC Printers</strong> &mdash; Deploy biological converters in cities around the world, from San Diego to the Lunar Relay</li>
+                    <li><strong>Transmit Genomes</strong> &mdash; Send digital DNA sequences across the network to active nodes</li>
+                    <li><strong>Synthesize Vaccines</strong> &mdash; Print vaccines and therapeutics on-site at remote locations</li>
+                    <li><strong>Repair Signals</strong> &mdash; When transmissions get corrupted, click the corrupted bases to fix them before the data degrades</li>
+                    <li><strong>Fight Outbreaks</strong> &mdash; Respond to pandemic events that erupt at random cities &mdash; deploy vaccines before they spread</li>
+                    <li><strong>Upgrade Signal Arrays</strong> &mdash; Improve your network's transmission fidelity and range</li>
+                </ul>
+
+                <h3>The Stakes</h3>
+                <p>The WHO, China's biotech program, and Big Pharma each have their own vision for how biological printing should work &mdash; and who should control it. Pandemic outbreaks don't wait for committee approvals. Every second of signal delay, every corrupted transmission, every city without a printer is a city where people die waiting. Your network is the difference between a contained outbreak and a global catastrophe.</p>
+            </div>
         </div>
 
         <div class="game-area">
@@ -725,57 +846,149 @@
                                 <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.3"/>
                                 <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
                             </radialGradient>
+                            <filter id="continentBlur">
+                                <feGaussianBlur stdDeviation="3" result="blur"/>
+                                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
+                            <!-- Lat/long grid pattern -->
+                            <pattern id="mapGrid" width="50" height="50" patternUnits="userSpaceOnUse">
+                                <line x1="0" y1="0" x2="50" y2="0" stroke="rgba(124,58,237,0.04)" stroke-width="0.5"/>
+                                <line x1="0" y1="0" x2="0" y2="50" stroke="rgba(124,58,237,0.04)" stroke-width="0.5"/>
+                            </pattern>
                         </defs>
 
+                        <!-- Grid background -->
+                        <rect width="1000" height="500" fill="url(#mapGrid)"/>
+
+                        <!-- Latitude lines -->
+                        <g opacity="0.06" stroke="#a78bfa" stroke-width="0.5" stroke-dasharray="4 8">
+                            <line x1="0" y1="83" x2="1000" y2="83"/>  <!-- Arctic -->
+                            <line x1="0" y1="167" x2="1000" y2="167"/> <!-- Tropic Cancer -->
+                            <line x1="0" y1="250" x2="1000" y2="250"/> <!-- Equator -->
+                            <line x1="0" y1="333" x2="1000" y2="333"/> <!-- Tropic Capricorn -->
+                            <line x1="0" y1="417" x2="1000" y2="417"/> <!-- Antarctic -->
+                        </g>
+                        <!-- Equator label -->
+                        <text x="14" y="248" fill="rgba(124,58,237,0.15)" font-size="8" font-family="monospace">0°</text>
+
                         <!-- Ocean current lines -->
-                        <path class="ocean-current" d="M50,250 Q200,230 350,260 Q500,290 650,250 Q800,210 950,240"/>
-                        <path class="ocean-current" d="M50,300 Q150,320 300,290 Q450,260 600,300 Q750,340 950,310" style="animation-delay:-7s"/>
-                        <path class="ocean-current" d="M50,180 Q200,160 400,190 Q600,220 800,180 Q900,160 950,170" style="animation-delay:-13s"/>
+                        <path class="ocean-current" d="M0,250 Q150,235 300,255 Q450,275 600,250 Q750,225 1000,245"/>
+                        <path class="ocean-current" d="M0,310 Q120,330 280,300 Q420,270 580,305 Q740,340 1000,315" style="animation-delay:-7s"/>
+                        <path class="ocean-current" d="M0,190 Q180,165 380,195 Q580,225 780,185 Q900,165 1000,175" style="animation-delay:-13s"/>
 
-                        <!-- Coastline glow layers (behind continents) -->
-                        <!-- North America glow -->
-                        <path class="continent-glow" d="M55,55 Q80,45 110,40 L155,35 Q175,38 190,50 L210,55 Q230,60 245,70 L255,85 Q265,100 270,115 L272,135 Q273,155 265,170 L255,185 Q240,195 225,205 L210,210 Q195,215 180,225 L165,238 Q155,248 148,260 L140,268 Q130,260 120,250 L110,235 Q95,215 85,200 L75,185 Q60,165 55,145 L50,125 Q48,105 50,85 Z"/>
-                        <!-- Africa glow -->
-                        <path class="continent-glow" d="M435,155 Q450,148 465,145 L485,142 Q500,145 515,155 L530,168 Q545,185 555,205 L560,225 Q562,250 558,275 L550,300 Q540,325 525,345 L510,365 Q495,380 475,388 L460,390 Q445,385 435,370 L425,350 Q418,325 415,300 L413,270 Q415,240 420,215 L425,195 Q430,175 435,155 Z"/>
+                        <!-- Coastline glow layers -->
+                        <g class="continent-glow" filter="url(#continentBlur)">
+                            <!-- North America glow -->
+                            <path d="M40,38 L72,32 L100,28 L138,22 L165,25 L195,38 L225,30 L242,40 L248,52 L260,50 L270,60 L260,68 L252,72 L240,68 L228,58 L218,68 L210,75 L198,82 L185,88 L175,98 L168,108 L158,112 L155,125 L150,135 L145,148 L140,155 L130,158 L115,155 L108,148 L102,138 L95,130 L82,128 L72,130 L62,125 L55,115 L48,100 L42,85 L38,68 L35,55 Z" fill="none" stroke="rgba(124,58,237,0.15)" stroke-width="6"/>
+                            <!-- South America glow -->
+                            <path d="M190,280 L210,272 L228,268 L245,272 L258,278 L268,290 L272,305 L278,320 L280,338 L278,355 L272,368 L265,378 L255,388 L242,398 L228,408 L218,418 L210,430 L202,435 L195,432 L190,422 L188,408 L185,392 L180,375 L178,358 L175,340 L172,320 L175,300 L180,288 Z" fill="none" stroke="rgba(124,58,237,0.15)" stroke-width="6"/>
+                            <!-- Africa glow -->
+                            <path d="M440,148 L462,140 L488,138 L510,142 L528,150 L540,162 L548,178 L555,195 L560,215 L562,235 L558,258 L552,278 L545,298 L535,318 L522,335 L508,350 L495,362 L480,368 L468,370 L458,365 L448,355 L440,340 L435,322 L430,302 L428,280 L428,258 L430,238 L432,218 L435,198 L438,175 Z" fill="none" stroke="rgba(124,58,237,0.15)" stroke-width="6"/>
+                        </g>
 
-                        <!-- North America -->
-                        <path class="continent" d="M55,55 Q80,45 110,40 L155,35 Q175,38 190,50 L210,55 Q230,60 245,70 L255,85 Q265,100 270,115 L272,135 Q273,155 265,170 L255,185 Q240,195 225,205 L210,210 Q195,215 180,225 L165,238 Q155,248 148,260 L140,268 Q130,260 120,250 L110,235 Q95,215 85,200 L75,185 Q60,165 55,145 L50,125 Q48,105 50,85 Z"/>
+                        <!-- NORTH AMERICA — detailed -->
+                        <!-- Alaska -->
+                        <path class="continent" d="M32,42 L48,35 L62,32 L78,30 L88,32 L95,38 L88,42 L78,45 L68,48 L58,52 L48,55 L42,52 L38,48 Z"/>
+                        <!-- Canada + USA mainland -->
+                        <path class="continent" d="M95,38 L115,32 L138,25 L158,22 L178,25 L195,32 L210,28 L228,32 L242,38 L250,48 L262,45 L272,55 L268,65 L258,68 L248,72 L238,65 L225,58 L215,62 L205,72 L195,80 L182,88 L172,98 L165,108 L158,115 L152,128 L148,138 L142,148 L135,155 L125,158 L115,155 L108,148 L100,138 L92,132 L82,128 L72,130 L62,125 L55,115 L48,100 L42,85 L38,68 L40,55 L48,45 L58,42 L72,40 L85,38 Z"/>
+                        <!-- Florida -->
+                        <path class="continent" d="M158,155 L165,158 L172,165 L178,175 L180,185 L178,192 L172,195 L165,190 L160,182 L155,172 L152,162 L155,158 Z"/>
+                        <!-- Mexico -->
+                        <path class="continent" d="M72,130 L82,138 L92,148 L100,155 L108,162 L115,168 L125,172 L132,178 L140,182 L148,178 L155,172 L158,162 L160,170 L158,180 L152,188 L145,195 L138,200 L130,208 L122,215 L115,222 L108,228 L100,232 L95,238 L88,242 L82,240 L78,235 L75,225 L72,215 L68,205 L65,195 L62,185 L60,175 L58,165 L60,155 L62,145 L65,138 Z"/>
                         <!-- Central America -->
-                        <path class="continent" d="M148,260 Q155,265 162,272 L170,280 Q175,290 172,298 L168,305 Q160,308 155,302 L148,295 Q142,285 140,275 Z"/>
-                        <!-- South America -->
-                        <path class="continent" d="M175,300 Q190,290 210,285 L230,282 Q248,285 260,295 L268,310 Q272,330 270,350 L265,370 Q255,390 242,405 L225,418 Q210,425 195,420 L185,410 Q178,395 175,375 L172,350 Q170,325 175,300 Z"/>
-                        <!-- Greenland -->
-                        <path class="continent" d="M250,25 Q270,18 290,22 L305,30 Q310,40 305,50 L295,55 Q280,58 265,52 L255,42 Q248,35 250,25 Z"/>
+                        <path class="continent" d="M95,238 L102,242 L110,248 L118,252 L128,258 L135,262 L142,268 L148,272 L152,278 L148,282 L142,280 L135,275 L128,272 L118,268 L110,265 L102,260 L98,255 L95,248 Z"/>
+                        <!-- Caribbean islands -->
+                        <path class="continent" d="M168,198 L175,195 L182,198 L188,202 L192,208 L188,212 L182,210 L175,208 L170,205 Z"/>
+                        <path class="continent" d="M195,210 L202,208 L208,212 L205,218 L198,218 L195,215 Z"/>
+
+                        <!-- SOUTH AMERICA -->
+                        <path class="continent" d="M182,278 L195,272 L210,268 L228,265 L245,268 L258,275 L268,288 L275,302 L280,318 L282,335 L280,352 L275,365 L268,378 L258,390 L248,400 L238,408 L228,415 L218,422 L210,432 L205,438 L198,435 L192,425 L188,412 L185,398 L182,382 L178,365 L175,348 L172,328 L172,310 L175,295 L178,285 Z"/>
+                        <!-- Falklands -->
+                        <path class="continent" d="M218,445 L225,442 L232,445 L228,450 L222,450 Z"/>
+
+                        <!-- GREENLAND -->
+                        <path class="continent" d="M260,18 L278,12 L298,10 L318,15 L332,22 L338,35 L335,48 L328,58 L318,62 L305,65 L292,62 L278,58 L268,52 L262,42 L258,32 Z"/>
+
+                        <!-- ICELAND -->
+                        <path class="continent" d="M388,32 L398,28 L410,30 L415,38 L410,45 L400,48 L392,42 Z"/>
+
                         <!-- UK + Ireland -->
-                        <path class="continent" d="M420,72 Q428,68 435,72 L438,80 Q436,88 430,90 L424,86 Q420,80 420,72 Z"/>
-                        <!-- Europe -->
-                        <path class="continent" d="M440,55 Q458,48 478,50 L500,55 Q518,58 530,68 L540,80 Q545,95 540,108 L532,118 Q520,128 505,132 L488,135 Q470,132 455,125 L442,115 Q435,105 433,92 L432,78 Q434,65 440,55 Z"/>
+                        <path class="continent" d="M418,68 L425,62 L432,65 L435,72 L438,80 L435,88 L430,92 L425,90 L420,85 L418,78 Z"/>
+                        <path class="continent" d="M410,72 L415,68 L418,72 L416,78 L412,80 L408,78 Z"/>
+
+                        <!-- EUROPE — detailed -->
+                        <!-- Iberian Peninsula -->
+                        <path class="continent" d="M415,102 L425,95 L438,92 L448,95 L455,102 L458,112 L455,122 L448,128 L438,132 L428,130 L418,125 L412,118 L412,108 Z"/>
+                        <!-- France -->
+                        <path class="continent" d="M435,88 L445,82 L458,80 L468,82 L475,88 L472,98 L465,105 L458,108 L448,105 L438,100 L435,92 Z"/>
+                        <!-- Central Europe -->
+                        <path class="continent" d="M468,72 L482,68 L498,65 L512,68 L522,75 L528,82 L525,92 L518,100 L508,105 L498,108 L485,105 L475,100 L468,92 L465,82 Z"/>
+                        <!-- Italy -->
+                        <path class="continent" d="M478,105 L485,108 L490,115 L492,125 L488,135 L482,142 L475,138 L472,128 L472,118 L475,110 Z"/>
+                        <!-- Greece/Balkans -->
+                        <path class="continent" d="M508,105 L518,108 L525,115 L528,125 L525,135 L518,140 L510,138 L505,130 L502,120 L505,110 Z"/>
                         <!-- Scandinavia -->
-                        <path class="continent" d="M468,25 Q478,18 490,22 L500,30 Q505,42 498,52 L488,48 Q480,42 475,35 L468,25 Z"/>
-                        <!-- Africa -->
-                        <path class="continent" d="M435,155 Q450,148 465,145 L485,142 Q500,145 515,155 L530,168 Q545,185 555,205 L560,225 Q562,250 558,275 L550,300 Q540,325 525,345 L510,365 Q495,380 475,388 L460,390 Q445,385 435,370 L425,350 Q418,325 415,300 L413,270 Q415,240 420,215 L425,195 Q430,175 435,155 Z"/>
+                        <path class="continent" d="M468,22 L478,18 L490,15 L502,18 L508,28 L512,42 L508,55 L502,62 L492,58 L485,52 L478,45 L472,38 L468,30 Z"/>
+
+                        <!-- RUSSIA / CENTRAL ASIA — wide landmass -->
+                        <path class="continent" d="M528,18 L558,12 L592,10 L628,12 L668,15 L708,18 L748,22 L785,28 L818,35 L845,42 L862,52 L868,62 L865,72 L855,78 L842,82 L825,80 L808,75 L788,68 L768,62 L745,58 L722,55 L698,52 L672,50 L648,48 L625,50 L602,55 L580,62 L558,68 L542,72 L530,68 L522,58 L520,45 L522,32 Z"/>
+
+                        <!-- AFRICA — detailed -->
+                        <path class="continent" d="M442,148 L458,142 L478,138 L498,138 L515,142 L530,150 L540,162 L548,178 L555,198 L560,218 L562,238 L560,258 L555,278 L548,298 L538,318 L525,335 L512,350 L498,362 L482,370 L468,372 L455,368 L445,358 L438,342 L432,322 L428,302 L426,280 L426,258 L428,238 L430,218 L433,198 L436,178 L438,162 Z"/>
                         <!-- Madagascar -->
-                        <path class="continent" d="M572,330 Q578,322 582,330 L580,350 Q576,360 570,355 L568,340 Z"/>
-                        <!-- Middle East -->
-                        <path class="continent" d="M545,130 Q560,125 575,130 L590,140 Q598,155 595,170 L585,178 Q570,180 560,172 L548,160 Q542,145 545,130 Z"/>
-                        <!-- Russia / Central Asia -->
-                        <path class="continent" d="M540,45 Q580,35 630,30 L690,28 Q740,32 780,45 L810,58 Q830,72 835,90 L830,78 Q815,65 795,55 L770,48 Q740,42 700,40 L660,42 Q620,48 590,60 L560,72 Q545,65 540,55 Z"/>
-                        <!-- India -->
-                        <path class="continent" d="M625,180 Q640,172 658,175 L672,182 Q682,195 685,215 L682,238 Q675,258 662,270 L648,275 Q635,270 628,255 L622,235 Q618,210 625,180 Z"/>
-                        <!-- China / East Asia -->
-                        <path class="continent" d="M680,65 Q710,58 740,62 L770,72 Q790,82 800,98 L805,115 Q802,135 790,148 L772,158 Q750,165 725,160 L700,152 Q680,140 670,122 L665,105 Q668,82 680,65 Z"/>
-                        <!-- Southeast Asia -->
-                        <path class="continent" d="M710,185 Q725,178 742,182 L758,190 Q768,200 770,215 L765,228 Q755,235 740,232 L725,225 Q715,215 712,200 Z"/>
-                        <!-- Indonesia -->
-                        <path class="continent" d="M720,248 Q740,242 760,245 L785,250 Q805,258 820,252 L830,256 Q825,268 810,270 L785,268 Q760,265 740,268 L725,265 Q718,258 720,248 Z"/>
-                        <!-- Japan -->
-                        <path class="continent" d="M828,78 Q835,70 842,75 L845,88 Q842,102 838,112 L832,108 Q828,95 828,78 Z"/>
+                        <path class="continent" d="M568,318 L575,312 L580,318 L582,332 L580,348 L575,358 L568,355 L565,342 L565,328 Z"/>
+
+                        <!-- MIDDLE EAST -->
+                        <path class="continent" d="M542,128 L558,122 L575,120 L590,125 L602,132 L608,142 L612,155 L608,168 L600,178 L588,182 L575,180 L562,175 L552,168 L545,158 L542,145 Z"/>
+                        <!-- Arabian Peninsula -->
+                        <path class="continent" d="M555,168 L568,172 L582,178 L592,188 L598,200 L595,212 L588,222 L578,228 L565,225 L555,218 L548,208 L545,195 L548,182 Z"/>
+
+                        <!-- INDIA — subcontinent -->
+                        <path class="continent" d="M622,132 L638,125 L652,128 L665,135 L672,148 L678,162 L682,178 L685,198 L685,218 L682,238 L675,255 L665,268 L652,278 L638,282 L625,275 L618,262 L612,245 L608,225 L608,205 L610,185 L612,168 L615,152 Z"/>
+                        <!-- Sri Lanka -->
+                        <path class="continent" d="M662,285 L668,280 L672,285 L670,295 L665,300 L660,295 Z"/>
+
+                        <!-- CHINA / EAST ASIA -->
+                        <path class="continent" d="M672,55 L698,50 L725,48 L752,52 L778,58 L798,68 L812,82 L818,98 L815,115 L808,130 L795,142 L780,152 L762,158 L742,162 L722,160 L702,155 L685,148 L672,138 L665,125 L660,108 L658,92 L662,75 Z"/>
+                        <!-- Korean Peninsula -->
+                        <path class="continent" d="M812,82 L820,78 L828,82 L832,92 L830,105 L825,112 L818,108 L815,98 Z"/>
+                        <!-- Taiwan -->
+                        <path class="continent" d="M802,148 L808,145 L812,150 L810,158 L805,160 L802,155 Z"/>
+
+                        <!-- JAPAN — detailed islands -->
+                        <!-- Hokkaido -->
+                        <path class="continent" d="M840,62 L850,58 L858,62 L860,72 L855,78 L848,80 L842,75 Z"/>
+                        <!-- Honshu -->
+                        <path class="continent" d="M835,82 L845,78 L855,82 L858,92 L855,105 L850,115 L842,120 L835,118 L832,108 L832,95 Z"/>
+                        <!-- Kyushu/Shikoku -->
+                        <path class="continent" d="M830,120 L838,118 L842,125 L838,132 L832,132 L828,128 Z"/>
+
+                        <!-- SOUTHEAST ASIA -->
+                        <path class="continent" d="M712,168 L725,162 L740,165 L752,172 L762,182 L768,195 L770,210 L768,225 L762,235 L752,240 L740,238 L728,232 L718,222 L712,210 L710,195 L710,180 Z"/>
                         <!-- Philippines -->
-                        <path class="continent" d="M798,195 Q804,188 808,195 L806,210 Q802,218 798,212 Z"/>
-                        <!-- Australia -->
-                        <path class="continent" d="M760,310 Q785,298 815,300 L845,308 Q868,320 878,342 L882,365 Q878,388 862,400 L838,408 Q812,410 788,400 L768,385 Q755,368 752,345 L755,325 Z"/>
-                        <!-- New Zealand -->
-                        <path class="continent" d="M895,385 Q900,378 905,382 L908,395 Q905,408 900,405 L895,395 Z"/>
+                        <path class="continent" d="M802,168 L810,165 L815,172 L815,185 L812,198 L808,208 L802,212 L798,205 L798,192 L798,180 Z"/>
+                        <!-- Borneo -->
+                        <path class="continent" d="M758,248 L770,242 L782,245 L790,252 L788,262 L780,268 L768,268 L760,262 L755,255 Z"/>
+                        <!-- Sumatra -->
+                        <path class="continent" d="M722,242 L732,238 L740,242 L745,252 L742,265 L735,272 L728,268 L722,258 L720,248 Z"/>
+                        <!-- Java -->
+                        <path class="continent" d="M748,278 L762,275 L778,278 L790,282 L798,278 L808,280 L812,285 L808,290 L795,288 L780,290 L765,290 L752,288 L745,285 Z"/>
+                        <!-- Sulawesi -->
+                        <path class="continent" d="M795,250 L802,245 L808,250 L805,260 L808,268 L805,275 L798,272 L795,262 Z"/>
+                        <!-- Papua New Guinea -->
+                        <path class="continent" d="M852,262 L868,258 L885,260 L898,268 L902,278 L895,285 L882,282 L868,278 L858,275 L852,270 Z"/>
+
+                        <!-- AUSTRALIA — detailed -->
+                        <path class="continent" d="M778,318 L798,308 L822,302 L845,305 L865,312 L882,322 L892,338 L898,355 L895,375 L888,392 L878,405 L862,412 L842,418 L822,415 L802,408 L785,398 L772,385 L765,368 L762,348 L765,332 Z"/>
+                        <!-- Tasmania -->
+                        <path class="continent" d="M868,422 L878,418 L885,422 L885,432 L878,438 L870,435 Z"/>
+
+                        <!-- NEW ZEALAND -->
+                        <path class="continent" d="M912,378 L918,372 L922,378 L920,392 L918,402 L912,408 L908,402 L908,392 Z"/>
+                        <path class="continent" d="M915,412 L920,408 L925,412 L922,422 L918,428 L912,425 L912,418 Z"/>
+
+                        <!-- Antarctica hint -->
+                        <path class="continent" d="M50,488 L150,482 L280,478 L420,475 L560,478 L700,482 L820,485 L950,488 L1000,492 L0,492 Z" opacity="0.3"/>
 
                         <!-- Network lines drawn by JS -->
                         <g id="network-lines"></g>

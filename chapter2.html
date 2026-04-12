@@ -177,7 +177,7 @@
             position: absolute;
             left: 50%; top: 50%;
             transform: translate(-50%, -50%);
-            width: 220px; height: 400px;
+            width: 280px; height: 480px;
             z-index: 2;
         }
         .body-silhouette {
@@ -521,6 +521,92 @@
             opacity: 0.06;
         }
 
+        /* Mission Briefing Button & Modal */
+        .mission-briefing-btn {
+            position: absolute;
+            top: 14px; right: 18px;
+            background: rgba(0,229,255,0.08);
+            border: 1px solid rgba(0,229,255,0.3);
+            color: #00e5ff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.7em;
+            padding: 6px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            z-index: 100;
+            transition: all 0.3s;
+        }
+        .mission-briefing-btn:hover {
+            background: rgba(0,229,255,0.18);
+            border-color: #00e5ff;
+            box-shadow: 0 0 15px rgba(0,229,255,0.3);
+        }
+        .mission-modal-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(2,5,16,0.92);
+            z-index: 9999;
+            justify-content: center; align-items: center;
+            animation: modalFadeIn 0.4s ease;
+        }
+        .mission-modal-overlay.active { display: flex; }
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        .mission-modal {
+            background: linear-gradient(135deg, #0a1628 0%, #0d1f3c 50%, #0a1628 100%);
+            border: 1px solid rgba(0,229,255,0.25);
+            border-radius: 12px;
+            max-width: 620px; width: 90%;
+            max-height: 85vh; overflow-y: auto;
+            padding: 36px 32px;
+            box-shadow: 0 0 60px rgba(0,229,255,0.1), inset 0 0 30px rgba(0,229,255,0.03);
+            position: relative;
+        }
+        .mission-modal-close {
+            position: absolute; top: 12px; right: 16px;
+            background: none; border: none;
+            color: rgba(0,229,255,0.5); font-size: 1.5em;
+            cursor: pointer;
+        }
+        .mission-modal-close:hover { color: #00e5ff; }
+        .mission-modal h2 {
+            color: #00e5ff; font-family: 'Courier New', monospace;
+            font-size: 1.1em; letter-spacing: 2px;
+            margin: 0 0 6px 0; text-transform: uppercase;
+        }
+        .mission-modal .mission-chapter-label {
+            color: rgba(0,229,255,0.4); font-size: 0.7em;
+            letter-spacing: 3px; margin-bottom: 18px;
+            font-family: 'Courier New', monospace;
+        }
+        .mission-modal h3 {
+            color: #a78bfa; font-size: 0.85em;
+            margin: 18px 0 8px 0; text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Courier New', monospace;
+        }
+        .mission-modal p, .mission-modal li {
+            color: rgba(200,220,255,0.8); font-size: 0.82em;
+            line-height: 1.6; margin: 0 0 10px 0;
+        }
+        .mission-modal ul { padding-left: 18px; }
+        .mission-modal li { margin-bottom: 6px; }
+        .mission-modal .venter-quote {
+            border-left: 2px solid rgba(0,229,255,0.3);
+            padding: 10px 16px; margin: 16px 0;
+            font-style: italic;
+            color: rgba(0,229,255,0.7);
+            background: rgba(0,229,255,0.03);
+            border-radius: 0 6px 6px 0;
+        }
+        .mission-modal .venter-attr {
+            color: rgba(0,229,255,0.4); font-size: 0.75em;
+            margin-top: 6px; font-style: normal;
+        }
     </style>
 </head>
 <body>
@@ -539,6 +625,41 @@
                 <div class="chapter-nav-dot locked" title="Chapter 4: Fax Me a Martian" onclick="window.location.href='chapter4.html'"></div>
             </div>
             <div class="chapter-nav-label">Chapter 2 of 4</div>
+            <button class="mission-briefing-btn" onclick="document.getElementById('mission-modal').classList.add('active')">Mission Briefing</button>
+        </div>
+
+        <!-- Mission Briefing Modal -->
+        <div class="mission-modal-overlay" id="mission-modal" onclick="if(event.target===this)this.classList.remove('active')">
+            <div class="mission-modal">
+                <button class="mission-modal-close" onclick="document.getElementById('mission-modal').classList.remove('active')">&times;</button>
+                <div class="mission-chapter-label">CHAPTER TWO</div>
+                <h2>The 100-Year Life</h2>
+
+                <h3>The Story</h3>
+                <p>After mapping the ocean's genetic diversity aboard the Sorcerer II, Craig Venter turned his sequencing machines inward &mdash; toward the human genome itself. He founded Human Longevity Inc. in La Jolla, California, with an audacious mission: sequence a million human genomes and use AI to decode the secrets of aging, disease, and longevity.</p>
+                <p>This wasn't academic curiosity. Venter believed that with enough genomic data and the right algorithms, medicine could shift from reactive to predictive &mdash; catching cancer, Alzheimer's, and heart disease before symptoms ever appeared.</p>
+
+                <div class="venter-quote">
+                    "Your genome is the software of life. We're learning to read it, and soon we'll learn to rewrite it. The 100-year lifespan isn't a fantasy &mdash; it's an engineering problem."
+                    <div class="venter-attr">&mdash; Craig Venter</div>
+                </div>
+
+                <h3>Your Role</h3>
+                <p>You are the lead genomics operator at HLI's flagship clinic. Your genome dashboard displays each patient as a living data stream &mdash; their body scanned, sequenced, and analyzed in real time. You train the AI to spot genetic markers, screen patients for risk, and file patents on breakthrough discoveries.</p>
+
+                <h3>How to Play</h3>
+                <ul>
+                    <li><strong>Sequence Genomes</strong> &mdash; Scan patients to read their genetic code and build your database</li>
+                    <li><strong>Train the AI</strong> &mdash; Feed data to your machine learning model to improve diagnostic accuracy</li>
+                    <li><strong>Screen Patients</strong> &mdash; Use your AI to detect disease markers before symptoms appear</li>
+                    <li><strong>Build Clinics</strong> &mdash; Expand your network to reach more patients worldwide</li>
+                    <li><strong>File Patents</strong> &mdash; Protect your discoveries and fund further research</li>
+                    <li><strong>Solve Health Grand Challenges</strong> &mdash; Tackle humanity's biggest killers with genomic medicine</li>
+                </ul>
+
+                <h3>The Stakes</h3>
+                <p>Pfizer, 23andMe, and Google DeepMind are racing to decode the same secrets. Rival labs are advancing their own AI models. Every genome you sequence, every marker you discover, and every patent you file shapes who controls the future of personalized medicine &mdash; and whether the 100-year life becomes reality for everyone, or only for those who can afford it.</p>
+            </div>
         </div>
 
         <div class="game-area">
@@ -555,37 +676,223 @@
 
                 <!-- Human body silhouette -->
                 <div class="body-display">
-                    <svg class="body-silhouette" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Head -->
-                        <ellipse cx="100" cy="40" rx="28" ry="32" fill="none" stroke="#00e5ff" stroke-width="1" opacity="0.5"/>
-                        <!-- Neck -->
-                        <rect x="90" y="70" width="20" height="20" rx="5" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.4"/>
-                        <!-- Torso -->
-                        <path d="M60 90 Q60 80 80 80 L120 80 Q140 80 140 90 L145 220 Q145 240 125 240 L75 240 Q55 240 55 220 Z"
-                              fill="none" stroke="#00e5ff" stroke-width="1" opacity="0.5"/>
-                        <!-- Ribcage suggestion -->
-                        <path d="M75 110 Q100 115 125 110" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.25"/>
-                        <path d="M73 125 Q100 130 127 125" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.25"/>
-                        <path d="M72 140 Q100 145 128 140" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.25"/>
-                        <!-- Heart -->
-                        <circle cx="108" cy="130" r="8" fill="rgba(255,80,80,0.15)" stroke="#ff5050" stroke-width="0.8" opacity="0.6">
-                            <animate attributeName="r" values="8;9;8" dur="1s" repeatCount="indefinite"/>
-                        </circle>
-                        <!-- Lungs -->
-                        <ellipse cx="82" cy="135" rx="12" ry="20" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.3"/>
-                        <ellipse cx="118" cy="135" rx="12" ry="20" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.3"/>
-                        <!-- Arms -->
-                        <path d="M60 90 L30 180 L25 240" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.4"/>
-                        <path d="M140 90 L170 180 L175 240" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.4"/>
-                        <!-- Legs -->
-                        <path d="M80 240 L70 340 L65 385" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.4"/>
-                        <path d="M120 240 L130 340 L135 385" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.4"/>
-                        <!-- DNA double helix decorative in torso -->
-                        <g opacity="0.15">
-                            <path d="M90 160 Q100 170 110 160 Q100 150 90 160" fill="none" stroke="#00e5ff" stroke-width="0.8"/>
-                            <path d="M90 175 Q100 185 110 175 Q100 165 90 175" fill="none" stroke="#00e5ff" stroke-width="0.8"/>
-                            <path d="M90 190 Q100 200 110 190 Q100 180 90 190" fill="none" stroke="#00e5ff" stroke-width="0.8"/>
+                    <svg class="body-silhouette" viewBox="0 0 300 520" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <radialGradient id="organGlow" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.12"/>
+                                <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+                            </radialGradient>
+                            <radialGradient id="heartGlow" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#ff5050" stop-opacity="0.2"/>
+                                <stop offset="100%" stop-color="#ff5050" stop-opacity="0"/>
+                            </radialGradient>
+                            <linearGradient id="nerveFade" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.4"/>
+                                <stop offset="100%" stop-color="#00e5ff" stop-opacity="0.05"/>
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Full body outline — anatomical contour -->
+                        <path d="M150,12 C164,12 176,24 176,40 C176,52 168,62 158,66
+                                 L162,72 C162,72 170,74 178,78 C192,84 210,92 218,100
+                                 C228,110 232,118 236,130 L244,158 C248,170 252,186 254,198
+                                 C256,210 256,220 252,228 C250,234 246,238 240,240
+                                 L236,242 C232,244 228,250 226,258 L220,282
+                                 C218,290 216,296 218,302 L222,316 C224,322 226,326 224,330
+                                 C222,334 218,336 214,334 L208,328 C204,322 200,310 198,298
+                                 L194,276 C192,268 190,262 188,256 L186,250
+                                 C184,244 182,240 180,236 L178,232 C176,228 174,226 172,224
+                                 L168,222 C164,220 160,220 156,220 L144,220
+                                 C140,220 136,220 132,222 L128,224
+                                 C126,226 124,228 122,232 L120,236
+                                 C118,240 116,244 114,250 L112,256
+                                 C110,262 108,268 106,276 L102,298
+                                 C100,310 96,322 92,328 L86,334
+                                 C82,336 78,334 76,330 C74,326 76,322 78,316
+                                 L82,302 C84,296 82,290 80,282 L74,258
+                                 C72,250 68,244 64,242 L60,240
+                                 C54,238 50,234 48,228 C44,220 44,210 46,198
+                                 C48,186 52,170 56,158 L64,130
+                                 C68,118 72,110 82,100 C90,92 108,84 122,78
+                                 C130,74 138,72 138,72 L142,66
+                                 C132,62 124,52 124,40 C124,24 136,12 150,12 Z"
+                              fill="rgba(0,229,255,0.03)" stroke="#00e5ff" stroke-width="1.2" opacity="0.6"/>
+
+                        <!-- Head detail — ear curves -->
+                        <path d="M124,36 C122,30 122,44 124,48" fill="none" stroke="#00e5ff" stroke-width="0.6" opacity="0.3"/>
+                        <path d="M176,36 C178,30 178,44 176,48" fill="none" stroke="#00e5ff" stroke-width="0.6" opacity="0.3"/>
+                        <!-- Face centerline + features hint -->
+                        <line x1="150" y1="28" x2="150" y2="60" stroke="#00e5ff" stroke-width="0.3" opacity="0.12" stroke-dasharray="2 3"/>
+                        <ellipse cx="140" cy="38" rx="4" ry="2.5" fill="none" stroke="#00e5ff" stroke-width="0.4" opacity="0.2"/>
+                        <ellipse cx="160" cy="38" rx="4" ry="2.5" fill="none" stroke="#00e5ff" stroke-width="0.4" opacity="0.2"/>
+
+                        <!-- Neck musculature -->
+                        <path d="M138,66 C140,70 142,74 140,78" fill="none" stroke="#00e5ff" stroke-width="0.4" opacity="0.2"/>
+                        <path d="M162,66 C160,70 158,74 160,78" fill="none" stroke="#00e5ff" stroke-width="0.4" opacity="0.2"/>
+
+                        <!-- Clavicles -->
+                        <path d="M122,82 Q136,88 150,86 Q164,88 178,82" fill="none" stroke="#00e5ff" stroke-width="0.7" opacity="0.35"/>
+
+                        <!-- Ribcage — 10 pairs -->
+                        <g opacity="0.2" fill="none" stroke="#00e5ff" stroke-width="0.5">
+                            <path d="M126,96 Q150,100 174,96"/>
+                            <path d="M122,106 Q150,112 178,106"/>
+                            <path d="M120,116 Q150,123 180,116"/>
+                            <path d="M118,126 Q150,134 182,126"/>
+                            <path d="M118,136 Q150,144 182,136"/>
+                            <path d="M120,146 Q150,154 180,146"/>
+                            <path d="M122,155 Q150,162 178,155"/>
+                            <path d="M126,163 Q150,169 174,163"/>
+                            <path d="M130,170 Q150,175 170,170"/>
+                            <path d="M134,176 Q150,180 166,176"/>
                         </g>
+                        <!-- Sternum -->
+                        <line x1="150" y1="88" x2="150" y2="178" stroke="#00e5ff" stroke-width="0.6" opacity="0.2"/>
+
+                        <!-- Spine (visible through torso) -->
+                        <g opacity="0.12" stroke="#00e5ff" stroke-width="0.5">
+                            <line x1="150" y1="72" x2="150" y2="220"/>
+                            <!-- Vertebra markers -->
+                            <line x1="146" y1="80" x2="154" y2="80"/>
+                            <line x1="146" y1="92" x2="154" y2="92"/>
+                            <line x1="146" y1="104" x2="154" y2="104"/>
+                            <line x1="146" y1="116" x2="154" y2="116"/>
+                            <line x1="146" y1="128" x2="154" y2="128"/>
+                            <line x1="146" y1="140" x2="154" y2="140"/>
+                            <line x1="146" y1="152" x2="154" y2="152"/>
+                            <line x1="146" y1="164" x2="154" y2="164"/>
+                            <line x1="146" y1="178" x2="154" y2="178"/>
+                            <line x1="146" y1="190" x2="154" y2="190"/>
+                            <line x1="146" y1="202" x2="154" y2="202"/>
+                            <line x1="146" y1="214" x2="154" y2="214"/>
+                        </g>
+
+                        <!-- Pelvis -->
+                        <path d="M122,210 Q130,222 150,226 Q170,222 178,210" fill="none" stroke="#00e5ff" stroke-width="0.6" opacity="0.25"/>
+                        <path d="M128,214 Q140,228 150,230 Q160,228 172,214" fill="none" stroke="#00e5ff" stroke-width="0.4" opacity="0.15"/>
+
+                        <!-- Lungs — detailed lobes -->
+                        <g opacity="0.3">
+                            <circle cx="132" cy="120" r="22" fill="url(#organGlow)"/>
+                            <circle cx="168" cy="120" r="22" fill="url(#organGlow)"/>
+                            <!-- Left lung lobes -->
+                            <path d="M118,100 C114,108 112,120 114,135 C116,148 122,155 130,155 C136,155 140,148 142,140 C144,130 144,115 142,105 C140,98 136,96 130,96 C124,96 120,97 118,100 Z"
+                                  fill="none" stroke="#00e5ff" stroke-width="0.7"/>
+                            <path d="M118,122 C124,126 132,126 142,122" fill="none" stroke="#00e5ff" stroke-width="0.4" opacity="0.5"/>
+                            <!-- Right lung lobes -->
+                            <path d="M182,100 C186,108 188,120 186,135 C184,148 178,155 170,155 C164,155 160,148 158,140 C156,130 156,115 158,105 C160,98 164,96 170,96 C176,96 180,97 182,100 Z"
+                                  fill="none" stroke="#00e5ff" stroke-width="0.7"/>
+                            <path d="M182,115 C176,119 168,119 158,115" fill="none" stroke="#00e5ff" stroke-width="0.4" opacity="0.5"/>
+                            <path d="M182,130 C176,134 168,134 158,130" fill="none" stroke="#00e5ff" stroke-width="0.4" opacity="0.5"/>
+                        </g>
+
+                        <!-- Heart — anatomical shape -->
+                        <g>
+                            <circle cx="155" cy="132" r="16" fill="url(#heartGlow)"/>
+                            <path d="M148,124 C144,118 148,112 154,112 C157,112 160,115 160,118
+                                     C160,115 163,112 166,112 C172,112 176,118 172,124
+                                     L160,140 L148,124 Z"
+                                  fill="rgba(255,80,80,0.1)" stroke="#ff5050" stroke-width="0.8" opacity="0.7">
+                                <animate attributeName="opacity" values="0.7;0.9;0.7" dur="1s" repeatCount="indefinite"/>
+                            </path>
+                            <!-- Aorta -->
+                            <path d="M158,112 C158,104 162,98 166,94 C172,88 174,82 174,78"
+                                  fill="none" stroke="#ff5050" stroke-width="0.5" opacity="0.3"/>
+                        </g>
+
+                        <!-- Liver -->
+                        <path d="M126,162 C120,166 118,174 122,180 C126,186 136,188 144,186 C150,184 154,178 152,172 C150,166 138,160 126,162 Z"
+                              fill="rgba(0,229,255,0.04)" stroke="#00e5ff" stroke-width="0.5" opacity="0.25"/>
+
+                        <!-- Stomach -->
+                        <path d="M156,160 C164,162 170,170 168,180 C166,188 158,192 152,190 C146,188 144,182 146,174 C148,166 152,160 156,160 Z"
+                              fill="rgba(0,229,255,0.04)" stroke="#00e5ff" stroke-width="0.5" opacity="0.25"/>
+
+                        <!-- Kidneys -->
+                        <ellipse cx="132" cy="188" rx="6" ry="10" fill="rgba(0,229,255,0.04)" stroke="#00e5ff" stroke-width="0.5" opacity="0.25" transform="rotate(-10 132 188)"/>
+                        <ellipse cx="168" cy="188" rx="6" ry="10" fill="rgba(0,229,255,0.04)" stroke="#00e5ff" stroke-width="0.5" opacity="0.25" transform="rotate(10 168 188)"/>
+
+                        <!-- Intestines suggestion -->
+                        <g opacity="0.12" fill="none" stroke="#00e5ff" stroke-width="0.4">
+                            <path d="M136,194 Q142,198 148,194 Q154,190 160,194"/>
+                            <path d="M134,200 Q142,204 150,200 Q158,196 164,200"/>
+                            <path d="M136,206 Q144,210 152,206 Q160,202 166,206"/>
+                            <path d="M138,212 Q146,216 154,212 Q162,208 168,212"/>
+                        </g>
+
+                        <!-- Leg anatomy — musculature lines -->
+                        <!-- Left leg -->
+                        <g opacity="0.15" fill="none" stroke="#00e5ff" stroke-width="0.4">
+                            <path d="M140,260 C138,280 136,300 134,320"/>
+                            <path d="M148,260 C146,280 144,300 142,320"/>
+                            <!-- Knee -->
+                            <ellipse cx="136" cy="330" rx="8" ry="5" stroke-width="0.5" opacity="0.3"/>
+                            <!-- Shin -->
+                            <path d="M134,336 C132,356 130,376 128,396"/>
+                            <path d="M140,336 C138,356 136,376 134,396"/>
+                        </g>
+                        <!-- Right leg -->
+                        <g opacity="0.15" fill="none" stroke="#00e5ff" stroke-width="0.4">
+                            <path d="M160,260 C162,280 164,300 166,320"/>
+                            <path d="M152,260 C154,280 156,300 158,320"/>
+                            <!-- Knee -->
+                            <ellipse cx="164" cy="330" rx="8" ry="5" stroke-width="0.5" opacity="0.3"/>
+                            <!-- Shin -->
+                            <path d="M166,336 C168,356 170,376 172,396"/>
+                            <path d="M160,336 C162,356 164,376 166,396"/>
+                        </g>
+
+                        <!-- Arm anatomy — musculature lines -->
+                        <!-- Left arm -->
+                        <g opacity="0.15" fill="none" stroke="#00e5ff" stroke-width="0.4">
+                            <path d="M116,100 C108,120 98,148 88,176"/>
+                            <path d="M112,96 C104,116 94,144 84,172"/>
+                            <!-- Elbow -->
+                            <ellipse cx="86" cy="178" rx="6" ry="4" stroke-width="0.5" opacity="0.3"/>
+                            <!-- Forearm -->
+                            <path d="M84,184 C80,200 76,220 72,240"/>
+                            <path d="M90,184 C86,200 82,220 78,240"/>
+                            <!-- Hand -->
+                            <path d="M72,240 C68,248 64,252 62,256 C60,260 62,262 66,260 L72,254" stroke-width="0.5" opacity="0.2"/>
+                        </g>
+                        <!-- Right arm -->
+                        <g opacity="0.15" fill="none" stroke="#00e5ff" stroke-width="0.4">
+                            <path d="M184,100 C192,120 202,148 212,176"/>
+                            <path d="M188,96 C196,116 206,144 216,172"/>
+                            <!-- Elbow -->
+                            <ellipse cx="214" cy="178" rx="6" ry="4" stroke-width="0.5" opacity="0.3"/>
+                            <!-- Forearm -->
+                            <path d="M216,184 C220,200 224,220 228,240"/>
+                            <path d="M210,184 C214,200 218,220 222,240"/>
+                            <!-- Hand -->
+                            <path d="M228,240 C232,248 236,252 238,256 C240,260 238,262 234,260 L228,254" stroke-width="0.5" opacity="0.2"/>
+                        </g>
+
+                        <!-- Circulatory system highlights -->
+                        <g opacity="0.1" fill="none" stroke="#ff5050" stroke-width="0.3">
+                            <!-- Carotid arteries -->
+                            <path d="M144,72 C142,60 140,50 140,40"/>
+                            <path d="M156,72 C158,60 160,50 160,40"/>
+                            <!-- Aortic arch down -->
+                            <path d="M155,140 L155,200 L150,220"/>
+                            <!-- Femoral arteries -->
+                            <path d="M144,226 C140,260 138,300 136,340"/>
+                            <path d="M156,226 C160,260 162,300 164,340"/>
+                        </g>
+
+                        <!-- Brain hint in head -->
+                        <g opacity="0.12" fill="none" stroke="#00e5ff" stroke-width="0.4">
+                            <path d="M136,28 Q142,22 150,24 Q158,22 164,28"/>
+                            <path d="M134,34 Q142,28 150,30 Q158,28 166,34"/>
+                            <path d="M136,40 Q143,34 150,36 Q157,34 164,40"/>
+                            <line x1="150" y1="24" x2="150" y2="48" stroke-width="0.3" opacity="0.5"/>
+                        </g>
+
+                        <!-- Scanning beam effect -->
+                        <rect class="scan-beam" x="100" y="0" width="100" height="4" fill="url(#organGlow)" opacity="0.5">
+                            <animate attributeName="y" values="10;500;10" dur="8s" repeatCount="indefinite"/>
+                            <animate attributeName="opacity" values="0;0.6;0.6;0" dur="8s" repeatCount="indefinite"/>
+                        </rect>
                     </svg>
 
                     <!-- Floating data points -->
