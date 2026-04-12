@@ -253,6 +253,131 @@
             margin-bottom: 5px;
             font-family: monospace; font-size: 10px;
         }
+        /* Gene tooltip */
+        .gene-label { position: relative; cursor: help; }
+        .gene-label .gene-tooltip {
+            display: none;
+            position: absolute;
+            left: 0; top: 18px;
+            width: 220px;
+            background: rgba(0,15,40,0.95);
+            border: 1px solid rgba(0,180,255,0.3);
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 9px;
+            color: rgba(200,220,255,0.85);
+            line-height: 1.5;
+            z-index: 100;
+            pointer-events: none;
+        }
+        .gene-label:hover .gene-tooltip { display: block; }
+        .gene-tooltip strong { color: #00d4ff; }
+
+        /* Venter Paradox special popup */
+        .venter-paradox-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.92);
+            z-index: 9998;
+            justify-content: center; align-items: center;
+        }
+        .venter-paradox-overlay.active { display: flex; }
+        .venter-paradox-card {
+            background: linear-gradient(135deg, #1a0a0a, #1e1520);
+            border: 2px solid #cc4444;
+            border-radius: 12px;
+            max-width: 520px; width: 90%;
+            padding: 28px 24px;
+            box-shadow: 0 0 40px rgba(204,68,68,0.15), inset 0 0 20px rgba(255,170,0,0.04);
+        }
+        .venter-paradox-card h3 {
+            color: #ff8844; font-size: 1.1em;
+            letter-spacing: 2px; margin: 0 0 14px 0;
+            font-family: monospace;
+        }
+        .venter-paradox-card p {
+            color: rgba(255,220,200,0.85);
+            font-size: 0.85em; line-height: 1.6;
+            margin: 0 0 12px 0;
+        }
+        .venter-paradox-card .vp-buttons {
+            display: flex; gap: 10px; margin-top: 16px;
+        }
+        .venter-paradox-card .vp-btn {
+            flex: 1; padding: 10px;
+            border-radius: 6px; border: none;
+            font-family: monospace; font-size: 0.8em;
+            cursor: pointer; letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+        .vp-btn.mri { background: #1a3a6e; color: #88aaff; border: 1px solid rgba(100,150,255,0.3); }
+        .vp-btn.mri:hover { background: #2244aa; }
+        .vp-btn.genome { background: rgba(255,255,255,0.05); color: #888; border: 1px solid rgba(255,255,255,0.1); }
+        .vp-btn.genome:hover { background: rgba(255,255,255,0.1); }
+
+        /* Million genome progress */
+        .genome-mission-bar {
+            background: rgba(0,100,200,0.15);
+            border-radius: 3px; height: 6px;
+            overflow: hidden; margin: 6px 0 2px 0;
+        }
+        .genome-mission-bar span {
+            display: block; height: 100%;
+            background: linear-gradient(90deg, #0066ff, #00d4ff);
+            border-radius: 3px;
+            transition: width 0.5s;
+        }
+
+        /* Chapter complete overlay */
+        .ch-complete-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 9999;
+            justify-content: center; align-items: center;
+        }
+        .ch-complete-overlay.active { display: flex; }
+        .ch-complete-card {
+            text-align: center;
+            max-width: 600px; width: 90%;
+            padding: 40px;
+        }
+        .ch-complete-card h2 {
+            font-size: 2.2em; font-weight: 200;
+            letter-spacing: 6px; color: #00d4ff;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .ch-complete-card .ch-sub {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.85em; letter-spacing: 2px;
+            margin-bottom: 24px;
+        }
+        .ch-complete-card p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95em; line-height: 1.7;
+            margin-bottom: 16px;
+        }
+        .ch-complete-card .ch-quote {
+            color: #88aaff; font-style: italic;
+            border-left: 3px solid #4466cc;
+            padding-left: 16px; margin: 20px auto;
+            max-width: 440px; text-align: left;
+        }
+        .ch-complete-card .ch-next-btn {
+            display: inline-block; margin-top: 24px;
+            padding: 14px 36px;
+            background: linear-gradient(135deg, #0044aa, #0066dd);
+            border: 1px solid rgba(0,180,255,0.3);
+            border-radius: 8px;
+            color: white; font-size: 1em;
+            letter-spacing: 2px; cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .ch-complete-card .ch-next-btn:hover {
+            background: linear-gradient(135deg, #0066dd, #0088ff);
+            box-shadow: 0 0 20px rgba(0,150,255,0.3);
+        }
+
         @media (max-width: 768px) {
             .holo-layout { flex-direction: column; }
             .holo-panel { width: 100%; flex-direction: row; flex-wrap: wrap; overflow-y: visible; }
@@ -760,10 +885,10 @@
                 <div class="holo-panel left-panel">
                     <div class="holo-card">
                         <div class="holo-card-title">Genome Analysis</div>
-                        <div class="holo-readout"><span class="gene-label">BRCA1</span><span class="gene-bar"><span id="brca1-bar" style="width:85%"></span></span><span class="gene-status normal" id="brca1-status">NORMAL</span></div>
-                        <div class="holo-readout"><span class="gene-label">TP53</span><span class="gene-bar"><span id="tp53-bar" style="width:65%"></span></span><span class="gene-status variant" id="tp53-status">VARIANT</span></div>
-                        <div class="holo-readout"><span class="gene-label">APOE</span><span class="gene-bar"><span id="apoe-bar" style="width:40%"></span></span><span class="gene-status risk" id="apoe-status">RISK e4</span></div>
-                        <div class="holo-readout"><span class="gene-label">MTHFR</span><span class="gene-bar"><span id="mthfr-bar" style="width:92%"></span></span><span class="gene-status normal" id="mthfr-status">NORMAL</span></div>
+                        <div class="holo-readout"><span class="gene-label">BRCA1<div class="gene-tooltip"><strong>BRCA1 &mdash; Tumor suppressor gene</strong><br>Mutations &rarr; elevated breast/ovarian cancer risk<br>Venter's team found family history predicts risk better than BRCA1 alone in 60% of cases</div></span><span class="gene-bar"><span id="brca1-bar" style="width:85%"></span></span><span class="gene-status normal" id="brca1-status">NORMAL</span></div>
+                        <div class="holo-readout"><span class="gene-label">TP53<div class="gene-tooltip"><strong>TP53 &mdash; Guardian of the genome</strong><br>Most commonly mutated gene in human cancers<br>Variant: rs1042522 (Pro72Arg) &mdash; moderate risk modifier<br>Requires: metabolomics cross-reference</div></span><span class="gene-bar"><span id="tp53-bar" style="width:65%"></span></span><span class="gene-status variant" id="tp53-status">VARIANT</span></div>
+                        <div class="holo-readout"><span class="gene-label">APOE<div class="gene-tooltip"><strong>APOE &mdash; Apolipoprotein E</strong><br>e4 allele: 3-4x increased Alzheimer's risk<br>BUT: 20% of APOE4 homozygotes in their 90s show no signs<br>Venter: "The causal mutations are in the missing heritability"</div></span><span class="gene-bar"><span id="apoe-bar" style="width:40%"></span></span><span class="gene-status risk" id="apoe-status">RISK e4</span></div>
+                        <div class="holo-readout"><span class="gene-label">MTHFR<div class="gene-tooltip"><strong>MTHFR &mdash; Methylenetetrahydrofolate reductase</strong><br>C677T variant: affects folate metabolism<br>Linked to cardiovascular risk, treatable with B vitamins<br>Low clinical significance without phenome confirmation</div></span><span class="gene-bar"><span id="mthfr-bar" style="width:92%"></span></span><span class="gene-status normal" id="mthfr-status">NORMAL</span></div>
                     </div>
                     <div class="holo-card">
                         <div class="holo-card-title">Cardiac Rhythm</div>
@@ -920,10 +1045,16 @@
 
                         <!-- ARMS -->
                         <g id="arms" opacity="0.75" stroke="#00d4ff" stroke-width="1" fill="none">
+                            <!-- Left shoulder joint -->
+                            <circle cx="80" cy="188" r="8" fill="rgba(0,200,255,0.1)" stroke="#00d4ff" stroke-width="1.2"/>
+                            <circle cx="80" cy="188" r="4" fill="rgba(0,200,255,0.2)" stroke="#00ffff" stroke-width="0.5"/>
                             <line x1="80" y1="188" x2="58" y2="260"/><line x1="80" y1="188" x2="68" y2="265"/>
                             <circle cx="62" cy="268" r="5" fill="rgba(0,180,255,0.1)" stroke="#00aaff" stroke-width="0.8"/>
                             <line x1="58" y1="268" x2="42" y2="340"/><line x1="68" y1="268" x2="52" y2="342"/>
                             <ellipse cx="46" cy="345" rx="8" ry="5" fill="rgba(0,180,255,0.1)" stroke="#00aaff" stroke-width="0.8"/>
+                            <!-- Right shoulder joint -->
+                            <circle cx="220" cy="188" r="8" fill="rgba(0,200,255,0.1)" stroke="#00d4ff" stroke-width="1.2"/>
+                            <circle cx="220" cy="188" r="4" fill="rgba(0,200,255,0.2)" stroke="#00ffff" stroke-width="0.5"/>
                             <line x1="220" y1="188" x2="242" y2="260"/><line x1="220" y1="188" x2="232" y2="265"/>
                             <circle cx="238" cy="268" r="5" fill="rgba(0,180,255,0.1)" stroke="#00aaff" stroke-width="0.8"/>
                             <line x1="242" y1="268" x2="258" y2="340"/><line x1="232" y1="268" x2="248" y2="342"/>
@@ -935,10 +1066,14 @@
                             <path d="M105,370 Q95,385 100,400 Q110,410 150,412 Q190,410 200,400 Q205,385 195,370 Z" stroke="#00d4ff" stroke-width="1"/>
                             <line x1="150" y1="378" x2="150" y2="412" stroke="#0066aa" stroke-width="0.4" opacity="0.5"/>
                             <line x1="110" y1="408" x2="98" y2="480"/><line x1="130" y1="410" x2="118" y2="482"/>
-                            <ellipse cx="108" cy="486" rx="12" ry="8" fill="rgba(0,180,255,0.08)" stroke="#00aaff" stroke-width="0.8"/>
+                            <!-- Left knee joint -->
+                            <circle cx="108" cy="486" r="8" fill="rgba(0,200,255,0.1)" stroke="#00d4ff" stroke-width="1.2"/>
+                            <circle cx="108" cy="486" r="4" fill="rgba(0,200,255,0.2)" stroke="#00ffff" stroke-width="0.5"/>
                             <line x1="100" y1="490" x2="96" y2="530"/><line x1="116" y1="490" x2="112" y2="530"/>
                             <line x1="190" y1="408" x2="202" y2="480"/><line x1="170" y1="410" x2="182" y2="482"/>
-                            <ellipse cx="192" cy="486" rx="12" ry="8" fill="rgba(0,180,255,0.08)" stroke="#00aaff" stroke-width="0.8"/>
+                            <!-- Right knee joint -->
+                            <circle cx="192" cy="486" r="8" fill="rgba(0,200,255,0.1)" stroke="#00d4ff" stroke-width="1.2"/>
+                            <circle cx="192" cy="486" r="4" fill="rgba(0,200,255,0.2)" stroke="#00ffff" stroke-width="0.5"/>
                             <line x1="200" y1="490" x2="204" y2="530"/><line x1="184" y1="490" x2="188" y2="530"/>
                             <ellipse cx="104" cy="532" rx="14" ry="6" fill="rgba(0,150,255,0.08)" stroke="#00aaff" stroke-width="0.8"/>
                             <ellipse cx="196" cy="532" rx="14" ry="6" fill="rgba(0,150,255,0.08)" stroke="#00aaff" stroke-width="0.8"/>
@@ -1065,6 +1200,17 @@
                 <button class="btn" onclick="publishFindings()">
                     Publish Research <span class="btn-cost">Free</span>
                 </button>
+                <button class="btn" onclick="healthNucleusExam()" style="border-color:rgba(0,212,255,0.4);">
+                    Full Health Nucleus Exam <span class="btn-cost">$25,000</span>
+                </button>
+
+                <!-- Million Genome Mission -->
+                <div class="section-title">Million Genome Mission</div>
+                <div style="font-family:monospace;font-size:0.7em;color:#4488aa;margin-bottom:4px;">
+                    GENOMES IN DATABASE: <span id="genome-db-count" style="color:#00d4ff;">0</span> / 1,000,000
+                </div>
+                <div class="genome-mission-bar"><span id="genome-mission-fill" style="width:0%"></span></div>
+                <div id="genome-milestone-msg" style="font-size:0.65em;color:#00ff88;margin-top:4px;min-height:14px;"></div>
 
                 <!-- Grand Challenges -->
                 <div class="section-title">Health Grand Challenges</div>
@@ -1087,6 +1233,29 @@
                     <span id="save-status">Auto-save on</span>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Venter Paradox overlay -->
+    <div class="venter-paradox-overlay" id="vp-overlay">
+        <div class="venter-paradox-card">
+            <h3>&#9888;&#65039; THE VENTER PARADOX</h3>
+            <p id="vp-text"></p>
+            <div class="vp-buttons">
+                <button class="vp-btn mri" onclick="resolveVenterParadox(true)">Order Brain MRI ($25,000)</button>
+                <button class="vp-btn genome" onclick="resolveVenterParadox(false)">Trust the Genome</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chapter Complete overlay -->
+    <div class="ch-complete-overlay" id="ch-complete-overlay">
+        <div class="ch-complete-card">
+            <h2>Chapter 2 Complete</h2>
+            <div class="ch-sub">THE 100-YEAR LIFE</div>
+            <p id="ch-complete-stats"></p>
+            <div class="ch-quote">"We proved the genome isn't destiny &mdash; but it's the most powerful map we've ever had."<br><span style="color:rgba(100,150,255,0.5);font-size:0.8em;font-style:normal">&mdash; Craig Venter</span></div>
+            <a class="ch-next-btn" href="chapter3.html">Advance to Chapter 3 &rarr;</a>
         </div>
     </div>
 
@@ -1117,6 +1286,7 @@
             challengesCompleted: 0,
             rivals: [],
             compoundLibrary: [],
+            criticalFinding: false,
             ch2Complete: false
         };
 
@@ -1217,6 +1387,9 @@
             // Create patient marker on dashboard
             createPatientMarker();
 
+            // Update phenome panel
+            updatePhenomePanel(patient);
+
             // Possible disease detection
             const detected = [];
             if (Math.random() < 0.4 + (gameState.aiAccuracy / 200)) {
@@ -1225,15 +1398,27 @@
                 gameState.diseasesPredicted++;
             }
 
+            // Randomize gene panel bars
+            const bars = { brca1: 70 + Math.floor(Math.random()*30), tp53: 50 + Math.floor(Math.random()*40), apoe: 30 + Math.floor(Math.random()*50), mthfr: 60 + Math.floor(Math.random()*35) };
+            Object.keys(bars).forEach(g => { const el = document.getElementById(g + '-bar'); if (el) el.style.width = bars[g] + '%'; });
+
             setTimeout(() => {
                 document.getElementById('scan-status').textContent = 'COMPLETE';
                 const msg = detected.length > 0
                     ? `Patient: ${patient}\n\n${detected.map(d => `${d.icon} ${d.name} detected (Gene: ${d.gene})\nSeverity: ${d.severity.toUpperCase()}`).join('\n\n')}\n\nEarly detection could save this patient's life.`
                     : `Patient: ${patient}\n\nNo significant risk markers detected.\nGenome added to AI training database.`;
                 showPopup('Genome Sequenced', msg);
+
+                // 40% chance of Venter Paradox when APOE risk is high
+                if (bars.apoe < 50 && Math.random() < 0.4) {
+                    setTimeout(() => triggerVenterParadox(patient), 2000);
+                }
+
+                checkChapterCompletion();
             }, 1500);
 
             updateDisplay();
+            updateGenomeMission();
         }
 
         function trainAI() {
@@ -1511,8 +1696,19 @@
                 r.progress = Math.min(100, r.progress + r.speed * (Math.random() * 3));
                 if (r.progress >= 100) {
                     r.progress = 0;
-                    // Rival published — pressure on player
-                    if (Math.random() < 0.3) {
+                    // Rival reaches 100% — patent blocking event
+                    if (Math.random() < 0.25) {
+                        const genes = ['BRCA1','TP53','APOE','MTHFR'];
+                        const blockedGene = genes[Math.floor(Math.random() * genes.length)];
+                        showPopup('Patent Challenge!',
+                            `${r.icon} ${r.name} has filed a patent blocking your ${blockedGene} analysis!\n\n` +
+                            `Pay $200,000 to license or lose this diagnostic capability.\n\n` +
+                            `"The genome belongs to humanity, not to corporations." — Dr. Venter`);
+                        // Auto-deduct if affordable, otherwise warn
+                        if (gameState.funding >= 200000) {
+                            gameState.funding -= 200000;
+                        }
+                    } else if (Math.random() < 0.4) {
                         showPopup('Rival Publication',
                             `${r.icon} ${r.name} just published a major paper!\n\nYour funding competitiveness may be affected.`);
                     }
@@ -1525,6 +1721,7 @@
                 gameState.funding += gameState.clinicsBuilt * 25000;
             }
             saveGame();
+            checkChapterCompletion();
         }
 
         // ============ Compound Library (Ch1 import) ============
@@ -1571,6 +1768,21 @@
             document.getElementById('funding').textContent = '$' + gameState.funding.toLocaleString();
             document.getElementById('patents-filed').textContent = gameState.patentsFiled;
             document.getElementById('ai-confidence').textContent = gameState.aiAccuracy + '%';
+
+            // Update AI confidence arc in left panel
+            const confArc = document.getElementById('confidence-arc');
+            const confPct = document.getElementById('conf-pct');
+            if (confArc) {
+                const dashOffset = 157 * (1 - gameState.aiAccuracy / 100);
+                confArc.setAttribute('stroke-dashoffset', dashOffset);
+            }
+            if (confPct) confPct.textContent = gameState.aiAccuracy + '%';
+
+            // Update genome mission bar
+            const dbEl = document.getElementById('genome-db-count');
+            const barEl = document.getElementById('genome-mission-fill');
+            if (dbEl) dbEl.textContent = gameState.genomesSequenced.toLocaleString();
+            if (barEl) barEl.style.width = Math.min(100, (gameState.genomesSequenced / 10000) * 100) + '%';
 
             updateChallengesUI();
             updateRivalsUI();
@@ -1626,6 +1838,201 @@
                 return true;
             } catch (e) {
                 return false;
+            }
+        }
+
+        // ============ Venter Paradox ============
+        let _vpPatient = '';
+        function triggerVenterParadox(patient) {
+            _vpPatient = patient;
+            document.getElementById('vp-text').textContent =
+                `Patient ${patient} shows APOE e4 variant — textbook Alzheimer's risk marker.\n\n` +
+                `But Venter himself carried this same variant. His MRI showed ZERO amyloid plaques. Zero cognitive decline.\n\n` +
+                `The genome isn't destiny. The phenome tells the real story.\n\n` +
+                `Order a full brain MRI to confirm actual disease status?`;
+            document.getElementById('vp-overlay').classList.add('active');
+        }
+
+        function resolveVenterParadox(orderMRI) {
+            document.getElementById('vp-overlay').classList.remove('active');
+            if (orderMRI) {
+                if (gameState.funding < 25000) {
+                    showPopup('Insufficient Funding', 'Brain MRI costs $25,000.');
+                    return;
+                }
+                gameState.funding -= 25000;
+                const isFine = Math.random() < 0.8;
+                gameState.aiAccuracy = Math.min(99, gameState.aiAccuracy + 15);
+                if (isFine) {
+                    showPopup('MRI Result: ALL CLEAR',
+                        `Patient ${_vpPatient}: Brain MRI shows NO amyloid plaques.\n\n` +
+                        `Despite APOE e4 variant, this patient has zero Alzheimer's indicators.\n\n` +
+                        `AI Confidence +15% — the model now understands that genotype ≠ phenotype.\n\n` +
+                        `"This is why we do whole-body imaging. The genome is a risk map, not a verdict." — Dr. Venter`);
+                } else {
+                    gameState.diseasesPredicted++;
+                    showPopup('MRI Result: FINDING CONFIRMED',
+                        `Patient ${_vpPatient}: Early amyloid deposits detected.\n\n` +
+                        `APOE e4 risk confirmed by imaging. Early intervention initiated.\n\n` +
+                        `AI Confidence +15% — confirmed genomic-phenomic correlation.\n\n` +
+                        `"We caught this 10 years before symptoms. That's the difference between prediction and prevention." — Dr. Venter`);
+                }
+            } else {
+                gameState.aiAccuracy = Math.max(1, gameState.aiAccuracy - 5);
+                showPopup('Genome-Only Assessment',
+                    `Relying on genomic data alone for ${_vpPatient}.\n\n` +
+                    `AI Confidence -5% — without imaging, diagnostic certainty decreases.\n\n` +
+                    `"Reading the genome without the phenome is like reading the blueprint without inspecting the building." — Dr. Venter`);
+            }
+            updateDisplay();
+        }
+
+        // ============ Health Nucleus Exam ============
+        function healthNucleusExam() {
+            if (gameState.funding < 25000) {
+                showPopup('Insufficient Funding', 'The full Health Nucleus exam costs $25,000 per patient.');
+                return;
+            }
+            gameState.funding -= 25000;
+            gameState.genomesSequenced++;
+            gameState.patientsScanned++;
+            createPatientMarker();
+
+            const patient = patientNames[Math.floor(Math.random() * patientNames.length)];
+            document.getElementById('patient-name').textContent = patient;
+            document.getElementById('scan-status').textContent = 'FULL SCAN...';
+
+            // Update phenome markers with typewriter effect
+            updatePhenomePanel(patient);
+
+            setTimeout(() => {
+                document.getElementById('scan-status').textContent = 'COMPLETE';
+                const roll = Math.random();
+                let result, reward;
+                if (roll < 0.70) {
+                    result = `Patient: ${patient}\n\nFull Health Nucleus Result: ALL CLEAR\n\nBiological age: ${Math.floor(Math.random() * 12) + 3} years younger than chronological.\nNo significant findings across genome, MRI, metabolome, or microbiome.\n\n"We found something seriously wrong in 40% of participants. This patient is in the lucky 60%." — Dr. Venter`;
+                    reward = 15000;
+                } else if (roll < 0.85) {
+                    result = `Patient: ${patient}\n\nFull Health Nucleus Result: EARLY-STAGE FINDING\n\nSmall thyroid nodule detected on MRI — invisible to standard screening.\nGenome confirms predisposition. Early treatment initiated.\nPatient outcome: TREATABLE.\n\n"This is what $25,000 buys — years of healthy life." — Dr. Venter`;
+                    reward = 35000;
+                    gameState.diseasesPredicted++;
+                } else if (roll < 0.95) {
+                    result = `Patient: ${patient}\n\nFull Health Nucleus Result: SIGNIFICANT FINDING\n\nStage 1 renal cell carcinoma found on whole-body MRI.\nNo symptoms. No pain. Patient had no idea.\nImmediate surgical referral — prognosis: EXCELLENT if treated within 30 days.\n\n"Without this scan, this cancer would have been found 3 years from now. At stage 4." — Dr. Venter`;
+                    reward = 80000;
+                    gameState.diseasesPredicted++;
+                    if (!gameState.criticalFinding) gameState.criticalFinding = true;
+                } else {
+                    result = `Patient: ${patient}\n\n⚠ CRITICAL FINDING — EMERGENCY REFERRAL\n\nPancreatic mass detected on MRI. Genome shows BRCA2 variant + KRAS mutation.\nZero symptoms. Patient felt perfectly healthy.\nEmergency oncology consult initiated.\n\n"This patient was walking around with a ticking time bomb. We just defused it. This is why I built Human Longevity Inc." — Dr. Venter`;
+                    reward = 200000;
+                    gameState.diseasesPredicted += 2;
+                    gameState.criticalFinding = true;
+                }
+                gameState.funding += reward;
+                showPopup('Health Nucleus Results', result);
+                updateDisplay();
+                checkChapterCompletion();
+            }, 2000);
+
+            updateDisplay();
+            updateGenomeMission();
+        }
+
+        // ============ Phenome Panel Update ============
+        function updatePhenomePanel(patient) {
+            const heights = ['5ft 4in','5ft 7in','5ft 9in','5ft 11in','6ft 1in','6ft 3in'];
+            const eyes = ['Brown','Blue','Green','Hazel','Gray'];
+            const bloods = ['O+','O-','A+','A-','B+','AB+'];
+            const longevity = 72 + Math.floor(Math.random() * 22);
+            const cancerRisk = Math.floor(5 + Math.random() * 30);
+            const alzRisk = Math.floor(3 + Math.random() * 40);
+
+            const rows = document.querySelectorAll('.right-panel .pheno-row');
+            const values = [
+                heights[Math.floor(Math.random() * heights.length)],
+                eyes[Math.floor(Math.random() * eyes.length)],
+                bloods[Math.floor(Math.random() * bloods.length)],
+                longevity + ' yrs',
+                (cancerRisk < 10 ? '' : '\u2191 ') + cancerRisk + '%',
+                (alzRisk < 10 ? '' : alzRisk < 25 ? '\u2191 ' : '\u2191\u2191 ') + alzRisk + '%'
+            ];
+            const colors = [
+                '#00d4ff','#00d4ff','#00d4ff',
+                longevity > 85 ? '#00ff88' : longevity > 75 ? '#ffaa00' : '#ff4444',
+                cancerRisk < 10 ? '#00ff88' : cancerRisk < 25 ? '#ffaa00' : '#ff4444',
+                alzRisk < 10 ? '#00ff88' : alzRisk < 25 ? '#ffaa00' : '#ff4444'
+            ];
+
+            rows.forEach((row, i) => {
+                const valSpan = row.querySelectorAll('span')[1];
+                if (valSpan) {
+                    setTimeout(() => {
+                        valSpan.textContent = values[i];
+                        valSpan.style.color = colors[i];
+                    }, 300 + i * 350);
+                }
+            });
+
+            // Update MRI scan % animation
+            let pct = 0;
+            const scanEl = document.getElementById('scan-pct');
+            const scanInterval = setInterval(() => {
+                pct += Math.floor(5 + Math.random() * 10);
+                if (pct >= 100) { pct = 100; clearInterval(scanInterval); }
+                if (scanEl) scanEl.textContent = pct + '%';
+            }, 200);
+        }
+
+        // ============ Million Genome Mission ============
+        const GENOME_MILESTONES = [
+            { count: 10, quote: "Ten genomes. Not even a whisper in the darkness. But it's a start." },
+            { count: 50, quote: "Fifty genomes. Patterns are emerging. The AI is learning." },
+            { count: 100, quote: "A hundred genomes. Now we're seeing the architecture of disease." },
+            { count: 250, quote: "Two hundred fifty. We can predict conditions no doctor has ever seen this early." },
+            { count: 500, quote: "Five hundred genomes. We're rewriting the textbook on human health." },
+            { count: 1000, quote: "A thousand genomes. We've built a mirror for humanity to look into." }
+        ];
+        let _lastMilestone = 0;
+
+        function updateGenomeMission() {
+            const count = gameState.genomesSequenced;
+            const dbEl = document.getElementById('genome-db-count');
+            const barEl = document.getElementById('genome-mission-fill');
+            const msgEl = document.getElementById('genome-milestone-msg');
+            if (dbEl) dbEl.textContent = count.toLocaleString();
+            if (barEl) barEl.style.width = Math.min(100, (count / 10000) * 100) + '%';
+
+            // Check milestones
+            for (const m of GENOME_MILESTONES) {
+                if (count >= m.count && _lastMilestone < m.count) {
+                    _lastMilestone = m.count;
+                    if (msgEl) msgEl.textContent = m.quote;
+                    setTimeout(() => {
+                        showPopup(`Milestone: ${m.count.toLocaleString()} Genomes`,
+                            `"${m.quote}" — Dr. Venter\n\nMilestone reward: $${(m.count * 500).toLocaleString()}`);
+                    }, 500);
+                    gameState.funding += m.count * 500;
+                }
+            }
+        }
+
+        // ============ Chapter 2 Completion ============
+        function checkChapterCompletion() {
+            if (gameState.ch2Complete) return;
+            if (gameState.genomesSequenced >= 50 &&
+                gameState.aiAccuracy >= 80 &&
+                gameState.clinicsBuilt >= 3 &&
+                gameState.criticalFinding &&
+                gameState.funding >= 10000000) {
+                gameState.ch2Complete = true;
+                try { localStorage.setItem('sorcerer2.ch2.complete', 'true'); } catch(e) {}
+                saveGame();
+                setTimeout(() => {
+                    const statsEl = document.getElementById('ch-complete-stats');
+                    if (statsEl) {
+                        statsEl.textContent = `${gameState.genomesSequenced} genomes sequenced | ${gameState.diseasesPredicted} diseases predicted early\n${gameState.clinicsBuilt} clinics worldwide | AI accuracy: ${gameState.aiAccuracy}%\n${gameState.patentsFiled} patents filed | $${gameState.funding.toLocaleString()} in funding`;
+                    }
+                    document.getElementById('ch-complete-overlay').classList.add('active');
+                }, 1000);
             }
         }
 
