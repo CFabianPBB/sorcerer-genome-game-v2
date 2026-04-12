@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Speed of Light">
+    <title>Life at the Speed of Light — Chapter 3</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #050a12;
+            color: white;
+            overflow-x: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .game-container { min-height: 100vh; position: relative; }
+
+        /* ================= Header ================= */
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(8,15,30,0.98) 100%);
+            border-bottom: 2px solid #7c3aed;
+            position: relative;
+        }
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, #7c3aed, transparent);
+            box-shadow: 0 0 20px rgba(124,58,237,0.6);
+        }
+        .title-chapter {
+            font-size: 0.7em;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: #a78bfa;
+            font-weight: 300;
+            margin-bottom: 2px;
+        }
+        .title-main {
+            font-size: 2.4em;
+            font-weight: 100;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            text-shadow: 0 0 30px rgba(124,58,237,0.3);
+        }
+        .subtitle {
+            font-size: 0.8em;
+            opacity: 0.5;
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* ================= Layout ================= */
+        .game-area {
+            display: flex;
+            height: calc(100vh - 110px);
+        }
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+                height: auto;
+                min-height: calc(100vh - 100px);
+            }
+            .world-map-panel { flex: none; height: 50vh; min-height: 280px; }
+            .controls-panel { flex: none; height: auto; max-height: 50vh; overflow-y: auto; padding: 12px; }
+            .title-main { font-size: 1.6em; letter-spacing: 3px; }
+            .header { padding: 12px 10px; }
+        }
+
+        /* ================= World Map Panel ================= */
+        .world-map-panel {
+            flex: 2;
+            background: radial-gradient(ellipse at 50% 50%, #0d1526 0%, #060b16 60%, #020510 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        /* Star field */
+        .world-map-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background:
+                radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.4), transparent),
+                radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.3), transparent),
+                radial-gradient(1px 1px at 50% 10%, rgba(255,255,255,0.5), transparent),
+                radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.3), transparent),
+                radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.4), transparent),
+                radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,0.3), transparent),
+                radial-gradient(1px 1px at 85% 15%, rgba(255,255,255,0.5), transparent),
+                radial-gradient(1px 1px at 45% 45%, rgba(255,255,255,0.2), transparent),
+                radial-gradient(1px 1px at 60% 30%, rgba(255,255,255,0.4), transparent),
+                radial-gradient(1px 1px at 25% 70%, rgba(255,255,255,0.3), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+        /* Subtle grid */
+        .map-grid {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background:
+                linear-gradient(rgba(124,58,237,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(124,58,237,0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* SVG world map container */
+        .map-svg-container {
+            position: absolute;
+            top: 5%; left: 5%; width: 90%; height: 90%;
+            z-index: 2;
+        }
+        .map-svg-container svg {
+            width: 100%; height: 100%;
+        }
+        /* Continent outlines */
+        .continent {
+            fill: rgba(124,58,237,0.08);
+            stroke: rgba(124,58,237,0.2);
+            stroke-width: 0.5;
+            transition: fill 0.3s;
+        }
+
+        /* DBC Node markers on map */
+        .dbc-node {
+            position: absolute;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #7c3aed, #4c1d95);
+            border: 2px solid #a78bfa;
+            cursor: pointer;
+            z-index: 10;
+            transition: transform 0.2s, box-shadow 0.2s;
+            animation: dbcPulse 3s ease-in-out infinite;
+        }
+        .dbc-node:hover {
+            transform: scale(1.4);
+            box-shadow: 0 0 20px rgba(124,58,237,0.8);
+        }
+        .dbc-node.active {
+            background: radial-gradient(circle, #10b981, #047857);
+            border-color: #34d399;
+            animation: dbcActive 2s ease-in-out infinite;
+        }
+        .dbc-node.outbreak {
+            background: radial-gradient(circle, #ef4444, #991b1b);
+            border-color: #f87171;
+            animation: dbcOutbreak 1s ease-in-out infinite;
+        }
+        .dbc-node-label {
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.55em;
+            color: rgba(255,255,255,0.5);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        @keyframes dbcPulse {
+            0%, 100% { box-shadow: 0 0 6px rgba(124,58,237,0.3); }
+            50%      { box-shadow: 0 0 14px rgba(124,58,237,0.6); }
+        }
+        @keyframes dbcActive {
+            0%, 100% { box-shadow: 0 0 6px rgba(16,185,129,0.4); }
+            50%      { box-shadow: 0 0 18px rgba(16,185,129,0.8); }
+        }
+        @keyframes dbcOutbreak {
+            0%, 100% { box-shadow: 0 0 8px rgba(239,68,68,0.4); transform: scale(1); }
+            50%      { box-shadow: 0 0 22px rgba(239,68,68,0.9); transform: scale(1.15); }
+        }
+
+        /* Signal arc animation (SVG-based, drawn in JS) */
+        .signal-arc {
+            fill: none;
+            stroke: url(#signalGrad);
+            stroke-width: 2;
+            stroke-linecap: round;
+            opacity: 0;
+            animation: arcFire 2.5s ease-in-out forwards;
+        }
+        @keyframes arcFire {
+            0%   { stroke-dashoffset: 500; opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 1; }
+            100% { stroke-dashoffset: 0; opacity: 0; }
+        }
+
+        /* Outbreak ring */
+        .outbreak-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(239,68,68,0.4);
+            pointer-events: none;
+            z-index: 5;
+            animation: outbreakSpread 3s ease-out forwards;
+        }
+        @keyframes outbreakSpread {
+            0%   { width: 20px; height: 20px; opacity: 0.8; }
+            100% { width: 100px; height: 100px; opacity: 0; }
+        }
+
+        /* Map info overlay */
+        .map-info {
+            position: absolute;
+            top: 10px; left: 10px;
+            background: rgba(0,5,15,0.8);
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(124,58,237,0.2);
+            font-size: 0.75em;
+            z-index: 20;
+        }
+        .map-info .label { color: rgba(255,255,255,0.4); font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; }
+        .map-info .value { color: #a78bfa; font-weight: bold; }
+        .map-info div { margin-bottom: 3px; }
+
+        /* Transmission status bar */
+        .transmission-bar {
+            position: absolute;
+            bottom: 10px; left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,5,15,0.85);
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(124,58,237,0.2);
+            font-size: 0.7em;
+            z-index: 20;
+            display: none;
+            text-align: center;
+            min-width: 250px;
+        }
+        .transmission-bar.active { display: block; }
+        .transmission-progress {
+            height: 4px;
+            background: rgba(124,58,237,0.15);
+            border-radius: 2px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+        .transmission-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #7c3aed, #a78bfa);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s;
+            box-shadow: 0 0 8px rgba(124,58,237,0.5);
+        }
+
+        /* ================= Controls Panel ================= */
+        .controls-panel {
+            flex: 1;
+            background: rgba(0,5,15,0.7);
+            padding: 18px;
+            overflow-y: auto;
+            border-left: 1px solid rgba(124,58,237,0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .stat-card {
+            background: rgba(124,58,237,0.05);
+            border: 1px solid rgba(124,58,237,0.1);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+        .stat-card .stat-value {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #a78bfa;
+            text-shadow: 0 0 10px rgba(124,58,237,0.3);
+        }
+        .stat-card .stat-label {
+            font-size: 0.65em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.4);
+            margin-top: 2px;
+        }
+        .stat-card.funding .stat-value { color: #fbbf24; }
+        .stat-card.integrity .stat-value { color: #10b981; }
+
+        .section-title {
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: rgba(255,255,255,0.35);
+            margin: 16px 0 8px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(124,58,237,0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 11px 12px;
+            margin-bottom: 6px;
+            border: 1px solid rgba(124,58,237,0.2);
+            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(124,58,237,0.02));
+            color: #fff;
+            font-size: 0.82em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        .btn:hover {
+            background: linear-gradient(135deg, rgba(124,58,237,0.18), rgba(124,58,237,0.06));
+            border-color: rgba(124,58,237,0.5);
+            box-shadow: 0 0 12px rgba(124,58,237,0.15);
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn .btn-cost { float: right; color: #fbbf24; font-size: 0.9em; }
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* ================= Challenges ================= */
+        .challenge-card {
+            background: rgba(124,58,237,0.04);
+            border: 1px solid rgba(124,58,237,0.1);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 6px;
+        }
+        .challenge-name { font-size: 0.85em; font-weight: bold; color: #a78bfa; margin-bottom: 3px; }
+        .challenge-desc { font-size: 0.7em; color: rgba(255,255,255,0.45); line-height: 1.4; }
+        .challenge-reward { font-size: 0.65em; color: #fbbf24; margin-top: 5px; }
+        .challenge-progress { height: 3px; background: rgba(124,58,237,0.1); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+        .challenge-progress-bar { height: 100%; background: #7c3aed; border-radius: 2px; transition: width 0.5s; }
+
+        /* ================= Rivals ================= */
+        .rival-row {
+            display: flex; align-items: center; gap: 8px;
+            padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.75em;
+        }
+        .rival-icon { font-size: 1.1em; }
+        .rival-name { flex: 1; font-weight: 500; }
+        .rival-bar { width: 70px; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+        .rival-bar-fill { height: 100%; background: linear-gradient(90deg, #ef4444, #f97316); transition: width 0.5s; }
+
+        /* ================= Signal Repair Mini-game Modal ================= */
+        .repair-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .repair-overlay.active { display: flex; }
+        .repair-box {
+            background: linear-gradient(135deg, #0a0e1a, #111827);
+            border: 1px solid rgba(124,58,237,0.4);
+            border-radius: 12px;
+            padding: 25px;
+            max-width: 500px;
+            width: 92%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(124,58,237,0.15);
+        }
+        .repair-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #a78bfa;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+        .repair-subtitle {
+            font-size: 0.75em;
+            color: rgba(255,255,255,0.45);
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .repair-sequence {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            letter-spacing: 3px;
+            text-align: center;
+            margin-bottom: 15px;
+            line-height: 2;
+            word-break: break-all;
+        }
+        .repair-sequence .base {
+            display: inline-block;
+            padding: 2px 4px;
+            border-radius: 3px;
+            cursor: default;
+            transition: background 0.2s, color 0.2s;
+        }
+        .repair-sequence .base.correct { color: #10b981; }
+        .repair-sequence .base.error {
+            color: #ef4444;
+            background: rgba(239,68,68,0.15);
+            cursor: pointer;
+            text-decoration: underline wavy #ef4444;
+        }
+        .repair-sequence .base.error:hover {
+            background: rgba(239,68,68,0.3);
+        }
+        .repair-sequence .base.fixed {
+            color: #10b981;
+            background: rgba(16,185,129,0.15);
+        }
+        .repair-info {
+            text-align: center;
+            font-size: 0.8em;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 10px;
+        }
+        .repair-timer {
+            text-align: center;
+            font-size: 0.85em;
+            color: #fbbf24;
+            margin-bottom: 12px;
+        }
+        .repair-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .repair-btn {
+            padding: 10px 24px;
+            border-radius: 20px;
+            border: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .repair-btn:hover { transform: scale(1.05); }
+        .repair-btn.primary {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            color: #fff;
+        }
+        .repair-btn.secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* ================= Cinematic: Signal Transmission ================= */
+        .signal-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 100;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .signal-particle {
+            position: absolute;
+            width: 4px; height: 4px;
+            border-radius: 50%;
+            background: #a78bfa;
+            box-shadow: 0 0 8px rgba(124,58,237,0.8);
+            pointer-events: none;
+        }
+
+        /* ================= Cinematic: DBC Print ================= */
+        .dbc-print-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            opacity: 0;
+            animation: fadeInOverlay 0.5s ease-out forwards;
+        }
+        @keyframes fadeInOverlay {
+            to { opacity: 1; }
+        }
+        .dbc-printer-svg {
+            width: 200px; height: 200px;
+            margin-bottom: 20px;
+        }
+        .print-status-text {
+            font-size: 1.1em;
+            color: #a78bfa;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(124,58,237,0.5);
+        }
+        .print-progress {
+            width: 250px; height: 4px;
+            background: rgba(124,58,237,0.15);
+            border-radius: 2px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+        .print-progress-bar {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, #7c3aed, #a78bfa);
+            border-radius: 2px;
+            animation: printFill 3s linear forwards;
+            box-shadow: 0 0 10px rgba(124,58,237,0.5);
+        }
+        @keyframes printFill {
+            to { width: 100%; }
+        }
+
+        /* ================= Cinematic: Pandemic Spread ================= */
+        .pandemic-flash {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at var(--cx) var(--cy), rgba(239,68,68,0.25), transparent 60%);
+            z-index: 50;
+            pointer-events: none;
+            animation: pandemicFlash 2s ease-out forwards;
+        }
+        @keyframes pandemicFlash {
+            0%   { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* ================= Venter Avatar ================= */
+        .venter-avatar {
+            position: absolute;
+            bottom: 12px; right: 12px;
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            border: 2px solid rgba(124,58,237,0.3);
+            background: radial-gradient(circle at 30% 30%, #b57745, #8b5a2b);
+            cursor: pointer;
+            z-index: 20;
+            transition: transform 0.2s, box-shadow 0.2s;
+            overflow: hidden;
+        }
+        .venter-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(124,58,237,0.4);
+        }
+        .venter-avatar svg { width: 100%; height: 100%; }
+
+        /* ================= Popup ================= */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1500;
+            justify-content: center;
+            align-items: center;
+        }
+        .popup-overlay.active { display: flex; }
+        .popup-box {
+            background: linear-gradient(135deg, #0a0e1a, #131b2e);
+            border: 1px solid rgba(124,58,237,0.3);
+            border-radius: 12px;
+            padding: 22px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(124,58,237,0.1);
+        }
+        .popup-title { font-size: 1.15em; font-weight: bold; color: #a78bfa; margin-bottom: 10px; }
+        .popup-text { font-size: 0.85em; line-height: 1.5; color: rgba(255,255,255,0.75); margin-bottom: 16px; white-space: pre-line; }
+        .popup-close {
+            padding: 10px 28px;
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            border: none; border-radius: 25px;
+            color: #fff; font-weight: bold; font-size: 0.85em;
+            cursor: pointer; transition: transform 0.2s;
+        }
+        .popup-close:hover { transform: scale(1.05); }
+
+        /* ================= Save indicator ================= */
+        .save-indicator {
+            position: fixed;
+            bottom: 8px; left: 10px;
+            font-size: 0.65em;
+            color: rgba(255,255,255,0.25);
+            z-index: 50;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <div class="title-chapter">Chapter Three</div>
+            <h1 class="title-main">LIFE AT THE SPEED OF LIGHT</h1>
+            <div class="subtitle">Digital-to-Biological Converter Network &bull; Global Operations</div>
+        </div>
+
+        <div class="game-area">
+            <!-- Left: World Map -->
+            <div class="world-map-panel" id="world-map">
+                <div class="map-grid"></div>
+
+                <!-- Map SVG (simplified world) -->
+                <div class="map-svg-container">
+                    <svg viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg" id="map-svg">
+                        <defs>
+                            <linearGradient id="signalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#7c3aed" stop-opacity="0"/>
+                                <stop offset="40%" stop-color="#a78bfa" stop-opacity="1"/>
+                                <stop offset="60%" stop-color="#a78bfa" stop-opacity="1"/>
+                                <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Simplified continent outlines -->
+                        <!-- North America -->
+                        <path class="continent" d="M120,80 L180,60 L240,70 L260,100 L270,140 L250,180 L220,200 L180,210 L150,240 L130,220 L100,200 L80,160 L90,120 Z"/>
+                        <!-- South America -->
+                        <path class="continent" d="M210,250 L240,240 L270,260 L280,300 L270,350 L250,400 L220,420 L200,400 L190,350 L195,300 Z"/>
+                        <!-- Europe -->
+                        <path class="continent" d="M440,70 L480,60 L520,70 L530,100 L520,130 L490,140 L460,130 L440,110 Z"/>
+                        <!-- Africa -->
+                        <path class="continent" d="M440,160 L480,150 L530,170 L550,220 L560,280 L540,340 L510,380 L470,390 L440,360 L420,300 L420,240 L430,200 Z"/>
+                        <!-- Asia -->
+                        <path class="continent" d="M530,50 L600,40 L680,50 L750,70 L800,100 L820,140 L800,170 L750,180 L700,170 L650,160 L600,150 L560,130 L540,100 Z"/>
+                        <!-- India -->
+                        <path class="continent" d="M640,180 L670,170 L690,200 L680,250 L650,270 L630,250 L620,220 L630,190 Z"/>
+                        <!-- Southeast Asia / Indonesia -->
+                        <path class="continent" d="M720,200 L760,190 L800,200 L830,210 L820,230 L780,240 L740,230 L720,220 Z"/>
+                        <!-- Australia -->
+                        <path class="continent" d="M770,310 L830,300 L870,320 L880,360 L860,390 L820,400 L780,390 L760,360 L760,330 Z"/>
+                        <!-- Japan -->
+                        <path class="continent" d="M830,90 L845,80 L850,100 L840,120 L830,110 Z"/>
+                        <!-- Signal arcs drawn here by JS -->
+                        <g id="signal-arcs"></g>
+                    </svg>
+                </div>
+
+                <!-- DBC nodes placed by JS -->
+                <div id="dbc-nodes"></div>
+
+                <!-- Map info overlay -->
+                <div class="map-info">
+                    <div><span class="label">DBC Network: </span><span class="value" id="network-status">Offline</span></div>
+                    <div><span class="label">Active Nodes: </span><span class="value" id="active-nodes">0</span></div>
+                    <div><span class="label">Signal Integrity: </span><span class="value" id="signal-integrity">100%</span></div>
+                    <div><span class="label">Outbreaks: </span><span class="value" id="outbreak-count" style="color:#ef4444;">0</span></div>
+                </div>
+
+                <!-- Transmission status bar -->
+                <div class="transmission-bar" id="transmission-bar">
+                    <div id="transmission-text">Transmitting genome...</div>
+                    <div class="transmission-progress">
+                        <div class="transmission-progress-bar" id="transmission-progress-bar"></div>
+                    </div>
+                </div>
+
+                <!-- Venter Avatar -->
+                <div class="venter-avatar" onclick="craigSpeaks()" title="Dr. Craig Venter">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Tech jacket -->
+                        <path d="M5 100 L18 60 Q28 50 50 50 Q72 50 82 60 L95 100 Z" fill="#1e1e2e"/>
+                        <path d="M18 60 L50 55 L82 60" fill="none" stroke="#7c3aed" stroke-width="0.8"/>
+                        <!-- Collar glow -->
+                        <path d="M38 55 L50 50 L62 55" fill="none" stroke="#a78bfa" stroke-width="1"/>
+                        <!-- Head -->
+                        <ellipse cx="50" cy="32" rx="18" ry="20" fill="#c98a5a"/>
+                        <ellipse cx="48" cy="18" rx="11" ry="5" fill="#ffe4c4" opacity="0.5"/>
+                        <!-- Eyes -->
+                        <ellipse cx="43" cy="34" rx="2.2" ry="1.3" fill="#fff"/>
+                        <circle cx="43" cy="34" r="0.9" fill="#2c5d8a"/>
+                        <ellipse cx="57" cy="34" rx="2.2" ry="1.3" fill="#fff"/>
+                        <circle cx="57" cy="34" r="0.9" fill="#2c5d8a"/>
+                        <!-- Smile -->
+                        <path d="M43 42 Q50 47 57 42" fill="none" stroke="#8b5a2b" stroke-width="0.7"/>
+                        <!-- Headset -->
+                        <path d="M28 30 Q28 15 50 12 Q72 15 72 30" fill="none" stroke="#444" stroke-width="2"/>
+                        <rect x="25" y="28" width="6" height="10" rx="2" fill="#333"/>
+                        <rect x="69" y="28" width="6" height="10" rx="2" fill="#333"/>
+                        <circle cx="28" cy="33" r="1.5" fill="#7c3aed"/>
+                        <!-- Holographic display hint -->
+                        <rect x="60" y="60" width="18" height="12" rx="2" fill="rgba(124,58,237,0.15)" stroke="#7c3aed" stroke-width="0.5"/>
+                        <line x1="63" y1="64" x2="75" y2="64" stroke="#a78bfa" stroke-width="0.4"/>
+                        <line x1="63" y1="67" x2="72" y2="67" stroke="#a78bfa" stroke-width="0.4"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Right: Controls -->
+            <div class="controls-panel">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="dbc-count">0</div>
+                        <div class="stat-label">DBC Nodes</div>
+                    </div>
+                    <div class="stat-card integrity">
+                        <div class="stat-value" id="integrity-pct">100%</div>
+                        <div class="stat-label">Signal Integrity</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="transmissions">0</div>
+                        <div class="stat-label">Transmissions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="vaccines-printed">0</div>
+                        <div class="stat-label">Vaccines Printed</div>
+                    </div>
+                    <div class="stat-card funding">
+                        <div class="stat-value" id="funding">$1,000,000</div>
+                        <div class="stat-label">Funding</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="outbreaks-stopped">0</div>
+                        <div class="stat-label">Outbreaks Stopped</div>
+                    </div>
+                </div>
+
+                <div class="section-title">DBC Operations</div>
+                <button class="btn" onclick="installDBC()">
+                    Install DBC Printer <span class="btn-cost">$500,000</span>
+                </button>
+                <button class="btn" onclick="transmitGenome()">
+                    Transmit Genome <span class="btn-cost">$100,000</span>
+                </button>
+                <button class="btn" onclick="synthesizeVaccine()">
+                    Synthesize Vaccine <span class="btn-cost">$200,000</span>
+                </button>
+                <button class="btn" onclick="upgradeSignal()">
+                    Upgrade Signal Array <span class="btn-cost">$300,000</span>
+                </button>
+                <button class="btn" onclick="publishFindings()">
+                    Publish Research <span class="btn-cost">Free</span>
+                </button>
+
+                <div class="section-title">Global Health Challenges</div>
+                <div id="challenges-list"></div>
+
+                <div class="section-title">Rival Networks</div>
+                <div id="rivals-list"></div>
+
+                <div class="save-indicator"><span id="save-status">Auto-save on</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup -->
+    <div class="popup-overlay" id="popup-overlay" onclick="closePopup(event)">
+        <div class="popup-box" onclick="event.stopPropagation()">
+            <div class="popup-title" id="popup-title"></div>
+            <div class="popup-text" id="popup-text"></div>
+            <button class="popup-close" onclick="closePopup()">Continue</button>
+        </div>
+    </div>
+
+    <!-- Signal Repair Mini-game -->
+    <div class="repair-overlay" id="repair-overlay">
+        <div class="repair-box">
+            <div class="repair-title">Signal Corruption Detected</div>
+            <div class="repair-subtitle">Click the corrupted bases (red) to repair them. Fix all errors before time runs out.</div>
+            <div class="repair-sequence" id="repair-sequence"></div>
+            <div class="repair-info" id="repair-info">Errors remaining: 0</div>
+            <div class="repair-timer" id="repair-timer">Time: 15s</div>
+            <div class="repair-actions">
+                <button class="repair-btn primary" id="repair-submit" onclick="submitRepair()">Transmit</button>
+                <button class="repair-btn secondary" onclick="abortRepair()">Abort</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SAVE_KEY = 'sorcerer2.ch3.v1';
+        let _initComplete = false;
+
+        // ============ Game State ============
+        const gameState = {
+            funding: 1000000,
+            dbcNodes: [],
+            transmissions: 0,
+            vaccinesPrinted: 0,
+            outbreaksStopped: 0,
+            signalIntegrity: 100,
+            papersPublished: 0,
+            activeOutbreaks: [],
+            activeChallenges: [],
+            challengesCompleted: 0,
+            rivals: [],
+            ch3Complete: false
+        };
+
+        // ============ DBC City Data ============
+        const DBC_CITIES = [
+            { id: 'sandiego',   name: 'San Diego',    x: 14, y: 36, continent: 'NA' },
+            { id: 'newyork',    name: 'New York',     x: 22, y: 30, continent: 'NA' },
+            { id: 'saopaulo',   name: 'Sao Paulo',    x: 24, y: 68, continent: 'SA' },
+            { id: 'london',     name: 'London',       x: 46, y: 22, continent: 'EU' },
+            { id: 'berlin',     name: 'Berlin',       x: 50, y: 20, continent: 'EU' },
+            { id: 'lagos',      name: 'Lagos',        x: 46, y: 52, continent: 'AF' },
+            { id: 'nairobi',    name: 'Nairobi',      x: 54, y: 56, continent: 'AF' },
+            { id: 'dubai',      name: 'Dubai',        x: 58, y: 40, continent: 'ME' },
+            { id: 'mumbai',     name: 'Mumbai',       x: 64, y: 44, continent: 'AS' },
+            { id: 'shanghai',   name: 'Shanghai',     x: 76, y: 34, continent: 'AS' },
+            { id: 'tokyo',      name: 'Tokyo',        x: 84, y: 28, continent: 'AS' },
+            { id: 'singapore',  name: 'Singapore',    x: 74, y: 54, continent: 'AS' },
+            { id: 'sydney',     name: 'Sydney',       x: 84, y: 72, continent: 'OC' },
+            { id: 'moonbase',   name: 'Lunar Relay',  x: 50, y: 6,  continent: 'MOON', cost: 5000000, special: true }
+        ];
+
+        // ============ Challenges ============
+        const CHALLENGE_TEMPLATES = [
+            {
+                id: 'pandemic_rapid', name: 'Rapid Pandemic Response', icon: '🦠',
+                desc: 'Stop 3 outbreaks within 30 seconds of detection using DBC-printed vaccines.',
+                requirement: { outbreaksStopped: 3, dbcCount: 3 },
+                reward: 2000000,
+                victoryQuote: '"We printed the vaccine before the virus even knew we were coming."'
+            },
+            {
+                id: 'global_net', name: 'Global DBC Network', icon: '🌐',
+                desc: 'Install DBC printers on every continent to enable worldwide biological teleportation.',
+                requirement: { dbcCount: 6, transmissions: 10 },
+                reward: 3000000,
+                victoryQuote: '"Any genome, anywhere on Earth, printed in under an hour. That\'s the future."'
+            },
+            {
+                id: 'signal_perfect', name: 'Perfect Signal', icon: '📡',
+                desc: 'Achieve 95%+ signal integrity across 20 transmissions.',
+                requirement: { signalIntegrity: 95, transmissions: 20 },
+                reward: 2500000,
+                victoryQuote: '"Zero errors in 3 billion base pairs transmitted across the ocean. Try doing that with email."'
+            },
+            {
+                id: 'vaccine_mass', name: 'Mass Vaccination', icon: '💉',
+                desc: 'Synthesize 10 vaccines at DBC nodes to prove decentralized manufacturing works.',
+                requirement: { vaccinesPrinted: 10, dbcCount: 4 },
+                reward: 3500000,
+                victoryQuote: '"No more cold chains. No more supply shortages. Just biology at the speed of light."'
+            },
+            {
+                id: 'lunar', name: 'Lunar Transmission', icon: '🌙',
+                desc: 'Transmit a genome to the Lunar Relay station — proving biology can be beamed through space.',
+                requirement: { dbcCount: 8, transmissions: 30, vaccinesPrinted: 5 },
+                reward: 10000000,
+                victoryQuote: '"We just faxed life to the Moon. Mars is next."'
+            }
+        ];
+
+        const RIVAL_TEMPLATES = [
+            { name: 'WHO BioNet', icon: '🏥', speed: 0.7, desc: 'Slow but trusted' },
+            { name: 'China BioLink', icon: '🇨🇳', speed: 1.4, desc: 'Fast, secretive' },
+            { name: 'Pharma Consortium', icon: '💊', speed: 1.0, desc: 'Patent trolls' }
+        ];
+
+        const OUTBREAK_TYPES = [
+            { name: 'Novel Influenza', severity: 2, icon: '🦠', vaccine: 'Flu Antigen Sequence' },
+            { name: 'Hemorrhagic Fever', severity: 4, icon: '🩸', vaccine: 'Viral Coat Protein' },
+            { name: 'Antibiotic-Resistant TB', severity: 3, icon: '🫁', vaccine: 'Phage Therapy Blueprint' },
+            { name: 'Synthetic Pathogen', severity: 5, icon: '☣', vaccine: 'Counter-Sequence' },
+            { name: 'Coral Plague', severity: 2, icon: '🪸', vaccine: 'Marine Probiotic' },
+            { name: 'Avian Zoonotic', severity: 3, icon: '🐦', vaccine: 'Cross-Species Blocker' }
+        ];
+
+        const craigQuotes = [
+            "We're not transporting biology anymore. We're transmitting it. At the speed of light.",
+            "The DBC is a biological fax machine. Except it prints living things.",
+            "In 2009, we digitally synthesized an H1N1 vaccine in hours. Now we do it in minutes, anywhere on Earth.",
+            "People laughed when I said we'd fax life. Nobody's laughing now.",
+            "The post office delivers packages. We deliver genomes. I know which service is more important.",
+            "Every hospital with a DBC is a vaccine factory. That changes everything about pandemic response.",
+            "Signal integrity is everything. One wrong base pair and you're printing a completely different organism.",
+            "The Moon is just a relay test. The real target is Mars. Always has been."
+        ];
+
+        const rejectionReasons = [
+            "Reviewers concerned about biocontainment protocols for transmitted organisms.",
+            "Ethics board requires additional review of digital biology implications.",
+            "Competing publication from WHO BioNet beat you to press.",
+            "Signal integrity data insufficient for peer review standards."
+        ];
+
+        // ============ Signal Repair Mini-game State ============
+        let repairState = null;
+
+        // ============ Core Functions ============
+
+        function installDBC() {
+            const baseCost = 500000;
+            const available = DBC_CITIES.filter(c => !gameState.dbcNodes.includes(c.id));
+            if (available.length === 0) {
+                showPopup('Network Complete', 'All DBC nodes have been installed. The global network is fully operational!');
+                return;
+            }
+
+            // Lunar relay costs more
+            const next = available[0];
+            const cost = next.cost || baseCost;
+
+            if (gameState.funding < cost) {
+                showPopup('Insufficient Funding', `Installing a DBC in ${next.name} costs $${cost.toLocaleString()}.`);
+                return;
+            }
+
+            gameState.funding -= cost;
+            gameState.dbcNodes.push(next.id);
+
+            // Show DBC print animation
+            showDBCPrintAnimation(next.name);
+
+            const networkSize = gameState.dbcNodes.length;
+            const isSpecial = next.special ? '\n\nThis is a SPECIAL node — it extends your signal range beyond Earth!' : '';
+
+            setTimeout(() => {
+                showPopup('DBC Installed!',
+                    `Digital-to-Biological Converter deployed in ${next.name}!\n\n` +
+                    `Network size: ${networkSize} nodes\n` +
+                    `Coverage: ${Math.min(100, Math.floor(networkSize / DBC_CITIES.length * 100))}% global${isSpecial}\n\n` +
+                    `"Each printer is a node. Each node is a factory. Each factory saves lives." — Dr. Venter`);
+            }, 3500);
+
+            renderDBCNodes();
+            updateDisplay();
+        }
+
+        function transmitGenome() {
+            if (gameState.funding < 100000) {
+                showPopup('Insufficient Funding', 'Genome transmission costs $100,000.');
+                return;
+            }
+            if (gameState.dbcNodes.length < 2) {
+                showPopup('Insufficient Network', 'You need at least 2 DBC nodes to transmit between them.');
+                return;
+            }
+
+            gameState.funding -= 100000;
+
+            // Calculate error chance based on integrity
+            const errorChance = Math.max(0.1, 1 - (gameState.signalIntegrity / 100));
+            const hasErrors = Math.random() < errorChance;
+
+            // Show signal arc animation
+            animateSignalArc();
+
+            if (hasErrors) {
+                // Trigger repair mini-game after arc animation
+                setTimeout(() => startRepairGame(), 2000);
+            } else {
+                // Clean transmission
+                gameState.transmissions++;
+                setTimeout(() => {
+                    showPopup('Transmission Complete',
+                        `Genome transmitted successfully!\n\n` +
+                        `Signal integrity: ${gameState.signalIntegrity}%\n` +
+                        `Total transmissions: ${gameState.transmissions}\n\n` +
+                        `Zero errors detected. Perfect fidelity.`);
+                }, 2500);
+            }
+
+            updateDisplay();
+        }
+
+        function synthesizeVaccine() {
+            if (gameState.funding < 200000) {
+                showPopup('Insufficient Funding', 'Vaccine synthesis costs $200,000.');
+                return;
+            }
+            if (gameState.dbcNodes.length < 1) {
+                showPopup('No DBC Nodes', 'Install at least one DBC printer before synthesizing vaccines.');
+                return;
+            }
+
+            gameState.funding -= 200000;
+            gameState.vaccinesPrinted++;
+
+            // Check if this stops an active outbreak
+            let stoppedOutbreak = null;
+            if (gameState.activeOutbreaks.length > 0) {
+                stoppedOutbreak = gameState.activeOutbreaks.shift();
+                gameState.outbreaksStopped++;
+                // Remove outbreak visual from the node
+                renderDBCNodes();
+            }
+
+            const revenue = 150000 + gameState.vaccinesPrinted * 10000;
+            gameState.funding += revenue;
+
+            const outbreakMsg = stoppedOutbreak
+                ? `\n\nOutbreak CONTAINED: ${stoppedOutbreak.type.icon} ${stoppedOutbreak.type.name} at ${stoppedOutbreak.city}\nLives saved: ~${(stoppedOutbreak.type.severity * 50000).toLocaleString()}`
+                : '';
+
+            showPopup('Vaccine Synthesized!',
+                `DBC printer successfully assembled the vaccine from digital sequence.\n\n` +
+                `Revenue from distribution: $${revenue.toLocaleString()}\n` +
+                `Total vaccines printed: ${gameState.vaccinesPrinted}${outbreakMsg}\n\n` +
+                `"We didn't ship a vaccine. We emailed it." — Dr. Venter`);
+
+            updateDisplay();
+        }
+
+        function upgradeSignal() {
+            if (gameState.funding < 300000) {
+                showPopup('Insufficient Funding', 'Signal array upgrade costs $300,000.');
+                return;
+            }
+            if (gameState.signalIntegrity >= 99) {
+                showPopup('Maximum Integrity', 'Signal integrity is already at peak performance.');
+                return;
+            }
+
+            gameState.funding -= 300000;
+            const improvement = Math.min(99 - gameState.signalIntegrity, Math.floor(Math.random() * 8) + 5);
+            gameState.signalIntegrity = Math.min(99, gameState.signalIntegrity + improvement);
+
+            showPopup('Signal Upgraded',
+                `Signal array enhanced with error-correcting algorithms.\n\n` +
+                `Integrity: ${gameState.signalIntegrity}% (+${improvement}%)\n\n` +
+                `"One misplaced nucleotide and you print the wrong protein. Precision isn't optional." — Dr. Venter`);
+
+            updateDisplay();
+        }
+
+        function publishFindings() {
+            if (gameState.transmissions < 3) {
+                showPopup('Insufficient Data', 'You need at least 3 successful transmissions to publish.');
+                return;
+            }
+
+            if (Math.random() < 0.25) {
+                const reason = rejectionReasons[Math.floor(Math.random() * rejectionReasons.length)];
+                showPopup('Paper Rejected', `Your submission was rejected.\n\n"${reason}"`);
+                return;
+            }
+
+            gameState.papersPublished++;
+            const grant = 300000 + gameState.transmissions * 15000 + gameState.vaccinesPrinted * 25000;
+            gameState.funding += grant;
+
+            showPopup('Research Published!',
+                `Landmark paper published in Science!\n\n` +
+                `"Digital Biological Teleportation: A Global Network for Instant Vaccine Manufacturing"\n\n` +
+                `Grant funding: $${grant.toLocaleString()}\n\n` +
+                `"They said biological teleportation was science fiction. We just peer-reviewed it." — Dr. Venter`);
+
+            updateDisplay();
+        }
+
+        // ============ DBC Node Rendering ============
+
+        function renderDBCNodes() {
+            const container = document.getElementById('dbc-nodes');
+            container.innerHTML = '';
+
+            DBC_CITIES.forEach(city => {
+                const installed = gameState.dbcNodes.includes(city.id);
+                if (!installed) return;
+
+                const node = document.createElement('div');
+                node.className = 'dbc-node active';
+
+                // Check if this city has an outbreak
+                const hasOutbreak = gameState.activeOutbreaks.some(o => o.cityId === city.id);
+                if (hasOutbreak) node.className = 'dbc-node outbreak';
+
+                node.style.left = city.x + '%';
+                node.style.top = city.y + '%';
+                node.style.transform = 'translate(-50%, -50%)';
+
+                node.onclick = () => {
+                    const status = hasOutbreak ? 'OUTBREAK IN PROGRESS' : 'Online';
+                    showPopup(`DBC Node: ${city.name}`,
+                        `Status: ${status}\n` +
+                        `Continent: ${city.continent}\n` +
+                        (city.special ? `Special: Lunar relay station\n` : '') +
+                        `Signal integrity: ${gameState.signalIntegrity}%`);
+                };
+
+                const label = document.createElement('div');
+                label.className = 'dbc-node-label';
+                label.textContent = city.name;
+                node.appendChild(label);
+
+                container.appendChild(node);
+            });
+
+            // Show uninstalled cities as dim markers
+            DBC_CITIES.forEach(city => {
+                if (gameState.dbcNodes.includes(city.id)) return;
+                const ghost = document.createElement('div');
+                ghost.className = 'dbc-node';
+                ghost.style.left = city.x + '%';
+                ghost.style.top = city.y + '%';
+                ghost.style.transform = 'translate(-50%, -50%)';
+                ghost.style.opacity = '0.2';
+                ghost.style.cursor = 'default';
+                ghost.style.animation = 'none';
+
+                const label = document.createElement('div');
+                label.className = 'dbc-node-label';
+                label.textContent = city.name;
+                label.style.opacity = '0.3';
+                ghost.appendChild(label);
+
+                container.appendChild(ghost);
+            });
+        }
+
+        // ============ Signal Arc Animation ============
+
+        function animateSignalArc() {
+            const installed = DBC_CITIES.filter(c => gameState.dbcNodes.includes(c.id));
+            if (installed.length < 2) return;
+
+            // Pick two random installed nodes
+            const from = installed[Math.floor(Math.random() * installed.length)];
+            let to = installed[Math.floor(Math.random() * installed.length)];
+            while (to.id === from.id) to = installed[Math.floor(Math.random() * installed.length)];
+
+            const arcsGroup = document.getElementById('signal-arcs');
+            const arc = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+            // Convert percentages to SVG viewBox coords (1000x500)
+            const x1 = from.x * 10, y1 = from.y * 5;
+            const x2 = to.x * 10, y2 = to.y * 5;
+            const mx = (x1 + x2) / 2;
+            const my = Math.min(y1, y2) - 40 - Math.abs(x2 - x1) * 0.1; // Arc height
+
+            arc.setAttribute('d', `M${x1},${y1} Q${mx},${my} ${x2},${y2}`);
+            arc.setAttribute('class', 'signal-arc');
+
+            const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2) * 1.3;
+            arc.style.strokeDasharray = length;
+            arc.style.strokeDashoffset = length;
+
+            arcsGroup.appendChild(arc);
+
+            // Show transmission bar
+            const bar = document.getElementById('transmission-bar');
+            const progressBar = document.getElementById('transmission-progress-bar');
+            const text = document.getElementById('transmission-text');
+            bar.classList.add('active');
+            text.textContent = `Transmitting: ${from.name} → ${to.name}`;
+            progressBar.style.width = '0%';
+
+            let pct = 0;
+            const interval = setInterval(() => {
+                pct += 4;
+                progressBar.style.width = pct + '%';
+                if (pct >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => bar.classList.remove('active'), 500);
+                }
+            }, 100);
+
+            // Remove arc after animation
+            setTimeout(() => { if (arc.parentNode) arc.remove(); }, 3000);
+
+            // Particle trail
+            animateSignalParticles(from, to);
+        }
+
+        function animateSignalParticles(from, to) {
+            const panel = document.getElementById('world-map');
+            const overlay = document.createElement('div');
+            overlay.className = 'signal-overlay';
+            panel.appendChild(overlay);
+
+            for (let i = 0; i < 12; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'signal-particle';
+
+                const startX = from.x;
+                const startY = from.y;
+                const endX = to.x;
+                const endY = to.y;
+
+                particle.style.left = startX + '%';
+                particle.style.top = startY + '%';
+
+                const delay = i * 120;
+                const duration = 1500 + Math.random() * 500;
+
+                setTimeout(() => {
+                    particle.style.transition = `left ${duration}ms cubic-bezier(0.4,0,0.2,1), top ${duration}ms cubic-bezier(0.4,0,0.2,1), opacity ${duration}ms`;
+                    particle.style.left = (endX + (Math.random() - 0.5) * 3) + '%';
+                    particle.style.top = (endY + (Math.random() - 0.5) * 3) + '%';
+                    particle.style.opacity = '0';
+                }, delay + 50);
+
+                overlay.appendChild(particle);
+            }
+
+            setTimeout(() => { if (overlay.parentNode) overlay.remove(); }, 3000);
+        }
+
+        // ============ Signal Repair Mini-game ============
+
+        function startRepairGame() {
+            const bases = 'ATCG';
+            const seqLength = 30;
+            const numErrors = Math.max(2, Math.floor((100 - gameState.signalIntegrity) / 12));
+
+            const original = [];
+            for (let i = 0; i < seqLength; i++) {
+                original.push(bases[Math.floor(Math.random() * 4)]);
+            }
+
+            // Introduce errors at random positions
+            const errorPositions = new Set();
+            while (errorPositions.size < numErrors) {
+                errorPositions.add(Math.floor(Math.random() * seqLength));
+            }
+
+            const corrupted = [...original];
+            errorPositions.forEach(pos => {
+                let newBase = bases[Math.floor(Math.random() * 4)];
+                while (newBase === original[pos]) newBase = bases[Math.floor(Math.random() * 4)];
+                corrupted[pos] = newBase;
+            });
+
+            repairState = {
+                original,
+                corrupted: [...corrupted],
+                current: [...corrupted],
+                errorPositions,
+                fixed: new Set(),
+                timeLeft: 15
+            };
+
+            renderRepairSequence();
+            document.getElementById('repair-overlay').classList.add('active');
+
+            // Timer
+            repairState.timerInterval = setInterval(() => {
+                repairState.timeLeft--;
+                document.getElementById('repair-timer').textContent = `Time: ${repairState.timeLeft}s`;
+                if (repairState.timeLeft <= 0) {
+                    clearInterval(repairState.timerInterval);
+                    failRepair();
+                }
+            }, 1000);
+        }
+
+        function renderRepairSequence() {
+            const container = document.getElementById('repair-sequence');
+            container.innerHTML = '';
+
+            repairState.current.forEach((base, i) => {
+                const span = document.createElement('span');
+                span.className = 'base';
+                span.textContent = base;
+
+                if (repairState.fixed.has(i)) {
+                    span.classList.add('fixed');
+                } else if (repairState.errorPositions.has(i) && !repairState.fixed.has(i)) {
+                    span.classList.add('error');
+                    span.onclick = () => repairBase(i);
+                } else {
+                    span.classList.add('correct');
+                }
+
+                container.appendChild(span);
+                // Add spacing every 5 bases
+                if ((i + 1) % 5 === 0 && i < repairState.current.length - 1) {
+                    container.appendChild(document.createTextNode(' '));
+                }
+            });
+
+            const remaining = repairState.errorPositions.size - repairState.fixed.size;
+            document.getElementById('repair-info').textContent = `Errors remaining: ${remaining}`;
+        }
+
+        function repairBase(index) {
+            if (!repairState || repairState.fixed.has(index)) return;
+
+            // Fix the base back to original
+            repairState.current[index] = repairState.original[index];
+            repairState.fixed.add(index);
+
+            renderRepairSequence();
+
+            // Check if all fixed
+            if (repairState.fixed.size === repairState.errorPositions.size) {
+                clearInterval(repairState.timerInterval);
+                setTimeout(() => submitRepair(), 300);
+            }
+        }
+
+        function submitRepair() {
+            const allFixed = repairState.fixed.size === repairState.errorPositions.size;
+            clearInterval(repairState.timerInterval);
+            document.getElementById('repair-overlay').classList.remove('active');
+
+            if (allFixed) {
+                gameState.transmissions++;
+                // Reward integrity bonus for fast repair
+                if (repairState.timeLeft > 10) {
+                    gameState.signalIntegrity = Math.min(99, gameState.signalIntegrity + 1);
+                }
+                showPopup('Signal Repaired!',
+                    `All corrupted bases corrected. Transmission complete!\n\n` +
+                    `Signal integrity: ${gameState.signalIntegrity}%\n` +
+                    `Total transmissions: ${gameState.transmissions}\n\n` +
+                    `"Error correction at this speed? That's not engineering. That's art." — Dr. Venter`);
+            } else {
+                // Partial fix — signal degrades
+                gameState.signalIntegrity = Math.max(50, gameState.signalIntegrity - 3);
+                showPopup('Transmission Corrupted',
+                    `Some errors were not corrected. The transmitted organism may be non-viable.\n\n` +
+                    `Signal integrity degraded to ${gameState.signalIntegrity}%\n\n` +
+                    `Upgrade your signal array to reduce future errors.`);
+            }
+
+            repairState = null;
+            updateDisplay();
+        }
+
+        function abortRepair() {
+            if (repairState) clearInterval(repairState.timerInterval);
+            document.getElementById('repair-overlay').classList.remove('active');
+            gameState.signalIntegrity = Math.max(50, gameState.signalIntegrity - 2);
+            showPopup('Transmission Aborted', 'Genome transmission cancelled. Signal integrity slightly degraded.');
+            repairState = null;
+            updateDisplay();
+        }
+
+        function failRepair() {
+            document.getElementById('repair-overlay').classList.remove('active');
+            gameState.signalIntegrity = Math.max(50, gameState.signalIntegrity - 5);
+            showPopup('Signal Lost!',
+                `Time expired. The genome was corrupted beyond repair.\n\n` +
+                `Signal integrity: ${gameState.signalIntegrity}%\n\n` +
+                `"In biology, a single wrong base pair is the difference between medicine and poison." — Dr. Venter`);
+            repairState = null;
+            updateDisplay();
+        }
+
+        // ============ Pandemic Outbreak Events ============
+
+        function triggerOutbreak() {
+            const installedCities = DBC_CITIES.filter(c => gameState.dbcNodes.includes(c.id) && !c.special);
+            if (installedCities.length === 0) return;
+
+            const city = installedCities[Math.floor(Math.random() * installedCities.length)];
+            const type = OUTBREAK_TYPES[Math.floor(Math.random() * OUTBREAK_TYPES.length)];
+
+            // Don't stack outbreaks on same city
+            if (gameState.activeOutbreaks.some(o => o.cityId === city.id)) return;
+
+            gameState.activeOutbreaks.push({
+                cityId: city.id,
+                city: city.name,
+                type,
+                startTime: Date.now()
+            });
+
+            // Visual effects
+            showPandemicFlash(city);
+            renderDBCNodes();
+
+            showPopup(`${type.icon} OUTBREAK: ${type.name}`,
+                `Location: ${city.name}\n` +
+                `Severity: ${'!'.repeat(type.severity)}\n` +
+                `Vaccine needed: ${type.vaccine}\n\n` +
+                `Synthesize a vaccine immediately to contain the spread!\n\n` +
+                `"This is exactly what the DBC was built for. Move NOW." — Dr. Venter`);
+
+            updateDisplay();
+        }
+
+        function showPandemicFlash(city) {
+            const panel = document.getElementById('world-map');
+            const flash = document.createElement('div');
+            flash.className = 'pandemic-flash';
+            flash.style.setProperty('--cx', city.x + '%');
+            flash.style.setProperty('--cy', city.y + '%');
+            panel.appendChild(flash);
+
+            // Expanding rings
+            for (let i = 0; i < 3; i++) {
+                const ring = document.createElement('div');
+                ring.className = 'outbreak-ring';
+                ring.style.left = `calc(${city.x}% - 10px)`;
+                ring.style.top = `calc(${city.y}% - 10px)`;
+                ring.style.animationDelay = (i * 0.5) + 's';
+                panel.appendChild(ring);
+                setTimeout(() => { if (ring.parentNode) ring.remove(); }, 3500);
+            }
+
+            setTimeout(() => { if (flash.parentNode) flash.remove(); }, 2500);
+        }
+
+        // ============ DBC Print Animation ============
+
+        function showDBCPrintAnimation(cityName) {
+            const overlay = document.createElement('div');
+            overlay.className = 'dbc-print-overlay';
+
+            // SVG Printer
+            const printer = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            printer.setAttribute('class', 'dbc-printer-svg');
+            printer.setAttribute('viewBox', '0 0 200 200');
+            printer.innerHTML = `
+                <!-- DBC Machine body -->
+                <rect x="30" y="40" width="140" height="120" rx="8" fill="none" stroke="#7c3aed" stroke-width="2"/>
+                <rect x="40" y="50" width="120" height="30" rx="4" fill="rgba(124,58,237,0.1)" stroke="#a78bfa" stroke-width="1"/>
+                <!-- Display -->
+                <text x="100" y="70" text-anchor="middle" fill="#a78bfa" font-size="10" font-family="monospace">DBC v4.2</text>
+                <!-- LEDs -->
+                ${Array.from({length: 8}, (_, i) =>
+                    `<circle cx="${52 + i * 14}" cy="95" r="3" fill="${i % 2 ? '#10b981' : '#7c3aed'}" opacity="0.4">
+                        <animate attributeName="opacity" values="0.4;1;0.4" dur="${0.3 + i * 0.1}s" repeatCount="indefinite"/>
+                    </circle>`
+                ).join('')}
+                <!-- Print chamber -->
+                <rect x="60" y="110" width="80" height="40" rx="4" fill="rgba(16,185,129,0.05)" stroke="#10b981" stroke-width="1"/>
+                <!-- Organism forming -->
+                <circle cx="100" cy="130" r="0" fill="#10b981" opacity="0.6">
+                    <animate attributeName="r" values="0;12" dur="3s" fill="freeze"/>
+                    <animate attributeName="opacity" values="0;0.8" dur="3s" fill="freeze"/>
+                </circle>
+                <!-- DNA strands feeding in -->
+                <path d="M100 40 Q110 25 100 10" fill="none" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4 4">
+                    <animate attributeName="stroke-dashoffset" values="0;-20" dur="1s" repeatCount="indefinite"/>
+                </path>
+                <path d="M100 40 Q90 25 100 10" fill="none" stroke="#7c3aed" stroke-width="1" stroke-dasharray="4 4">
+                    <animate attributeName="stroke-dashoffset" values="0;-20" dur="1s" repeatCount="indefinite"/>
+                </path>
+            `;
+            overlay.appendChild(printer);
+
+            const statusText = document.createElement('div');
+            statusText.className = 'print-status-text';
+            statusText.textContent = `Printing in ${cityName}...`;
+            overlay.appendChild(statusText);
+
+            const progress = document.createElement('div');
+            progress.className = 'print-progress';
+            progress.innerHTML = '<div class="print-progress-bar"></div>';
+            overlay.appendChild(progress);
+
+            document.body.appendChild(overlay);
+            setTimeout(() => { if (overlay.parentNode) overlay.remove(); }, 3500);
+        }
+
+        // ============ Challenges ============
+
+        function initChallenges() {
+            const shuffled = [...CHALLENGE_TEMPLATES].sort(() => Math.random() - 0.5);
+            gameState.activeChallenges = shuffled.slice(0, 3);
+        }
+
+        function updateChallengesUI() {
+            const list = document.getElementById('challenges-list');
+            if (!list) return;
+
+            list.innerHTML = gameState.activeChallenges.map((ch, i) => {
+                const req = ch.requirement;
+                let progress = 0, total = 0;
+                Object.entries(req).forEach(([key, val]) => {
+                    total++;
+                    const actual = key === 'dbcCount' ? gameState.dbcNodes.length : gameState[key];
+                    if (actual >= val) progress++;
+                });
+                const pct = Math.floor((progress / total) * 100);
+                const canSolve = progress === total;
+
+                return `<div class="challenge-card">
+                    <div class="challenge-name">${ch.icon} ${ch.name}</div>
+                    <div class="challenge-desc">${ch.desc}</div>
+                    <div class="challenge-reward">Reward: $${ch.reward.toLocaleString()}</div>
+                    <div class="challenge-progress"><div class="challenge-progress-bar" style="width:${pct}%"></div></div>
+                    ${canSolve ? `<button class="btn" style="margin-top:6px;" onclick="solveChallenge(${i})">Deploy Solution</button>` : ''}
+                </div>`;
+            }).join('');
+        }
+
+        function solveChallenge(idx) {
+            const ch = gameState.activeChallenges[idx];
+            if (!ch) return;
+
+            gameState.funding += ch.reward;
+            gameState.challengesCompleted++;
+
+            const activeIds = gameState.activeChallenges.map(c => c.id);
+            const remaining = CHALLENGE_TEMPLATES.filter(t => !activeIds.includes(t.id));
+            if (remaining.length > 0) {
+                gameState.activeChallenges[idx] = remaining[Math.floor(Math.random() * remaining.length)];
+            } else {
+                gameState.activeChallenges.splice(idx, 1);
+            }
+
+            showPopup(`${ch.icon} ${ch.name} — SOLVED!`,
+                `Global health breakthrough!\n\n` +
+                `Grant Reward: $${ch.reward.toLocaleString()}\n\n` +
+                `${ch.victoryQuote}`);
+
+            updateDisplay();
+        }
+
+        // ============ Rivals ============
+
+        function initRivals() {
+            gameState.rivals = RIVAL_TEMPLATES.map(r => ({
+                ...r, progress: Math.floor(Math.random() * 15)
+            }));
+        }
+
+        function updateRivalsUI() {
+            const list = document.getElementById('rivals-list');
+            if (!list) return;
+            list.innerHTML = gameState.rivals.map(r =>
+                `<div class="rival-row">
+                    <span class="rival-icon">${r.icon}</span>
+                    <span class="rival-name">${r.name}</span>
+                    <div class="rival-bar"><div class="rival-bar-fill" style="width:${Math.min(100, r.progress)}%"></div></div>
+                </div>`
+            ).join('');
+        }
+
+        function tickRivals() {
+            gameState.rivals.forEach(r => {
+                r.progress = Math.min(100, r.progress + r.speed * (Math.random() * 2.5));
+                if (r.progress >= 100) {
+                    r.progress = 0;
+                    if (Math.random() < 0.25) {
+                        showPopup('Rival Breakthrough',
+                            `${r.icon} ${r.name} published a major advance!\n\n"${r.desc}" — their approach is gaining traction.`);
+                    }
+                }
+            });
+            updateRivalsUI();
+
+            // DBC node revenue
+            if (gameState.dbcNodes.length > 0) {
+                gameState.funding += gameState.dbcNodes.length * 20000;
+            }
+
+            // Random outbreak chance (scales with network size)
+            if (gameState.dbcNodes.length >= 2 && Math.random() < 0.15) {
+                triggerOutbreak();
+            }
+
+            saveGame();
+        }
+
+        // ============ Craig Venter ============
+
+        function craigSpeaks() {
+            const quote = craigQuotes[Math.floor(Math.random() * craigQuotes.length)];
+            showPopup('Dr. Craig Venter says:', `"${quote}"`);
+        }
+
+        // ============ Display ============
+
+        function updateDisplay() {
+            document.getElementById('dbc-count').textContent = gameState.dbcNodes.length;
+            document.getElementById('integrity-pct').textContent = gameState.signalIntegrity + '%';
+            document.getElementById('signal-integrity').textContent = gameState.signalIntegrity + '%';
+            document.getElementById('transmissions').textContent = gameState.transmissions;
+            document.getElementById('vaccines-printed').textContent = gameState.vaccinesPrinted;
+            document.getElementById('funding').textContent = '$' + gameState.funding.toLocaleString();
+            document.getElementById('outbreaks-stopped').textContent = gameState.outbreaksStopped;
+            document.getElementById('active-nodes').textContent = gameState.dbcNodes.length;
+            document.getElementById('outbreak-count').textContent = gameState.activeOutbreaks.length;
+            document.getElementById('network-status').textContent =
+                gameState.dbcNodes.length === 0 ? 'Offline' :
+                gameState.dbcNodes.length < 4 ? 'Regional' :
+                gameState.dbcNodes.length < 8 ? 'Continental' :
+                gameState.dbcNodes.length < 13 ? 'Global' : 'Interplanetary';
+
+            updateChallengesUI();
+            updateRivalsUI();
+            saveGame();
+        }
+
+        // ============ Popup ============
+
+        function showPopup(title, text) {
+            document.getElementById('popup-title').textContent = title;
+            document.getElementById('popup-text').textContent = text;
+            document.getElementById('popup-overlay').classList.add('active');
+        }
+
+        function closePopup(event) {
+            if (event && event.target !== document.getElementById('popup-overlay') && event.target.className !== 'popup-close') return;
+            document.getElementById('popup-overlay').classList.remove('active');
+        }
+
+        // ============ Save / Load ============
+
+        function saveGame() {
+            if (!_initComplete) return;
+            try {
+                localStorage.setItem(SAVE_KEY, JSON.stringify({
+                    funding:            gameState.funding,
+                    dbcNodes:           gameState.dbcNodes,
+                    transmissions:      gameState.transmissions,
+                    vaccinesPrinted:    gameState.vaccinesPrinted,
+                    outbreaksStopped:   gameState.outbreaksStopped,
+                    signalIntegrity:    gameState.signalIntegrity,
+                    papersPublished:    gameState.papersPublished,
+                    activeOutbreaks:    gameState.activeOutbreaks,
+                    activeChallenges:   gameState.activeChallenges,
+                    challengesCompleted: gameState.challengesCompleted,
+                    rivals:             gameState.rivals,
+                    ch3Complete:        gameState.ch3Complete,
+                    savedAt:            Date.now()
+                }));
+            } catch (e) { console.warn('Save failed:', e); }
+        }
+
+        function loadGame() {
+            try {
+                const raw = localStorage.getItem(SAVE_KEY);
+                if (!raw) return false;
+                Object.assign(gameState, JSON.parse(raw));
+                return true;
+            } catch (e) { return false; }
+        }
+
+        // ============ Init ============
+
+        const _resumed = loadGame();
+
+        if (!_resumed) {
+            initChallenges();
+            initRivals();
+        }
+
+        renderDBCNodes();
+        _initComplete = true;
+        updateDisplay();
+
+        if (_resumed) {
+            const status = document.getElementById('save-status');
+            if (status) {
+                status.textContent = 'Progress restored';
+                setTimeout(() => { status.textContent = 'Auto-save on'; }, 2500);
+            }
+        } else {
+            setTimeout(() => {
+                showPopup('Welcome to Chapter 3',
+                    `The clinic proved genomics could predict disease. Now we go further — transmitting biology itself.\n\n` +
+                    `You are Dr. Craig Venter, deploying a global network of Digital-to-Biological Converters.\n\n` +
+                    `Your mission: Build DBC printers worldwide, transmit genomes at the speed of light, synthesize vaccines on demand, and stop pandemics before they spread.\n\n` +
+                    `"We decoded life. Then we learned to predict it. Now we learn to transmit it." — Dr. Venter`);
+            }, 800);
+        }
+
+        // Game tick every 10 seconds
+        setInterval(tickRivals, 10000);
+    </script>
+</body>
+</html>

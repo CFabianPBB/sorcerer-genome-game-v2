@@ -8,30 +8,25 @@ No frameworks, no build tools, no dependencies. Everything lives in index.html.
 ## The Four-Chapter Arc
 This game is designed as a four-chapter series. Each chapter is its own HTML file.
 
-### Chapter 1 — Voyage of the Sorcerer II (index.html) ← CURRENT
+### Chapter 1 — Voyage of the Sorcerer II (index.html) ✅ COMPLETE
 - Setting: The ocean. Sorcerer II research vessel.
 - Core loop: Deploy nets → collect specimens → sequence DNA → solve Grand Challenges → publish papers
 - Key systems: specimen traits, grand challenges, rival expeditions, synthetic biology lab
-- Status: LIVE. Cinematic animations added (net drop, deep dive, sequencing, paper publish)
+- Status: LIVE. Cinematic animations, Chapter Complete unlock screen added.
 
-### Chapter 2 — The 100-Year Life (chapter2.html) ← NEXT TO BUILD
-- Setting: La Jolla clinic + global health network. The Sorcerer II becomes a floating diagnostic center.
-- Core loop: Sequence human genomes → train AI diagnostic models → build Health Nucleus clinics → 
-  race to detect diseases before rivals (big pharma) patent your discoveries
-- New mechanics: phenome dashboard, AI accuracy vs privacy tradeoffs, ethical dilemmas, 
-  ocean specimens → drug compounds pipeline from Ch.1
-- Real science basis: Venter's Human Longevity Inc. + Diploid Genomics Inc. (launched Jan 2026)
-- Cinematic moments: holographic body scan, tumor detection animation, AI training montage
+### Chapter 2 — The 100-Year Life (chapter2.html) ✅ COMPLETE
+- Setting: La Jolla clinic + global health network. Genome Dashboard with SVG body silhouette.
+- Core loop: Sequence genomes → train AI → build clinics → screen patients → file patents
+- Key systems: AI accuracy, patient markers, Health Grand Challenges, Pfizer/23andMe/Google rivals
+- Imports Ch1 specimens as compound library via localStorage
 
-### Chapter 3 — Life at the Speed of Light (chapter3.html)
-- Setting: Global DBC (Digital-to-Biological Converter) network + near-Earth orbit
-- Core loop: Build a network of biological printers in hospitals → synthesize vaccines on demand → 
-  fight pandemics in real time → expand signal range to the Moon
-- New mechanics: signal integrity (DNA transmission errors to fix), black market biology threats,
-  pandemic outbreak events on a world map
-- Real science basis: Venter's actual DBC prototype, biological teleportation concept, 
-  the H1N1 vaccine synthesized digitally in 2009
-- Cinematic moments: DNA signal streaming across world map, DBC printing a live organism
+### Chapter 3 — Life at the Speed of Light (chapter3.html) ✅ COMPLETE
+- Setting: Global DBC network command center with SVG world map
+- Core loop: Install DBC printers → transmit genomes → synthesize vaccines → stop pandemics
+- Key systems: signal integrity, signal repair mini-game (click corrupted bases), 
+  pandemic outbreak events, DBC print animation, signal arc animations
+- 14 DBC cities including Lunar Relay, WHO/China/Pharma rivals
+- Challenges: Rapid Pandemic Response, Global Network, Perfect Signal, Mass Vaccination, Lunar Transmission
 
 ### Chapter 4 — Fax Me a Martian (chapter4.html)
 - Setting: Deep space. Mars surface. The Sorcerer II as interplanetary relay station.
@@ -73,8 +68,10 @@ This game is designed as a four-chapter series. Each chapter is its own HTML fil
   * DNA sequencing (CRT lab scene, helix animation, base pair readout)
   * Paper publication (Nature magazine cover slides in, confetti explosion)
 
-### Next for Ch1:
-- Chapter Complete unlock screen (triggers when 3rd Grand Challenge solved)
+### Next to build:
+- Chapter 4: Fax Me a Martian (chapter4.html)
+- Chapter complete unlock screens for Ch2 and Ch3
+- Cinematic animations for Ch2 and Ch3 actions
 
 ## File Structure
 ```
