@@ -2458,6 +2458,169 @@
             100% { transform: translateX(-50%); }
         }
 
+        /* ================= Why I Built This — Personal Letter Modal ================= */
+        @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+        .why-link {
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 0.7em;
+            letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.35);
+            cursor: pointer;
+            transition: color 0.3s;
+            font-style: italic;
+        }
+        .why-link:hover {
+            color: #c9a84c;
+        }
+
+        .why-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 5000;
+            background: rgba(0,0,0,0.88);
+            overflow-y: auto;
+            animation: whyFadeIn 0.4s ease-out;
+        }
+        .why-overlay.active { display: block; }
+        @keyframes whyFadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .why-container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 50px 30px 60px;
+            position: relative;
+        }
+
+        .why-close {
+            position: fixed;
+            top: 18px; right: 22px;
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.6);
+            color: rgba(255,255,255,0.6);
+            font-size: 1.1em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5001;
+            transition: all 0.2s;
+        }
+        .why-close:hover {
+            border-color: #c9a84c;
+            color: #c9a84c;
+        }
+
+        .why-gold-line {
+            width: 60px; height: 2px;
+            background: #c9a84c;
+            margin: 0 auto 30px;
+        }
+
+        .why-heading {
+            font-family: 'Lora', Georgia, serif;
+            font-size: 1.6em;
+            font-weight: 400;
+            color: #f5f0e8;
+            text-align: center;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        .why-body {
+            font-family: 'Lora', Georgia, serif;
+            font-size: 0.95em;
+            line-height: 1.85;
+            color: #d4cfc4;
+            font-weight: 400;
+        }
+        .why-body p {
+            margin-bottom: 18px;
+        }
+        .why-body strong {
+            color: #f5f0e8;
+            font-weight: 600;
+        }
+        .why-body em {
+            color: #c9a84c;
+            font-style: italic;
+        }
+
+        .why-author {
+            font-family: 'Lora', Georgia, serif;
+            font-size: 0.8em;
+            color: rgba(212,207,196,0.5);
+            text-align: right;
+            margin-top: 25px;
+            font-variant: small-caps;
+            letter-spacing: 2px;
+        }
+
+        .why-divider {
+            width: 100%; height: 1px;
+            background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+            margin: 30px 0;
+        }
+
+        .why-expand-toggle {
+            font-family: 'Lora', Georgia, serif;
+            font-size: 0.85em;
+            color: #c9a84c;
+            cursor: pointer;
+            display: inline-block;
+            transition: color 0.2s;
+            border: none;
+            background: none;
+            padding: 0;
+            font-style: italic;
+        }
+        .why-expand-toggle:hover {
+            color: #e8c65a;
+        }
+
+        .why-full-essay {
+            display: none;
+            margin-top: 25px;
+        }
+        .why-full-essay.expanded {
+            display: block;
+            animation: whyFadeIn 0.4s ease-out;
+        }
+
+        .why-full-essay .dna-bullet {
+            padding-left: 28px;
+            position: relative;
+            margin-bottom: 12px;
+        }
+        .why-full-essay .dna-bullet::before {
+            content: '\1F9EC';
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 0.85em;
+        }
+
+        .why-section-head {
+            font-family: 'Lora', Georgia, serif;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #f5f0e8;
+            margin: 28px 0 14px;
+        }
+
+        @media (max-width: 768px) {
+            .why-container { padding: 35px 18px 40px; }
+            .why-heading { font-size: 1.3em; }
+            .why-body { font-size: 0.88em; }
+        }
+
     </style>
 </head>
 <body>
@@ -2469,6 +2632,7 @@
                 <div class="title-sorcerer">SORCERER II</div>
             </h1>
             <p class="subtitle">The expedition that unlocked the secrets of the ocean's microbiome</p>
+            <div class="why-link" onclick="openWhyModal()">Why this game exists &rarr;</div>
             <div class="chapter-progress" id="chapter-progress">
                 <div class="chapter-dot active" data-chapter="1" data-href="index.html" title="Chapter 1: Voyage of the Sorcerer II" onclick="navigateChapter(this)"></div>
                 <div class="chapter-connector"></div>
@@ -3004,6 +3168,89 @@
         </div>
     </div>
     
+    <!-- Why I Built This — Personal Letter Modal -->
+    <div class="why-overlay" id="why-overlay">
+        <button class="why-close" onclick="closeWhyModal()">&times;</button>
+        <div class="why-container">
+            <div class="why-gold-line"></div>
+            <div class="why-heading">Why I Built This</div>
+
+            <div class="why-body">
+                <p>Craig Venter didn't just sequence the genome &mdash; he proved that once you decode the underlying blueprint of a system, <strong>everything changes</strong>. Medicine moved from reactive to predictive. From broad interventions to targeted precision.</p>
+
+                <p>I see local government in the same place genomics was in 1999.</p>
+
+                <p>The general ledger is the DNA. Every dollar, every position, every program &mdash; encoded but not yet understood. <em>Priority-Based Budgeting</em> is our sequencing pipeline: decode the financial genome of a community, and you unlock its full potential.</p>
+
+                <p>Not just budgeting better. <strong>Unlocking what's already there.</strong></p>
+            </div>
+
+            <div class="why-divider"></div>
+
+            <button class="why-expand-toggle" id="why-expand-toggle" onclick="toggleFullEssay()">Read the full story &rarr;</button>
+
+            <div class="why-full-essay" id="why-full-essay">
+
+                <div class="why-section-head">Why Gene Sequencing Inspires My Work</div>
+
+                <div class="why-body">
+                    <p>When Craig Venter set out to sequence the human genome, the establishment said it was impossible. Too complex. Too expensive. Too audacious. He did it anyway &mdash; and in doing so, he didn't just read the code of life. He <strong>proved that complex systems can be decoded</strong>, understood, and transformed.</p>
+
+                    <p>That insight changed my life. Not because I work in genomics &mdash; I don't. I work in local government finance. But the parallel is structural, not superficial, and once you see it, you can't unsee it.</p>
+
+                    <div class="why-section-head">The General Ledger Is the DNA</div>
+
+                    <p>Every local government has a general ledger. It's the complete financial record &mdash; every dollar appropriated, every position funded, every program authorized. It contains the <strong>full truth</strong> of what a community invests in and why.</p>
+
+                    <p>But almost nobody reads it. Not really. It sits in an ERP system, encoded in account strings and fund codes, and the people who make decisions about community priorities &mdash; elected officials, department heads, residents &mdash; never see the underlying blueprint. They see summaries. Dashboards. Budget books. Translations of translations.</p>
+
+                    <p>Sound familiar? Before Venter, the genome was the same. The information was there &mdash; every cell carried the complete code &mdash; but it was unreadable. Invisible. And because it was unreadable, medicine was <em>reactive</em>. You got sick, and then someone tried to fix you.</p>
+
+                    <div class="why-section-head">From Reactive to Predictive</div>
+
+                    <p>Genomic sequencing made medicine <em>predictive</em>. Once you could read the blueprint, you could see disease before it arrived. You could target interventions with precision. You could stop asking "what went wrong?" and start asking "what's encoded that we haven't activated yet?"</p>
+
+                    <p>That's exactly the shift I'm trying to create in public finance.</p>
+
+                    <p>Priority-Based Budgeting is our sequencing pipeline. It takes the raw data of the general ledger &mdash; the financial DNA &mdash; and decodes it into something actionable:</p>
+
+                    <div class="dna-bullet">What does each program actually do, and for whom?</div>
+                    <div class="dna-bullet">What results is each dollar producing?</div>
+                    <div class="dna-bullet">Where are resources misaligned with community priorities?</div>
+                    <div class="dna-bullet">What latent capacity is encoded but not yet activated?</div>
+
+                    <p>When you sequence a government's financial genome, you move from reactive budgeting &mdash; cutting across the board, fighting over line items, repeating last year's mistakes &mdash; to <strong>predictive, precision resource allocation</strong>. You can see which programs are producing results and which are consuming resources without impact. You can identify opportunities that were always there but never visible.</p>
+
+                    <div class="why-section-head">Why a Game?</div>
+
+                    <p>I built this game because Venter's story is the best metaphor I've ever found for what I believe public finance can become. Every mechanic in this game reflects a principle:</p>
+
+                    <div class="dna-bullet"><strong>Specimen collection</strong> = gathering raw financial data from the ledger</div>
+                    <div class="dna-bullet"><strong>DNA sequencing</strong> = decoding that data into meaningful program-level insights</div>
+                    <div class="dna-bullet"><strong>Grand Challenges</strong> = the real problems communities face (housing, climate, equity)</div>
+                    <div class="dna-bullet"><strong>Rival expeditions</strong> = the political and institutional resistance to transparency</div>
+                    <div class="dna-bullet"><strong>Publishing research</strong> = making findings public so communities can act on them</div>
+
+                    <p>The game is fun. But the point is serious. <strong>Every community has a financial genome that, once decoded, reveals its true priorities and untapped potential.</strong> We just need the courage to sequence it.</p>
+
+                    <div class="why-section-head">The Bigger Vision</div>
+
+                    <p>Venter didn't stop at the ocean. He moved to human health, then biological teleportation, then Mars. The ambition scaled because the insight scaled.</p>
+
+                    <p>The same is true here. Priority-Based Budgeting starts with one city's general ledger. But the same approach &mdash; decode, analyze, align, optimize &mdash; can transform every public institution on Earth. Schools. Hospitals. Nations. The financial genome is universal. The sequencing pipeline is what's been missing.</p>
+
+                    <p>This game is my way of showing what becomes possible when you stop treating complex systems as black boxes and start <em>reading the code</em>.</p>
+
+                    <div class="why-divider"></div>
+
+                    <p style="text-align:center; font-style:italic; color:rgba(212,207,196,0.5);">"The future belongs to those who can read the blueprint &mdash; whether it's written in nucleotides or in ledger entries."</p>
+                </div>
+
+                <div class="why-author">Chris Fabian</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Story / About Overlay -->
     <div class="story-overlay" id="story-overlay">
         <button class="story-close" onclick="closeStory()">&times;</button>
@@ -4658,6 +4905,39 @@
         /* ============================================
            STORY OVERLAY + CHAPTER PROGRESS
            ============================================ */
+
+        /* ============================================
+           WHY I BUILT THIS — PERSONAL LETTER MODAL
+           ============================================ */
+
+        function openWhyModal() {
+            document.getElementById('why-overlay').classList.add('active');
+        }
+
+        function closeWhyModal() {
+            document.getElementById('why-overlay').classList.remove('active');
+            // Collapse essay if open
+            const essay = document.getElementById('why-full-essay');
+            const toggle = document.getElementById('why-expand-toggle');
+            essay.classList.remove('expanded');
+            toggle.innerHTML = 'Read the full story &rarr;';
+        }
+
+        function toggleFullEssay() {
+            const essay = document.getElementById('why-full-essay');
+            const toggle = document.getElementById('why-expand-toggle');
+            if (essay.classList.contains('expanded')) {
+                essay.classList.remove('expanded');
+                toggle.innerHTML = 'Read the full story &rarr;';
+            } else {
+                essay.classList.add('expanded');
+                toggle.innerHTML = '&uarr; Collapse';
+                // Scroll to the expanded content
+                setTimeout(() => {
+                    essay.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+        }
 
         function openStory() {
             document.getElementById('story-overlay').classList.add('active');
