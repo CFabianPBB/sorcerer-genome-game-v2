@@ -1791,6 +1791,7 @@
             // Check for game completion
             if (gameState.terraformPct >= 50 && gameState.challengesCompleted >= 4) {
                 gameState.ch4Complete = true;
+                try { localStorage.setItem('sorcerer2.ch4.complete', 'true'); } catch(e) {}
                 setTimeout(() => showGameComplete(), 3000);
             }
 
@@ -1946,6 +1947,17 @@
                 return true;
             } catch (e) { return false; }
         }
+
+        // ============ Chapter Gating ============
+        (function checkPreviousChapter() {
+            try {
+                const ch3Done = localStorage.getItem('sorcerer2.ch3.complete');
+                if (!ch3Done) {
+                    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#1a0a00;color:#f87171;font-family:monospace;text-align:center;padding:20px;"><div><h2 style="letter-spacing:3px;margin-bottom:16px;">CHAPTER 4 LOCKED</h2><p style="color:rgba(255,255,255,0.6);line-height:1.7;max-width:400px;">Complete Chapter 3: Life at the Speed of Light to unlock this chapter.</p><br><a href="chapter3.html" style="color:#ffd700;text-decoration:none;border:1px solid #ffd700;padding:10px 24px;border-radius:6px;">Play Chapter 3 &rarr;</a></div></div>';
+                    throw new Error('Chapter 3 not complete');
+                }
+            } catch(e) { if (e.message === 'Chapter 3 not complete') return; }
+        })();
 
         // ============ Init ============
 

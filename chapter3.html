@@ -810,7 +810,7 @@
                 <div class="chapter-nav-connector lit"></div>
                 <div class="chapter-nav-dot active" title="Chapter 3: Life at the Speed of Light"></div>
                 <div class="chapter-nav-connector"></div>
-                <div class="chapter-nav-dot" title="Chapter 4: Fax Me a Martian" onclick="window.location.href='chapter4.html'"></div>
+                <div class="chapter-nav-dot locked" title="Chapter 4: Fax Me a Martian" onclick="if(localStorage.getItem('sorcerer2.ch3.complete'))window.location.href='chapter4.html';else alert('Complete Chapter 3 first!')"></div>
             </div>
             <div class="chapter-nav-label">Chapter 3 of 4</div>
             <button class="about-chapter-btn" onclick="document.getElementById('about-modal').classList.add('active')">About This Chapter</button>
@@ -1826,6 +1826,8 @@
                 `Grant Reward: $${ch.reward.toLocaleString()}\n\n` +
                 `${ch.victoryQuote}`);
 
+            checkCh3Completion();
+
             updateDisplay();
         }
 
@@ -2029,6 +2031,39 @@
                 svg.append('text').attr('x', '50%').attr('y', '50%')
                     .attr('fill', '#6644cc').attr('text-anchor', 'middle')
                     .attr('font-family', 'monospace').text('MAP LOADING...');
+            }
+        }
+
+        // ============ Chapter Gating ============
+        (function checkPreviousChapter() {
+            try {
+                const ch2Done = localStorage.getItem('sorcerer2.ch2.complete');
+                if (!ch2Done) {
+                    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0a0f1e;color:#a78bfa;font-family:monospace;text-align:center;padding:20px;"><div><h2 style="letter-spacing:3px;margin-bottom:16px;">CHAPTER 3 LOCKED</h2><p style="color:rgba(255,255,255,0.6);line-height:1.7;max-width:400px;">Complete Chapter 2: The 100-Year Life to unlock this chapter.</p><br><a href="chapter2.html" style="color:#ffd700;text-decoration:none;border:1px solid #ffd700;padding:10px 24px;border-radius:6px;">Play Chapter 2 &rarr;</a></div></div>';
+                    throw new Error('Chapter 2 not complete');
+                }
+            } catch(e) { if (e.message === 'Chapter 2 not complete') return; }
+        })();
+
+        // ============ Chapter 3 Completion ============
+        function checkCh3Completion() {
+            if (gameState.ch3Complete) return;
+            if (gameState.dbcNodes.length >= 8 &&
+                gameState.transmissions >= 20 &&
+                gameState.vaccinesPrinted >= 5 &&
+                gameState.outbreaksStopped >= 3 &&
+                gameState.challengesCompleted >= 2) {
+                gameState.ch3Complete = true;
+                try { localStorage.setItem('sorcerer2.ch3.complete', 'true'); } catch(e) {}
+                saveGame();
+                setTimeout(() => {
+                    showPopup('CHAPTER 3 COMPLETE',
+                        `The DBC network spans the globe. Biology travels at the speed of light.\n\n` +
+                        `${gameState.dbcNodes.length} DBC nodes online | ${gameState.transmissions} transmissions\n` +
+                        `${gameState.vaccinesPrinted} vaccines printed | ${gameState.outbreaksStopped} outbreaks stopped\n\n` +
+                        `"We proved biology can be transmitted anywhere on Earth. Now... what about Mars?"\n\n` +
+                        `— Dr. Craig Venter\n\nAdvance to Chapter 4: Fax Me a Martian →`);
+                }, 1000);
             }
         }
 

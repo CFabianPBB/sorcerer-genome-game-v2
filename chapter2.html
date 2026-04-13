@@ -838,9 +838,9 @@
                 <div class="chapter-nav-connector lit"></div>
                 <div class="chapter-nav-dot active" title="Chapter 2: The 100-Year Life"></div>
                 <div class="chapter-nav-connector"></div>
-                <div class="chapter-nav-dot" title="Chapter 3: Life at the Speed of Light" onclick="window.location.href='chapter3.html'"></div>
+                <div class="chapter-nav-dot locked" title="Chapter 3: Life at the Speed of Light" onclick="if(localStorage.getItem('sorcerer2.ch2.complete'))window.location.href='chapter3.html';else alert('Complete Chapter 2 first!')"></div>
                 <div class="chapter-nav-connector"></div>
-                <div class="chapter-nav-dot locked" title="Chapter 4: Fax Me a Martian" onclick="window.location.href='chapter4.html'"></div>
+                <div class="chapter-nav-dot locked" title="Chapter 4: Fax Me a Martian" onclick="if(localStorage.getItem('sorcerer2.ch3.complete'))window.location.href='chapter4.html';else alert('Complete Chapter 3 first!')"></div>
             </div>
             <div class="chapter-nav-label">Chapter 2 of 4</div>
             <button class="about-chapter-btn" onclick="document.getElementById('about-modal').classList.add('active')">About This Chapter</button>
@@ -2130,6 +2130,17 @@
                 }, 1000);
             }
         }
+
+        // ============ Chapter Gating ============
+        (function checkPreviousChapter() {
+            try {
+                const ch1Done = localStorage.getItem('sorcerer2.ch1.complete');
+                if (!ch1Done) {
+                    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0a0e1a;color:#00d4ff;font-family:monospace;text-align:center;padding:20px;"><div><h2 style="letter-spacing:3px;margin-bottom:16px;">CHAPTER 2 LOCKED</h2><p style="color:rgba(255,255,255,0.6);line-height:1.7;max-width:400px;">Complete Chapter 1: Voyage of the Sorcerer II to unlock this chapter.</p><br><a href="index.html" style="color:#ffd700;text-decoration:none;border:1px solid #ffd700;padding:10px 24px;border-radius:6px;">Play Chapter 1 &rarr;</a></div></div>';
+                    throw new Error('Chapter 1 not complete');
+                }
+            } catch(e) { if (e.message === 'Chapter 1 not complete') return; }
+        })();
 
         // ============ Init ============
         const _resumed = loadGame();

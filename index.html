@@ -4866,41 +4866,7 @@
             document.body.appendChild(overlay);
         }
 
-        // Show "Continue to Ch2" banner on load if chapter was already completed
-        (function checkCh1ReturnVisit() {
-            if (gameState.ch1Complete) {
-                setTimeout(() => {
-                    const existing = document.getElementById('ch2-continue-banner');
-                    if (existing) return;
-                    const banner = document.createElement('div');
-                    banner.id = 'ch2-continue-banner';
-                    banner.style.cssText = `
-                        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-                        z-index: 500;
-                        background: linear-gradient(135deg, #ffd700, #ffaa00);
-                        color: #000; padding: 14px 32px; border-radius: 30px;
-                        font-weight: bold; font-size: 1em; cursor: pointer;
-                        box-shadow: 0 4px 20px rgba(255,215,0,0.4), 0 0 40px rgba(255,215,0,0.15);
-                        letter-spacing: 1.5px; pointer-events: auto;
-                        animation: bannerPulse 2s ease-in-out infinite;
-                        text-align: center;
-                    `;
-                    banner.textContent = 'Chapter 1 Complete \u2014 Continue to Chapter 2 \u2192';
-                    banner.onclick = () => { window.location.href = 'chapter2.html'; };
-
-                    // Add the pulse animation dynamically
-                    const style = document.createElement('style');
-                    style.textContent = `
-                        @keyframes bannerPulse {
-                            0%, 100% { box-shadow: 0 4px 20px rgba(255,215,0,0.4), 0 0 40px rgba(255,215,0,0.15); }
-                            50% { box-shadow: 0 4px 30px rgba(255,215,0,0.6), 0 0 60px rgba(255,215,0,0.25); }
-                        }
-                    `;
-                    document.head.appendChild(style);
-                    document.body.appendChild(banner);
-                }, 500);
-            }
-        })();
+        // Ch1 completion banner removed — chapter nav dots handle progression
 
         /* ============================================
            STORY OVERLAY + CHAPTER PROGRESS
