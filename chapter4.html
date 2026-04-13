@@ -939,29 +939,56 @@
                 <!-- Venter avatar (space suit) -->
                 <div class="venter-avatar" onclick="craigSpeaks()" title="Dr. Craig Venter">
                     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <radialGradient id="craigSkin" cx="50%" cy="38%" r="65%"><stop offset="0%" stop-color="#f7cda2"/><stop offset="55%" stop-color="#d89160"/><stop offset="100%" stop-color="#8a5530"/></radialGradient>
+                            <linearGradient id="craigBeard" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#b9bec3"/></linearGradient>
+                        </defs>
+                        <!-- Mars sky background -->
+                        <rect width="100" height="100" fill="#1a0a00"/>
+                        <rect y="60" width="100" height="40" fill="#3a1a08"/>
                         <!-- Space suit body -->
-                        <path d="M10 100 L20 58 Q30 48 50 48 Q70 48 80 58 L90 100 Z" fill="#e8e8e8"/>
-                        <path d="M30 60 L50 55 L70 60" fill="none" stroke="#ccc" stroke-width="1"/>
-                        <!-- Helmet -->
-                        <ellipse cx="50" cy="30" rx="24" ry="26" fill="#ddd" stroke="#bbb" stroke-width="1.5"/>
-                        <!-- Visor -->
-                        <ellipse cx="50" cy="32" rx="18" ry="16" fill="#1a3a5c" opacity="0.85"/>
-                        <ellipse cx="50" cy="32" rx="18" ry="16" fill="none" stroke="#e85d04" stroke-width="1"/>
-                        <!-- Face behind visor -->
-                        <ellipse cx="50" cy="34" rx="14" ry="12" fill="#c98a5a"/>
-                        <ellipse cx="44" cy="33" rx="1.8" ry="1.1" fill="#fff"/>
-                        <circle cx="44" cy="33" r="0.7" fill="#2c5d8a"/>
-                        <ellipse cx="56" cy="33" rx="1.8" ry="1.1" fill="#fff"/>
-                        <circle cx="56" cy="33" r="0.7" fill="#2c5d8a"/>
-                        <path d="M44 39 Q50 43 56 39" fill="none" stroke="#8b5a2b" stroke-width="0.6"/>
-                        <!-- Visor shine -->
-                        <ellipse cx="42" cy="26" rx="6" ry="3" fill="#fff" opacity="0.15"/>
-                        <!-- Suit details -->
-                        <rect x="38" y="62" width="24" height="4" rx="2" fill="#ccc"/>
-                        <circle cx="50" cy="70" r="3" fill="#e85d04"/>
+                        <path d="M5 100 L14 62 Q26 50 50 50 Q74 50 86 62 L95 100 Z" fill="#e8e8e8"/>
+                        <path d="M14 62 Q22 56 32 54 Q26 62 24 72 L14 68 Z" fill="#ccc" opacity="0.5"/>
+                        <path d="M86 62 Q78 56 68 54 Q74 62 76 72 L86 68 Z" fill="#ccc" opacity="0.5"/>
+                        <!-- Suit chest panel -->
+                        <rect x="36" y="64" width="28" height="6" rx="2" fill="#ccc"/>
+                        <circle cx="50" cy="75" r="3.5" fill="#e85d04"/>
                         <!-- Mission patch -->
-                        <circle cx="30" cy="72" r="6" fill="none" stroke="#e85d04" stroke-width="0.8"/>
-                        <text x="30" y="74" text-anchor="middle" fill="#e85d04" font-size="4" font-weight="bold">V</text>
+                        <circle cx="28" cy="76" r="6" fill="none" stroke="#e85d04" stroke-width="0.8"/>
+                        <text x="28" y="78" text-anchor="middle" fill="#e85d04" font-size="4" font-weight="bold">V</text>
+                        <!-- Helmet -->
+                        <ellipse cx="50" cy="30" rx="26" ry="28" fill="#ddd" stroke="#bbb" stroke-width="1.5"/>
+                        <!-- Visor -->
+                        <ellipse cx="50" cy="32" rx="20" ry="18" fill="#1a2a44" opacity="0.85"/>
+                        <ellipse cx="50" cy="32" rx="20" ry="18" fill="none" stroke="#e85d04" stroke-width="1"/>
+                        <!-- Visor shine -->
+                        <ellipse cx="42" cy="24" rx="7" ry="3" fill="#fff" opacity="0.15"/>
+                        <!-- Face visible through visor — same detailed Venter -->
+                        <ellipse cx="50" cy="34" rx="16" ry="14" fill="url(#craigSkin)"/>
+                        <ellipse cx="48" cy="24" rx="10" ry="4" fill="#ffe4c4" opacity="0.5"/>
+                        <!-- Side hair through helmet -->
+                        <path d="M36 32 Q34 38 37 42 Q38 39 38.5 36 Q38 34 36 32 Z" fill="#e8ecef" opacity="0.6"/>
+                        <path d="M64 32 Q66 38 63 42 Q62 39 61.5 36 Q62 34 64 32 Z" fill="#e8ecef" opacity="0.6"/>
+                        <!-- Eyebrows -->
+                        <path d="M41 31 Q45 29 49 31" stroke="#4a3020" stroke-width="1" fill="none" stroke-linecap="round"/>
+                        <path d="M51 31 Q55 29 59 31" stroke="#4a3020" stroke-width="1" fill="none" stroke-linecap="round"/>
+                        <!-- Eyes -->
+                        <ellipse cx="44" cy="34" rx="2.5" ry="1.5" fill="#f8f5ef"/>
+                        <ellipse cx="56" cy="34" rx="2.5" ry="1.5" fill="#f8f5ef"/>
+                        <path d="M41.5 32.8 Q44 32.2 46.5 32.8" stroke="#1a120a" stroke-width="0.6" fill="none"/>
+                        <path d="M53.5 32.8 Q56 32.2 58.5 32.8" stroke="#1a120a" stroke-width="0.6" fill="none"/>
+                        <circle cx="44" cy="34.1" r="1.3" fill="#2e5a7f"/><circle cx="56" cy="34.1" r="1.3" fill="#2e5a7f"/>
+                        <circle cx="44" cy="34.1" r="0.9" fill="#4a7ba8"/><circle cx="56" cy="34.1" r="0.9" fill="#4a7ba8"/>
+                        <circle cx="44" cy="34.1" r="0.6" fill="#0a1220"/><circle cx="56" cy="34.1" r="0.6" fill="#0a1220"/>
+                        <circle cx="44.4" cy="33.6" r="0.35" fill="#fff"/><circle cx="56.4" cy="33.6" r="0.35" fill="#fff"/>
+                        <!-- Nose -->
+                        <path d="M50 36 Q48 41 47 43 Q49 44 50 43.5 Q51 44 53 43 Q52 41 50 36 Z" fill="#c98a5a" stroke="#8a5530" stroke-width="0.3"/>
+                        <!-- Mustache -->
+                        <path d="M43 44 Q46 43 50 44 Q54 43 57 44 Q57 46.5 54 46.5 Q50 45.5 46 46.5 Q43 46.5 43 44 Z" fill="url(#craigBeard)" stroke="#b8bec3" stroke-width="0.3"/>
+                        <!-- Smile -->
+                        <path d="M46 46.5 Q49 47.5 52 47 Q54 46.5 55 46" stroke="#4a1f05" stroke-width="0.65" fill="none" stroke-linecap="round"/>
+                        <!-- Beard (visible below mustache in visor) -->
+                        <path d="M42 46 Q40 52 45 54 Q47 55 50 55 Q53 55 55 54 Q60 52 58 46 Q56 50 53 50.5 Q50 51 47 50.5 Q44 50 42 46 Z" fill="url(#craigBeard)" stroke="#b8bec3" stroke-width="0.3"/>
                     </svg>
                 </div>
             </div>

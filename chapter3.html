@@ -882,30 +882,54 @@
                 <!-- Venter Avatar -->
                 <div class="venter-avatar" onclick="craigSpeaks()" title="Dr. Craig Venter">
                     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <radialGradient id="craigSkin" cx="50%" cy="38%" r="65%"><stop offset="0%" stop-color="#f7cda2"/><stop offset="55%" stop-color="#d89160"/><stop offset="100%" stop-color="#8a5530"/></radialGradient>
+                            <linearGradient id="craigBeard" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#b9bec3"/></linearGradient>
+                        </defs>
+                        <!-- Dark command center background -->
+                        <rect width="100" height="100" fill="#0a0f1e"/>
                         <!-- Tech jacket -->
-                        <path d="M5 100 L18 60 Q28 50 50 50 Q72 50 82 60 L95 100 Z" fill="#1e1e2e"/>
-                        <path d="M18 60 L50 55 L82 60" fill="none" stroke="#7c3aed" stroke-width="0.8"/>
-                        <!-- Collar glow -->
-                        <path d="M38 55 L50 50 L62 55" fill="none" stroke="#a78bfa" stroke-width="1"/>
-                        <!-- Head -->
-                        <ellipse cx="50" cy="32" rx="18" ry="20" fill="#c98a5a"/>
-                        <ellipse cx="48" cy="18" rx="11" ry="5" fill="#ffe4c4" opacity="0.5"/>
-                        <!-- Eyes -->
-                        <ellipse cx="43" cy="34" rx="2.2" ry="1.3" fill="#fff"/>
-                        <circle cx="43" cy="34" r="0.9" fill="#2c5d8a"/>
-                        <ellipse cx="57" cy="34" rx="2.2" ry="1.3" fill="#fff"/>
-                        <circle cx="57" cy="34" r="0.9" fill="#2c5d8a"/>
-                        <!-- Smile -->
-                        <path d="M43 42 Q50 47 57 42" fill="none" stroke="#8b5a2b" stroke-width="0.7"/>
+                        <path d="M-2 100 L8 68 Q22 58 50 58 Q78 58 92 68 L102 100 Z" fill="#1a1a30"/>
+                        <path d="M8 68 Q16 62 26 60 Q20 68 18 78 L8 76 Z" fill="#12122a" opacity="0.6"/>
+                        <path d="M92 68 Q84 62 74 60 Q80 68 82 78 L92 76 Z" fill="#12122a" opacity="0.6"/>
+                        <path d="M34 66 Q38 60 46 58 L54 58 Q62 60 66 66 Q60 63 50 63 Q40 63 34 66 Z" fill="#2a2a4a"/>
+                        <!-- Purple trim -->
+                        <line x1="8" y1="68" x2="92" y2="68" stroke="#7c3aed" stroke-width="0.8" opacity="0.6"/>
+                        <line x1="50" y1="63" x2="50" y2="100" stroke="#333" stroke-width="0.5"/>
                         <!-- Headset -->
-                        <path d="M28 30 Q28 15 50 12 Q72 15 72 30" fill="none" stroke="#444" stroke-width="2"/>
-                        <rect x="25" y="28" width="6" height="10" rx="2" fill="#333"/>
-                        <rect x="69" y="28" width="6" height="10" rx="2" fill="#333"/>
-                        <circle cx="28" cy="33" r="1.5" fill="#7c3aed"/>
-                        <!-- Holographic display hint -->
-                        <rect x="60" y="60" width="18" height="12" rx="2" fill="rgba(124,58,237,0.15)" stroke="#7c3aed" stroke-width="0.5"/>
-                        <line x1="63" y1="64" x2="75" y2="64" stroke="#a78bfa" stroke-width="0.4"/>
-                        <line x1="63" y1="67" x2="72" y2="67" stroke="#a78bfa" stroke-width="0.4"/>
+                        <path d="M28 30 Q28 14 50 11 Q72 14 72 30" fill="none" stroke="#444" stroke-width="2"/>
+                        <rect x="25" y="27" width="6" height="10" rx="2" fill="#333"/><circle cx="28" cy="32" r="1.5" fill="#7c3aed"/>
+                        <rect x="69" y="27" width="6" height="10" rx="2" fill="#333"/><circle cx="72" cy="32" r="1.5" fill="#7c3aed"/>
+                        <!-- Neck -->
+                        <path d="M43 58 Q43 64 50 66 Q57 64 57 58 Z" fill="#b57745"/>
+                        <!-- Head -->
+                        <ellipse cx="50" cy="35" rx="22" ry="26" fill="url(#craigSkin)"/>
+                        <ellipse cx="47" cy="20" rx="15" ry="7.5" fill="#ffe4c4" opacity="0.6"/>
+                        <ellipse cx="53" cy="18" rx="6" ry="2" fill="#fff" opacity="0.45"/>
+                        <ellipse cx="27" cy="39" rx="3" ry="5" fill="#c98a5a"/>
+                        <ellipse cx="73" cy="39" rx="3" ry="5" fill="#c98a5a"/>
+                        <path d="M28 37 Q26 45 30 51 Q32 47 33 42 Q32 39 28 37 Z" fill="#e8ecef"/>
+                        <path d="M72 37 Q74 45 70 51 Q68 47 67 42 Q68 39 72 37 Z" fill="#e8ecef"/>
+                        <path d="M30 33 Q36 27 50 26 Q64 27 70 33 Q62 30 50 30 Q38 30 30 33 Z" fill="#cfd3d7" opacity="0.55"/>
+                        <path d="M34 33.5 Q40 30.5 46 33.5" stroke="#4a3020" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+                        <path d="M54 33.5 Q60 30.5 66 33.5" stroke="#4a3020" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+                        <ellipse cx="40" cy="39" rx="3.1" ry="1.9" fill="#f8f5ef"/>
+                        <ellipse cx="60" cy="39" rx="3.1" ry="1.9" fill="#f8f5ef"/>
+                        <path d="M36.8 37.5 Q40 36.7 43.2 37.5" stroke="#1a120a" stroke-width="0.75" fill="none"/>
+                        <path d="M56.8 37.5 Q60 36.7 63.2 37.5" stroke="#1a120a" stroke-width="0.75" fill="none"/>
+                        <circle cx="40" cy="39.1" r="1.55" fill="#2e5a7f"/><circle cx="60" cy="39.1" r="1.55" fill="#2e5a7f"/>
+                        <circle cx="40" cy="39.1" r="1.1" fill="#4a7ba8"/><circle cx="60" cy="39.1" r="1.1" fill="#4a7ba8"/>
+                        <circle cx="40" cy="39.1" r="0.75" fill="#0a1220"/><circle cx="60" cy="39.1" r="0.75" fill="#0a1220"/>
+                        <circle cx="40.55" cy="38.55" r="0.45" fill="#fff"/><circle cx="60.55" cy="38.55" r="0.45" fill="#fff"/>
+                        <path d="M50 41 Q47 49 45.5 53 Q48 55 50 54 Q52 55 54.5 53 Q53 49 50 41 Z" fill="#c98a5a" stroke="#8a5530" stroke-width="0.4"/>
+                        <ellipse cx="48.3" cy="53" rx="0.7" ry="0.5" fill="#4a1f05" opacity="0.65"/>
+                        <ellipse cx="51.7" cy="53" rx="0.7" ry="0.5" fill="#4a1f05" opacity="0.65"/>
+                        <path d="M39 55 Q44 53 50 55 Q56 53 61 55 Q61 59 56 59 Q50 57 44 59 Q39 59 39 55 Z" fill="url(#craigBeard)" stroke="#b8bec3" stroke-width="0.35"/>
+                        <path d="M45 59 Q49 60.3 52 59.6 Q55 58.6 56 58" stroke="#4a1f05" stroke-width="0.85" fill="none" stroke-linecap="round"/>
+                        <path d="M37 58 Q34 69 42 73 Q46 75 50 75 Q54 75 58 73 Q66 69 63 58 Q60 64 55 64.5 Q50 65 45 64.5 Q40 64 37 58 Z" fill="url(#craigBeard)" stroke="#b8bec3" stroke-width="0.4"/>
+                        <path d="M42 62 Q42 67 42 71" stroke="#b8bec3" stroke-width="0.35" fill="none"/>
+                        <path d="M50 65 Q50 70 50 75" stroke="#b8bec3" stroke-width="0.35" fill="none"/>
+                        <path d="M58 62 Q58 67 58 71" stroke="#b8bec3" stroke-width="0.35" fill="none"/>
                     </svg>
                 </div>
             </div>

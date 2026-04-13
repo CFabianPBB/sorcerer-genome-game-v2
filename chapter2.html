@@ -1186,18 +1186,61 @@
                 <!-- Venter avatar -->
                 <div class="venter-avatar" onclick="craigSpeaks()" title="Dr. Craig Venter">
                     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5 100 L15 65 Q25 55 50 55 Q75 55 85 65 L95 100 Z" fill="#f0f0f0"/>
-                        <path d="M35 60 L45 55 L50 62 L55 55 L65 60" fill="none" stroke="#ccc" stroke-width="1"/>
-                        <ellipse cx="50" cy="35" rx="20" ry="22" fill="#c98a5a"/>
-                        <ellipse cx="48" cy="20" rx="12" ry="6" fill="#ffe4c4" opacity="0.5"/>
-                        <ellipse cx="42" cy="38" rx="2.5" ry="1.5" fill="#fff"/><circle cx="42" cy="38" r="1" fill="#2c5d8a"/>
-                        <ellipse cx="58" cy="38" rx="2.5" ry="1.5" fill="#fff"/><circle cx="58" cy="38" r="1" fill="#2c5d8a"/>
-                        <path d="M42 47 Q50 52 58 47" fill="none" stroke="#8b5a2b" stroke-width="0.8"/>
-                        <rect x="35" y="34" width="14" height="8" rx="3" fill="none" stroke="#333" stroke-width="0.8"/>
-                        <rect x="51" y="34" width="14" height="8" rx="3" fill="none" stroke="#333" stroke-width="0.8"/>
-                        <line x1="49" y1="38" x2="51" y2="38" stroke="#333" stroke-width="0.6"/>
-                        <path d="M45 60 Q45 70 50 75 Q55 70 55 60" fill="none" stroke="#00e5ff" stroke-width="1"/>
-                        <circle cx="50" cy="77" r="2" fill="#00e5ff"/>
+                        <defs>
+                            <radialGradient id="craigSkin" cx="50%" cy="38%" r="65%"><stop offset="0%" stop-color="#f7cda2"/><stop offset="55%" stop-color="#d89160"/><stop offset="100%" stop-color="#8a5530"/></radialGradient>
+                            <linearGradient id="craigBeard" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#b9bec3"/></linearGradient>
+                        </defs>
+                        <!-- Clinical blue background -->
+                        <rect width="100" height="100" fill="linear-gradient(180deg,#0a1628,#0d1f3c)" rx="0"/>
+                        <rect width="100" height="100" fill="#0d1525"/>
+                        <!-- Lab coat -->
+                        <path d="M-2 100 L8 68 Q22 58 50 58 Q78 58 92 68 L102 100 Z" fill="#f0f0f0"/>
+                        <path d="M8 68 Q16 62 26 60 Q20 68 18 78 L8 76 Z" fill="#dde" opacity="0.5"/>
+                        <path d="M92 68 Q84 62 74 60 Q80 68 82 78 L92 76 Z" fill="#dde" opacity="0.5"/>
+                        <path d="M34 66 Q38 60 46 58 L54 58 Q62 60 66 66 Q60 63 50 63 Q40 63 34 66 Z" fill="#ccd"/>
+                        <line x1="50" y1="63" x2="50" y2="100" stroke="#bbb" stroke-width="0.5"/>
+                        <!-- Stethoscope -->
+                        <path d="M42 66 Q42 78 50 82 Q58 78 58 66" fill="none" stroke="#00b4ff" stroke-width="1.2"/>
+                        <circle cx="50" cy="84" r="2.5" fill="#00b4ff"/>
+                        <!-- Neck -->
+                        <path d="M43 58 Q43 64 50 66 Q57 64 57 58 Z" fill="#b57745"/>
+                        <!-- Head -->
+                        <ellipse cx="50" cy="35" rx="22" ry="26" fill="url(#craigSkin)"/>
+                        <ellipse cx="47" cy="20" rx="15" ry="7.5" fill="#ffe4c4" opacity="0.6"/>
+                        <ellipse cx="53" cy="18" rx="6" ry="2" fill="#fff" opacity="0.45"/>
+                        <ellipse cx="33" cy="28" rx="3" ry="5" fill="#ffe4c4" opacity="0.3"/>
+                        <!-- Ears -->
+                        <ellipse cx="27" cy="39" rx="3" ry="5" fill="#c98a5a"/>
+                        <ellipse cx="73" cy="39" rx="3" ry="5" fill="#c98a5a"/>
+                        <!-- Side hair -->
+                        <path d="M28 37 Q26 45 30 51 Q32 47 33 42 Q32 39 28 37 Z" fill="#e8ecef"/>
+                        <path d="M72 37 Q74 45 70 51 Q68 47 67 42 Q68 39 72 37 Z" fill="#e8ecef"/>
+                        <path d="M30 33 Q36 27 50 26 Q64 27 70 33 Q62 30 50 30 Q38 30 30 33 Z" fill="#cfd3d7" opacity="0.55"/>
+                        <!-- Eyebrows -->
+                        <path d="M34 33.5 Q40 30.5 46 33.5" stroke="#4a3020" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+                        <path d="M54 33.5 Q60 30.5 66 33.5" stroke="#4a3020" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+                        <!-- Eyes -->
+                        <ellipse cx="40" cy="39" rx="3.1" ry="1.9" fill="#f8f5ef"/>
+                        <ellipse cx="60" cy="39" rx="3.1" ry="1.9" fill="#f8f5ef"/>
+                        <path d="M36.8 37.5 Q40 36.7 43.2 37.5" stroke="#1a120a" stroke-width="0.75" fill="none"/>
+                        <path d="M56.8 37.5 Q60 36.7 63.2 37.5" stroke="#1a120a" stroke-width="0.75" fill="none"/>
+                        <circle cx="40" cy="39.1" r="1.55" fill="#2e5a7f"/><circle cx="60" cy="39.1" r="1.55" fill="#2e5a7f"/>
+                        <circle cx="40" cy="39.1" r="1.1" fill="#4a7ba8"/><circle cx="60" cy="39.1" r="1.1" fill="#4a7ba8"/>
+                        <circle cx="40" cy="39.1" r="0.75" fill="#0a1220"/><circle cx="60" cy="39.1" r="0.75" fill="#0a1220"/>
+                        <circle cx="40.55" cy="38.55" r="0.45" fill="#fff"/><circle cx="60.55" cy="38.55" r="0.45" fill="#fff"/>
+                        <!-- Nose -->
+                        <path d="M50 41 Q47 49 45.5 53 Q48 55 50 54 Q52 55 54.5 53 Q53 49 50 41 Z" fill="#c98a5a" stroke="#8a5530" stroke-width="0.4"/>
+                        <ellipse cx="48.3" cy="53" rx="0.7" ry="0.5" fill="#4a1f05" opacity="0.65"/>
+                        <ellipse cx="51.7" cy="53" rx="0.7" ry="0.5" fill="#4a1f05" opacity="0.65"/>
+                        <!-- Mustache -->
+                        <path d="M39 55 Q44 53 50 55 Q56 53 61 55 Q61 59 56 59 Q50 57 44 59 Q39 59 39 55 Z" fill="url(#craigBeard)" stroke="#b8bec3" stroke-width="0.35"/>
+                        <!-- Smile -->
+                        <path d="M45 59 Q49 60.3 52 59.6 Q55 58.6 56 58" stroke="#4a1f05" stroke-width="0.85" fill="none" stroke-linecap="round"/>
+                        <!-- Beard -->
+                        <path d="M37 58 Q34 69 42 73 Q46 75 50 75 Q54 75 58 73 Q66 69 63 58 Q60 64 55 64.5 Q50 65 45 64.5 Q40 64 37 58 Z" fill="url(#craigBeard)" stroke="#b8bec3" stroke-width="0.4"/>
+                        <path d="M42 62 Q42 67 42 71" stroke="#b8bec3" stroke-width="0.35" fill="none"/>
+                        <path d="M50 65 Q50 70 50 75" stroke="#b8bec3" stroke-width="0.35" fill="none"/>
+                        <path d="M58 62 Q58 67 58 71" stroke="#b8bec3" stroke-width="0.35" fill="none"/>
                     </svg>
                 </div>
             </div>
