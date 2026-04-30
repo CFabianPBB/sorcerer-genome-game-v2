@@ -2621,6 +2621,55 @@
             .why-body { font-size: 0.88em; }
         }
 
+        /* ============================================================
+           Mobile Polish — Chapter 1
+           Targets bunched/overlapping UI on phones (<=768px / <=480px)
+           ============================================================ */
+        @media (max-width: 768px) {
+            html, body { overflow-x: hidden; }
+            .game-container { width: 100%; }
+
+            /* Modals: shrink padding so content doesn't squeeze on phones */
+            .synbio-modal { padding: 18px 14px; max-height: 88vh; overflow-y: auto; }
+            .synbio-modal-actions { flex-direction: column; gap: 8px; }
+            .synbio-modal-actions button { width: 100%; }
+
+            .chapter-complete-overlay .chapter-complete-content,
+            .chapter-complete-content { padding: 24px 16px !important; max-width: 92vw; max-height: 88vh; overflow-y: auto; }
+
+            /* Cinematic overlays: keep within viewport */
+            .seq-overlay, .pub-overlay, .net-overlay { padding: 0; overflow: hidden; }
+            .seq-helix-container { transform: translate(-50%, -50%) scale(0.7); }
+            .pub-journal { width: 88vw !important; max-width: 88vw; }
+            .net-svg { width: 80% !important; }
+
+            /* Avatar + label — keep clickable but out of the way */
+            .craig-avatar { top: 56px; right: 8px; width: 64px; height: 64px; }
+            .craig-label { font-size: 9px; padding: 2px 6px; max-width: 70px; }
+
+            /* Touch targets */
+            button, .btn, .controls-btn { min-height: 40px; }
+
+            /* Ocean info should not block the ship */
+            .ocean-info { font-size: 0.72em; padding: 8px 10px; min-width: 0; max-width: 70vw; }
+
+            /* Chapter complete badge sizing */
+            .chapter-complete-title { font-size: 1.4em !important; letter-spacing: 3px !important; }
+            .chapter-complete-subtitle { font-size: 0.75em !important; }
+            .chapter-complete-badge { transform: scale(0.8); }
+        }
+
+        @media (max-width: 480px) {
+            .title-main { font-size: 1.2em; letter-spacing: 2px; }
+            .title-sorcerer { font-size: 1.5em; letter-spacing: 2px; }
+            .subtitle { font-size: 0.75em; }
+            .craig-avatar { width: 54px; height: 54px; top: 50px; right: 6px; }
+            .craig-label { font-size: 8px; max-width: 60px; }
+            .controls-panel { padding: 12px; }
+            .ocean-info { font-size: 0.65em; padding: 6px 8px; }
+            .seq-helix-container { transform: translate(-50%, -50%) scale(0.55); }
+        }
+
     </style>
 </head>
 <body>

@@ -691,6 +691,47 @@
             background: linear-gradient(135deg, #2244aa, #3355cc);
             box-shadow: 0 0 20px rgba(100,150,255,0.3);
         }
+
+        /* ============================================================
+           Mobile Polish — Chapter 4
+           ============================================================ */
+        @media (max-width: 768px) {
+            html, body { overflow-x: hidden; }
+            .game-container { width: 100%; }
+
+            /* Stack stat grid */
+            .stat-card-grid { grid-template-columns: 1fr !important; gap: 6px; }
+            .stat-label { font-size: 0.78em !important; }
+
+            /* Mars HUD — compact corner badges */
+            .mars-info { font-size: 0.62em; padding: 5px 7px; max-width: 50vw; }
+            .signal-delay { font-size: 0.62em; padding: 5px 7px; max-width: 45vw; }
+
+            /* Alien decoder helix was hardcoded 300px — must shrink */
+            .alien-helix { width: 80vw !important; max-width: 280px; }
+            .alien-text { font-size: 0.7em; letter-spacing: 2px; padding: 0 12px; }
+            .alien-label { font-size: 1em; letter-spacing: 2px; }
+
+            /* Ethics modal */
+            .ethics-box { padding: 18px 14px !important; max-width: 92vw; max-height: 88vh; overflow-y: auto; }
+            .ethics-option { padding: 10px 12px; }
+
+            /* Terraform cinematic */
+            .terraform-progress-text { font-size: 1.4em !important; letter-spacing: 3px; }
+
+            .about-modal { padding: 22px 16px !important; max-width: 92vw; max-height: 88vh; overflow-y: auto; }
+            .about-modal .begin-btn { width: 100%; padding: 12px 18px; }
+
+            /* Touch targets */
+            button, .btn { min-height: 40px; }
+        }
+
+        @media (max-width: 480px) {
+            .title-main { font-size: 1.2em; letter-spacing: 2px; }
+            .stat-label { font-size: 0.72em !important; }
+            .mars-info, .signal-delay { font-size: 0.55em; }
+            .alien-helix { width: 88vw !important; }
+        }
     </style>
 </head>
 <body>

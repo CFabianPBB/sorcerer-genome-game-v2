@@ -825,6 +825,45 @@
             background: linear-gradient(135deg, #2244aa, #3355cc);
             box-shadow: 0 0 20px rgba(100,150,255,0.3);
         }
+
+        /* ============================================================
+           Mobile Polish — Chapter 2
+           ============================================================ */
+        @media (max-width: 768px) {
+            html, body { overflow-x: hidden; }
+            .game-container { width: 100%; }
+
+            /* Stack 2-col stat grid */
+            .stat-card-grid { grid-template-columns: 1fr !important; gap: 6px; }
+            .stat-label { font-size: 0.78em !important; }
+
+            /* Holo center body shouldn't dominate mobile screen */
+            .holo-center { width: 100% !important; min-height: 280px; }
+            .holo-panel { width: 100% !important; max-height: 220px; }
+
+            /* Dashboard absolute info */
+            .dashboard-info, .stat-indicator { font-size: 0.7em; padding: 6px 8px; }
+
+            /* Modals — reduce padding */
+            .venter-paradox-card { padding: 18px 14px !important; max-height: 88vh; overflow-y: auto; }
+            .vp-buttons { flex-direction: column; gap: 8px; }
+            .vp-buttons button { width: 100%; }
+
+            .ch-complete-card { padding: 22px 16px !important; max-width: 92vw; max-height: 88vh; overflow-y: auto; }
+
+            .about-modal { padding: 22px 16px !important; max-width: 92vw; max-height: 88vh; overflow-y: auto; }
+            .about-modal .begin-btn { width: 100%; padding: 12px 18px; }
+
+            /* Touch targets */
+            button, .btn { min-height: 40px; }
+        }
+
+        @media (max-width: 480px) {
+            .title-main { font-size: 1.2em; letter-spacing: 2px; }
+            .holo-center { min-height: 220px; }
+            .stat-label { font-size: 0.72em !important; }
+            .ch-complete-card, .about-modal, .venter-paradox-card { padding: 16px 12px !important; }
+        }
     </style>
 </head>
 <body>
